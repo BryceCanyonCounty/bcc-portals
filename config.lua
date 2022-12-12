@@ -6,7 +6,7 @@ Config.shopKey = 0x760A9C6F --[G]
 -- Travel Time Between Locations
 Config.travelTime = 5000
 -- Fast Travel Shops
-Config.ftShops = {
+Config.travelShops = {
     annesburg = {
         shopName = "Annesburg Travel", -- Name of Shop on Menu
         location = "annesburg", -- DON'T CHANGE / Used for Location in Database
@@ -26,7 +26,8 @@ Config.ftShops = {
         shopHours = false, -- If You Want the Shops to Use Open and Closed Hours
         shopOpen = 7, -- Shop Open Time / 24 Hour Clock
         shopClose = 21, -- Shop Close Time / 24 Hour Clock
-        price = 50, -- Price for Fast Travel
+        buyPrice = 50, -- Price for Fast Travel
+        currencyType = "cash", -- "cash" or "gold"
     },
 
     armadillo = {
@@ -48,7 +49,8 @@ Config.ftShops = {
         shopHours = false,
         shopOpen = 7,
         shopClose = 21,
-        price = 40,
+        buyPrice = 40,
+        currencyType = "cash",
     },
 
     blackwater = {
@@ -70,7 +72,8 @@ Config.ftShops = {
         shopHours = false,
         shopOpen = 7,
         shopClose = 21,
-        price = 20,
+        buyPrice = 20,
+        currencyType = "cash",
     },
 
     rhodes = {
@@ -92,7 +95,8 @@ Config.ftShops = {
         shopHours = false,
         shopOpen = 7,
         shopClose = 21,
-        price = 20,
+        buyPrice = 20,
+        currencyType = "cash",
     },
 
     strawberry = {
@@ -114,7 +118,8 @@ Config.ftShops = {
         shopHours = false,
         shopOpen = 7,
         shopClose = 21,
-        price = 10,
+        buyPrice = 10,
+        currencyType = "cash",
     },
 
     stdenis = {
@@ -136,7 +141,8 @@ Config.ftShops = {
         shopHours = false,
         shopOpen = 7,
         shopClose = 21,
-        price = 30,
+        buyPrice = 30,
+        currencyType = "cash",
     },
 
     tumbleweed = {
@@ -158,7 +164,8 @@ Config.ftShops = {
         shopHours = false,
         shopOpen = 7,
         shopClose = 21,
-        price = 50,
+        buyPrice = 50,
+        currencyType = "cash",
     },
 
     valentine = {
@@ -180,7 +187,8 @@ Config.ftShops = {
         shopHours = false,
         shopOpen = 7,
         shopClose = 21,
-        price = 30,
+        buyPrice = 30,
+        currencyType = "cash",
     },
 
     vanhorn = {
@@ -202,7 +210,8 @@ Config.ftShops = {
         shopHours = false,
         shopOpen = 7,
         shopClose = 21,
-        price = 40,
+        buyPrice = 40,
+        currencyType = "cash",
     },
 
 }
