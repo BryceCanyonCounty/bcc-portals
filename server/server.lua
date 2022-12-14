@@ -5,16 +5,19 @@ end)
 
 -- Buy New Boats
 RegisterServerEvent('oss_fasttravel:BuyTicket')
-AddEventHandler('oss_fasttravel:BuyTicket', function(location, currencyType, buyPrice)
+AddEventHandler('oss_fasttravel:BuyTicket', function(shopData, shopId)
     local _source = source
     local Character = VORPcore.getUser(_source).getUsedCharacter
     local money = Character.money
     local gold = Character.gold
+    local currencyType = shopData.currencyType
+    local buyPrice = shopData.buyPrice
+    local location = shopData.location
 
     if currencyType == "cash" then
         if money >= buyPrice then
             Character.removeCurrency(0, buyPrice)
-            VORPcore.NotifyRightTip(_source, _U("bought") .. name .. _U("frcash") .. buyPrice, 4000)
+            TriggerClientEvent('oss_fasttravel:TeleportPlayer', _source, location, shopId)
         else
             VORPcore.NotifyRightTip(_source, _U("shortCash"), 4000)
         end
@@ -22,7 +25,7 @@ AddEventHandler('oss_fasttravel:BuyTicket', function(location, currencyType, buy
     elseif currencyType == "gold" then
         if gold >= buyPrice then
             Character.removeCurrency(1, buyPrice)
-            VORPcore.NotifyRightTip(_source, _U("bought") .. name .. _U("fr") .. buyPrice .. _U("ofgold"), 4000)
+            TriggerClientEvent('oss_fasttravel:TeleportPlayer', _source, location, shopId)
         else
             VORPcore.NotifyRightTip(_source, _U("shortGold"), 4000)
         end
