@@ -1,7 +1,7 @@
-# Fast Travel
+# Portals
 
 #### Description
-This is a basic Fast Travel script for RedM servers using the [VORP framework](https://github.com/VORPCORE). Travel can be arranged through shops. There are 9 shops configured, more shop locations may be added using the `config.lua` file.
+This is a basic Portals (fast-travel) script for RedM servers using the [VORP framework](https://github.com/VORPCORE). Travel can be arranged through shops. There are 9 shops configured, more shop locations may be added using the `config.lua` file.
 
 #### Features
 - Buy passage to a location from a Travel Shop
@@ -45,7 +45,6 @@ Settings can be changed in the `config.lua` file. Here is an example of one shop
 - Ensure that the dependancies are added and started
 - Add `oss_fasttravel` folder to your resources folder
 - Add `ensure oss_fasttravel` to your `resources.cfg`
-- Restart your server and get traveling
 
 #### Credits
 - vorp_stores
