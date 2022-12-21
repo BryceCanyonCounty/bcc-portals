@@ -4,20 +4,21 @@ TriggerEvent("getCore", function(core)
 end)
 
 -- Buy New Boats
-RegisterServerEvent('oss_fasttravel:BuyTicket')
-AddEventHandler('oss_fasttravel:BuyTicket', function(shopData, shopId)
+RegisterServerEvent('oss_portals:BuyPassage')
+AddEventHandler('oss_portals:BuyPassage', function(portData, portId)
     local _source = source
     local Character = VORPcore.getUser(_source).getUsedCharacter
     local money = Character.money
     local gold = Character.gold
-    local currencyType = shopData.currencyType
-    local buyPrice = shopData.buyPrice
-    local location = shopData.location
+    local location = portData.location
+    local currencyType = portData.currencyType
+    local buyPrice = portData.buyPrice
+    
 
     if currencyType == "cash" then
         if money >= buyPrice then
             Character.removeCurrency(0, buyPrice)
-            TriggerClientEvent('oss_fasttravel:TeleportPlayer', _source, location, shopId)
+            TriggerClientEvent('oss_portals:SendPlayer', _source, location, portId)
         else
             VORPcore.NotifyRightTip(_source, _U("shortCash"), 4000)
         end
@@ -25,7 +26,7 @@ AddEventHandler('oss_fasttravel:BuyTicket', function(shopData, shopId)
     elseif currencyType == "gold" then
         if gold >= buyPrice then
             Character.removeCurrency(1, buyPrice)
-            TriggerClientEvent('oss_fasttravel:TeleportPlayer', _source, location, shopId)
+            TriggerClientEvent('oss_portals:SendPlayer', _source, location, portId)
         else
             VORPcore.NotifyRightTip(_source, _U("shortGold"), 4000)
         end
@@ -33,14 +34,14 @@ AddEventHandler('oss_fasttravel:BuyTicket', function(shopData, shopId)
 end)
 
 -- Check Player Job and Job Grade
-RegisterServerEvent('oss_fasttravel:getPlayerJob')
-AddEventHandler('oss_fasttravel:getPlayerJob', function()
+RegisterServerEvent('oss_portals:getPlayerJob')
+AddEventHandler('oss_portals:getPlayerJob', function()
     local _source = source
     if _source then
         local Character = VORPcore.getUser(_source).getUsedCharacter
         local CharacterJob = Character.job
         local CharacterGrade = Character.jobGrade
 
-        TriggerClientEvent('oss_fasttravel:sendPlayerJob', _source, CharacterJob, CharacterGrade)
+        TriggerClientEvent('oss_portals:sendPlayerJob', _source, CharacterJob, CharacterGrade)
     end
 end)

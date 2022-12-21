@@ -3,10 +3,10 @@ TriggerEvent("getCore", function(core)
     VORPcore = core
 end)
 
-local OpenShops
-local CloseShops
-local ShopPrompt1 = GetRandomIntInRange(0, 0xffffff)
-local ShopPrompt2 = GetRandomIntInRange(0, 0xffffff)
+local OpenPorts
+local ClosePorts
+local PortPrompt1 = GetRandomIntInRange(0, 0xffffff)
+local PortPrompt2 = GetRandomIntInRange(0, 0xffffff)
 local PlayerJob
 local JobName
 local JobGrade
@@ -19,8 +19,8 @@ end)
 
 -- Start Boats
 Citizen.CreateThread(function()
-    ShopOpen()
-    ShopClosed()
+    PortOpen()
+    PortClosed()
 
     while true do
         Citizen.Wait(0)
@@ -31,146 +31,146 @@ Citizen.CreateThread(function()
         local hour = GetClockHours()
 
         if InMenu == false and not dead then
-            for shopId, shopConfig in pairs(Config.travelShops) do
-                if shopConfig.shopHours then
-                    if hour >= shopConfig.shopClose or hour < shopConfig.shopOpen then
-                        if not Config.travelShops[shopId].BlipHandle and shopConfig.blipAllowed then
-                            AddBlip(shopId)
+            for portId, portConfig in pairs(Config.ports) do
+                if portConfig.portHours then
+                    if hour >= portConfig.portClose or hour < portConfig.portOpen then
+                        if not Config.ports[portId].BlipHandle and portConfig.blipAllowed then
+                            AddBlip(portId)
                         end
-                        if Config.travelShops[shopId].BlipHandle then
-                            Citizen.InvokeNative(0x662D364ABF16DE2F, Config.travelShops[shopId].BlipHandle, GetHashKey(shopConfig.blipColorClosed))
+                        if Config.ports[portId].BlipHandle then
+                            Citizen.InvokeNative(0x662D364ABF16DE2F, Config.ports[portId].BlipHandle, GetHashKey(portConfig.blipColorClosed))
                         end
-                        if shopConfig.NPC then
-                            DeleteEntity(shopConfig.NPC)
-                            DeletePed(shopConfig.NPC)
-                            SetEntityAsNoLongerNeeded(shopConfig.NPC)
-                            shopConfig.NPC = nil
+                        if portConfig.NPC then
+                            DeleteEntity(portConfig.NPC)
+                            DeletePed(portConfig.NPC)
+                            SetEntityAsNoLongerNeeded(portConfig.NPC)
+                            portConfig.NPC = nil
                         end
                         local coordsDist = vector3(coords.x, coords.y, coords.z)
-                        local coordsShop = vector3(shopConfig.npcx, shopConfig.npcy, shopConfig.npcz)
-                        local distanceShop = #(coordsDist - coordsShop)
+                        local coordsPort = vector3(portConfig.npcx, portConfig.npcy, portConfig.npcz)
+                        local distPort = #(coordsDist - coordsPort)
 
-                        if (distanceShop <= shopConfig.distanceShop) then
+                        if (distPort <= portConfig.distPort) then
                             sleep = false
-                            local shopClosed = CreateVarString(10, 'LITERAL_STRING', _U("closed") .. shopConfig.shopOpen .. _U("am") .. shopConfig.shopClose .. _U("pm"))
-                            PromptSetActiveGroupThisFrame(ShopPrompt2, shopClosed)
+                            local portClosed = CreateVarString(10, 'LITERAL_STRING', _U("closed") .. portConfig.portOpen .. _U("am") .. portConfig.portClose .. _U("pm"))
+                            PromptSetActiveGroupThisFrame(PortPrompt2, portClosed)
 
-                            if Citizen.InvokeNative(0xC92AC953F0A982AE, CloseShops) then
+                            if Citizen.InvokeNative(0xC92AC953F0A982AE, ClosePorts) then
                                 Wait(100)
-                                VORPcore.NotifyRightTip(_U("closed") .. shopConfig.shopOpen .. _U("am") .. shopConfig.shopClose .. _U("pm"), 3000)
+                                VORPcore.NotifyRightTip(_U("closed") .. portConfig.portOpen .. _U("am") .. portConfig.portClose .. _U("pm"), 3000)
                             end
                         end
-                    elseif hour >= shopConfig.shopOpen then
-                        if not Config.travelShops[shopId].BlipHandle and shopConfig.blipAllowed then
-                            AddBlip(shopId)
+                    elseif hour >= portConfig.portOpen then
+                        if not Config.ports[portId].BlipHandle and portConfig.blipAllowed then
+                            AddBlip(portId)
                         end
-                        if Config.travelShops[shopId].BlipHandle then
-                            Citizen.InvokeNative(0x662D364ABF16DE2F, Config.travelShops[shopId].BlipHandle, GetHashKey(shopConfig.blipColorOpen))
+                        if Config.ports[portId].BlipHandle then
+                            Citizen.InvokeNative(0x662D364ABF16DE2F, Config.ports[portId].BlipHandle, GetHashKey(portConfig.blipColorOpen))
                         end
-                        if not shopConfig.NPC and shopConfig.npcAllowed then
-                            SpawnNPC(shopId)
+                        if not portConfig.NPC and portConfig.npcAllowed then
+                            SpawnNPC(portId)
                         end
-                        if not next(shopConfig.allowedJobs) then
+                        if not next(portConfig.allowedJobs) then
                             local coordsDist = vector3(coords.x, coords.y, coords.z)
-                            local coordsShop = vector3(shopConfig.npcx, shopConfig.npcy, shopConfig.npcz)
-                            local distanceShop = #(coordsDist - coordsShop)
+                            local coordsPort = vector3(portConfig.npcx, portConfig.npcy, portConfig.npcz)
+                            local distPort = #(coordsDist - coordsPort)
 
-                            if (distanceShop <= shopConfig.distanceShop) then
+                            if (distPort <= portConfig.distPort) then
                                 sleep = false
-                                local shopOpen = CreateVarString(10, 'LITERAL_STRING', shopConfig.promptName)
-                                PromptSetActiveGroupThisFrame(ShopPrompt1, shopOpen)
+                                local portOpened = CreateVarString(10, 'LITERAL_STRING', portConfig.promptName)
+                                PromptSetActiveGroupThisFrame(PortPrompt1, portOpened)
 
-                                if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenShops) then
-                                    MainMenu(shopId)
+                                if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then
+                                    PortalMenu(portId)
                                     DisplayRadar(false)
                                     TaskStandStill(player, -1)
                                 end
                             end
                         else
                             local coordsDist = vector3(coords.x, coords.y, coords.z)
-                            local coordsShop = vector3(shopConfig.npcx, shopConfig.npcy, shopConfig.npcz)
-                            local distanceShop = #(coordsDist - coordsShop)
+                            local coordsPort = vector3(portConfig.npcx, portConfig.npcy, portConfig.npcz)
+                            local distPort = #(coordsDist - coordsPort)
 
-                            if (distanceShop <= shopConfig.distanceShop) then
+                            if (distPort <= portConfig.distPort) then
                                 sleep = false
-                                local shopOpen = CreateVarString(10, 'LITERAL_STRING', shopConfig.promptName)
-                                PromptSetActiveGroupThisFrame(ShopPrompt1, shopOpen)
+                                local portOpened = CreateVarString(10, 'LITERAL_STRING', portConfig.promptName)
+                                PromptSetActiveGroupThisFrame(PortPrompt1, portOpened)
 
-                                if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenShops) then
-                                    TriggerServerEvent("oss_fasttravel:getPlayerJob")
+                                if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then
+                                    TriggerServerEvent("oss_portals:getPlayerJob")
                                     Wait(200)
                                     if PlayerJob then
-                                        if CheckJob(shopConfig.allowedJobs, PlayerJob) then
-                                            if tonumber(shopConfig.jobGrade) <= tonumber(JobGrade) then
-                                                MainMenu(shopId)
+                                        if CheckJob(portConfig.allowedJobs, PlayerJob) then
+                                            if tonumber(portConfig.jobGrade) <= tonumber(JobGrade) then
+                                                PortalMenu(portId)
                                                 DisplayRadar(false)
                                                 TaskStandStill(player, -1)
                                             else
-                                                VORPcore.NotifyRightTip(_U("needJob") .. JobName .. " " .. shopConfig.jobGrade,5000)
+                                                VORPcore.NotifyRightTip(_U("needJob") .. JobName .. " " .. portConfig.jobGrade,5000)
                                             end
                                         else
-                                            VORPcore.NotifyRightTip(_U("needJob") .. JobName .. " " .. shopConfig.jobGrade,5000)
+                                            VORPcore.NotifyRightTip(_U("needJob") .. JobName .. " " .. portConfig.jobGrade,5000)
                                         end
                                     else
-                                        VORPcore.NotifyRightTip(_U("needJob") .. JobName .. " " .. shopConfig.jobGrade,5000)
+                                        VORPcore.NotifyRightTip(_U("needJob") .. JobName .. " " .. portConfig.jobGrade,5000)
                                     end
                                 end
                             end
                         end
                     end
                 else
-                    if not Config.travelShops[shopId].BlipHandle and shopConfig.blipAllowed then
-                        AddBlip(shopId)
+                    if not Config.ports[portId].BlipHandle and portConfig.blipAllowed then
+                        AddBlip(portId)
                     end
-                    if Config.travelShops[shopId].BlipHandle then
-                        Citizen.InvokeNative(0x662D364ABF16DE2F, Config.travelShops[shopId].BlipHandle, GetHashKey(shopConfig.blipColorOpen))
+                    if Config.ports[portId].BlipHandle then
+                        Citizen.InvokeNative(0x662D364ABF16DE2F, Config.ports[portId].BlipHandle, GetHashKey(portConfig.blipColorOpen))
                     end
-                    if not shopConfig.NPC and shopConfig.npcAllowed then
-                        SpawnNPC(shopId)
+                    if not portConfig.NPC and portConfig.npcAllowed then
+                        SpawnNPC(portId)
                     end
-                    if not next(shopConfig.allowedJobs) then
+                    if not next(portConfig.allowedJobs) then
                         local coordsDist = vector3(coords.x, coords.y, coords.z)
-                        local coordsShop = vector3(shopConfig.npcx, shopConfig.npcy, shopConfig.npcz)
-                        local distanceShop = #(coordsDist - coordsShop)
+                        local coordsPort = vector3(portConfig.npcx, portConfig.npcy, portConfig.npcz)
+                        local distPort = #(coordsDist - coordsPort)
 
-                        if (distanceShop <= shopConfig.distanceShop) then
+                        if (distPort <= portConfig.distPort) then
                             sleep = false
-                            local shopOpen = CreateVarString(10, 'LITERAL_STRING', shopConfig.promptName)
-                            PromptSetActiveGroupThisFrame(ShopPrompt1, shopOpen)
+                            local portOpened = CreateVarString(10, 'LITERAL_STRING', portConfig.promptName)
+                            PromptSetActiveGroupThisFrame(PortPrompt1, portOpened)
 
-                            if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenShops) then
-                                MainMenu(shopId)
+                            if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then
+                                PortalMenu(portId)
                                 DisplayRadar(false)
                                 TaskStandStill(player, -1)
                             end
                         end
                     else
                         local coordsDist = vector3(coords.x, coords.y, coords.z)
-                        local coordsShop = vector3(shopConfig.npcx, shopConfig.npcy, shopConfig.npcz)
-                        local distanceShop = #(coordsDist - coordsShop)
+                        local coordsPort = vector3(portConfig.npcx, portConfig.npcy, portConfig.npcz)
+                        local distPort = #(coordsDist - coordsPort)
 
-                        if (distanceShop <= shopConfig.distanceShop) then
+                        if (distPort <= portConfig.distPort) then
                             sleep = false
-                            local shopOpen = CreateVarString(10, 'LITERAL_STRING', shopConfig.promptName)
-                            PromptSetActiveGroupThisFrame(ShopPrompt1, shopOpen)
+                            local portOpened = CreateVarString(10, 'LITERAL_STRING', portConfig.promptName)
+                            PromptSetActiveGroupThisFrame(PortPrompt1, portOpened)
 
-                            if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenShops) then
-                                TriggerServerEvent("oss_boats:getPlayerJob")
+                            if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then
+                                TriggerServerEvent("oss_portals:getPlayerJob")
                                 Wait(200)
                                 if PlayerJob then
-                                    if CheckJob(shopConfig.allowedJobs, PlayerJob) then
-                                        if tonumber(shopConfig.jobGrade) <= tonumber(JobGrade) then
-                                            MainMenu(shopId)
+                                    if CheckJob(portConfig.allowedJobs, PlayerJob) then
+                                        if tonumber(portConfig.jobGrade) <= tonumber(JobGrade) then
+                                            PortalMenu(portId)
                                             DisplayRadar(false)
                                             TaskStandStill(player, -1)
                                         else
-                                            VORPcore.NotifyRightTip(_U("needJob") .. JobName .. " " .. shopConfig.jobGrade,5000)
+                                            VORPcore.NotifyRightTip(_U("needJob") .. JobName .. " " .. portConfig.jobGrade,5000)
                                         end
                                     else
-                                        VORPcore.NotifyRightTip(_U("needJob") .. JobName .. " " .. shopConfig.jobGrade,5000)
+                                        VORPcore.NotifyRightTip(_U("needJob") .. JobName .. " " .. portConfig.jobGrade,5000)
                                     end
                                 else
-                                    VORPcore.NotifyRightTip(_U("needJob") .. JobName .. " " .. shopConfig.jobGrade,5000)
+                                    VORPcore.NotifyRightTip(_U("needJob") .. JobName .. " " .. portConfig.jobGrade,5000)
                                 end
                             end
                         end
@@ -184,23 +184,23 @@ Citizen.CreateThread(function()
     end
 end)
 
--- Main Boats Menu
-function MainMenu(shopId)
+-- Portal Menu to Choose Destination
+function PortalMenu(portId)
     MenuData.CloseAll()
     InMenu = true
     local elements = {}
 
-    for _, shopConfig in pairs(Config.travelShops) do
+    for outlet, outletConfig in pairs(Config.ports[portId].outlets) do
         elements[#elements + 1] = {
-            label = shopConfig.menuName,
-            value = shopConfig.location,
-            desc = _U("price") .. shopConfig.buyPrice .. " " .. shopConfig.currencyType,
-            info = shopConfig,
+            label = outletConfig.label,
+            value = outlet,
+            desc = _U("price") .. outletConfig.buyPrice .. " " .. outletConfig.currencyType,
+            info = outletConfig,
         }
     end
     MenuData.Open('default', GetCurrentResourceName(), 'menuapi',
     {
-        title = Config.travelShops[shopId].shopName,
+        title = Config.ports[portId].portName,
         subtext = _U("subMenu"),
         align = "top-left",
         elements = elements,
@@ -208,11 +208,11 @@ function MainMenu(shopId)
     },
     function(data, menu)
         if data.current == "backup" then
-            _G[data.trigger](shopId)
+            _G[data.trigger](portId)
         end
         if data.current.value then
-            local shopData = data.current.info
-            TriggerServerEvent('oss_fasttravel:BuyTicket', shopData, shopId)
+            local portData = data.current.info
+            TriggerServerEvent('oss_portals:BuyPassage', portData, portId)
 
             menu.close()
             InMenu = false
@@ -229,56 +229,56 @@ function MainMenu(shopId)
 end
 
 -- Return Boat Using Prompt at Shop Location
-RegisterNetEvent("oss_fasttravel:TeleportPlayer")
-AddEventHandler("oss_fasttravel:TeleportPlayer", function(location, shopId)
+RegisterNetEvent("oss_portals:SendPlayer")
+AddEventHandler("oss_portals:SendPlayer", function(location, portId)
     local player = PlayerPedId()
     local destination = location
-    local coords = vector3(Config.travelShops[destination].playerx, Config.travelShops[destination].playery, Config.travelShops[destination].playerz)
+    local coords = vector3(Config.ports[destination].playerx, Config.ports[destination].playery, Config.ports[destination].playerz)
     DoScreenFadeOut(500)
     Wait(Config.travelTime)
-    SetEntityCoords(player, coords.x, coords.y, coords.z)
-    --Citizen.InvokeNative(0x203BEFFDBE12E96A, player, coords.x, coords.y, coords.z, coords.h) -- _SET_ENTITY_COORDS_AND_HEADING
-    Wait(500)
+    --SetEntityCoords(player, coords.x, coords.y, coords.z)
+    Citizen.InvokeNative(0x203BEFFDBE12E96A, player, coords.x, coords.y, coords.z, coords.h) -- _SET_ENTITY_COORDS_AND_HEADING
+    Wait(Config.travelTime)
     DoScreenFadeIn(500)
 end)
 
 -- Menu Prompts
-function ShopOpen()
-    local str = _U("shopPrompt")
-    OpenShops = PromptRegisterBegin()
-    PromptSetControlAction(OpenShops, Config.shopKey)
+function PortOpen()
+    local str = _U("portPrompt")
+    OpenPorts = PromptRegisterBegin()
+    PromptSetControlAction(OpenPorts, Config.portKey)
     str = CreateVarString(10, 'LITERAL_STRING', str)
-    PromptSetText(OpenShops, str)
-    PromptSetEnabled(OpenShops, 1)
-    PromptSetVisible(OpenShops, 1)
-    PromptSetStandardMode(OpenShops, 1)
-    PromptSetGroup(OpenShops, ShopPrompt1)
-    Citizen.InvokeNative(0xC5F428EE08FA7F2C, OpenShops, true)
-    PromptRegisterEnd(OpenShops)
+    PromptSetText(OpenPorts, str)
+    PromptSetEnabled(OpenPorts, 1)
+    PromptSetVisible(OpenPorts, 1)
+    PromptSetStandardMode(OpenPorts, 1)
+    PromptSetGroup(OpenPorts, PortPrompt1)
+    Citizen.InvokeNative(0xC5F428EE08FA7F2C, OpenPorts, true)
+    PromptRegisterEnd(OpenPorts)
 end
 
-function ShopClosed()
-    local str = _U("shopPrompt")
-    CloseShops = PromptRegisterBegin()
-    PromptSetControlAction(CloseShops, Config.shopKey)
+function PortClosed()
+    local str = _U("portPrompt")
+    ClosePorts = PromptRegisterBegin()
+    PromptSetControlAction(ClosePorts, Config.portKey)
     str = CreateVarString(10, 'LITERAL_STRING', str)
-    PromptSetText(CloseShops, str)
-    PromptSetEnabled(CloseShops, 1)
-    PromptSetVisible(CloseShops, 1)
-    PromptSetStandardMode(CloseShops, 1)
-    PromptSetGroup(CloseShops, ShopPrompt2)
-    Citizen.InvokeNative(0xC5F428EE08FA7F2C, CloseShops, true)
-    PromptRegisterEnd(CloseShops)
+    PromptSetText(ClosePorts, str)
+    PromptSetEnabled(ClosePorts, 1)
+    PromptSetVisible(ClosePorts, 1)
+    PromptSetStandardMode(ClosePorts, 1)
+    PromptSetGroup(ClosePorts, PortPrompt2)
+    Citizen.InvokeNative(0xC5F428EE08FA7F2C, ClosePorts, true)
+    PromptRegisterEnd(ClosePorts)
 end
 
 -- Blips
-function AddBlip(shopId)
-    local shopConfig = Config.travelShops[shopId]
-    if shopConfig.blipAllowed then
-        shopConfig.BlipHandle = N_0x554d9d53f696d002(1664425300, shopConfig.npcx, shopConfig.npcy, shopConfig.npcz) -- BlipAddForCoords
-        SetBlipSprite(shopConfig.BlipHandle, shopConfig.blipSprite, 1)
-        SetBlipScale(shopConfig.BlipHandle, 0.2)
-        Citizen.InvokeNative(0x9CB1A1623062F402, shopConfig.BlipHandle, shopConfig.blipName) -- SetBlipNameFromPlayerString
+function AddBlip(portId)
+    local portConfig = Config.ports[portId]
+    if portConfig.blipAllowed then
+        portConfig.BlipHandle = N_0x554d9d53f696d002(1664425300, portConfig.npcx, portConfig.npcy, portConfig.npcz) -- BlipAddForCoords
+        SetBlipSprite(portConfig.BlipHandle, portConfig.blipSprite, 1)
+        SetBlipScale(portConfig.BlipHandle, 0.2)
+        Citizen.InvokeNative(0x9CB1A1623062F402, portConfig.BlipHandle, portConfig.blipName) -- SetBlipNameFromPlayerString
     end
 end
 
@@ -292,18 +292,18 @@ function LoadModel(npcModel)
     end
 end
 
-function SpawnNPC(shopId)
-    local shopConfig = Config.travelShops[shopId]
-    LoadModel(shopConfig.npcModel)
-    if shopConfig.npcAllowed then
-        local npc = CreatePed(shopConfig.npcModel, shopConfig.npcx, shopConfig.npcy, shopConfig.npcz, shopConfig.npch, false, true, true, true)
+function SpawnNPC(portId)
+    local portConfig = Config.ports[portId]
+    LoadModel(portConfig.npcModel)
+    if portConfig.npcAllowed then
+        local npc = CreatePed(portConfig.npcModel, portConfig.npcx, portConfig.npcy, portConfig.npcz, portConfig.npch, false, true, true, true)
         Citizen.InvokeNative(0x283978A15512B2FE, npc, true) -- SetRandomOutfitVariation
         SetEntityCanBeDamaged(npc, false)
         SetEntityInvincible(npc, true)
         Wait(500)
         FreezeEntityPosition(npc, true)
         SetBlockingOfNonTemporaryEvents(npc, true)
-        Config.travelShops[shopId].NPC = npc
+        Config.ports[portId].NPC = npc
     end
 end
 
@@ -318,8 +318,8 @@ function CheckJob(allowedJob, playerJob)
     return false
 end
 
-RegisterNetEvent("oss_fasttravel:sendPlayerJob")
-AddEventHandler("oss_fasttravel:sendPlayerJob", function(Job, grade)
+RegisterNetEvent("oss_portals:sendPlayerJob")
+AddEventHandler("oss_portals:sendPlayerJob", function(Job, grade)
     PlayerJob = Job
     JobGrade = grade
 end)
@@ -330,19 +330,19 @@ AddEventHandler('onResourceStop', function(resourceName)
     end
     if InMenu == true then
         ClearPedTasksImmediately(PlayerPedId())
-        PromptDelete(OpenShops)
-        PromptDelete(CloseShops)
+        PromptDelete(OpenPorts)
+        PromptDelete(ClosePorts)
         MenuData.CloseAll()
     end
 
-    for _, shopConfig in pairs(Config.travelShops) do
-        if shopConfig.BlipHandle then
-            RemoveBlip(shopConfig.BlipHandle)
+    for _, portConfig in pairs(Config.ports) do
+        if portConfig.BlipHandle then
+            RemoveBlip(portConfig.BlipHandle)
         end
-        if shopConfig.NPC then
-            DeleteEntity(shopConfig.NPC)
-            DeletePed(shopConfig.NPC)
-            SetEntityAsNoLongerNeeded(shopConfig.NPC)
+        if portConfig.NPC then
+            DeleteEntity(portConfig.NPC)
+            DeletePed(portConfig.NPC)
+            SetEntityAsNoLongerNeeded(portConfig.NPC)
         end
     end
 end)
