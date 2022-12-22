@@ -5,15 +5,14 @@ end)
 
 -- Buy New Boats
 RegisterServerEvent('oss_portals:BuyPassage')
-AddEventHandler('oss_portals:BuyPassage', function(portData, portId)
+AddEventHandler('oss_portals:BuyPassage', function(outletData, portId)
     local _source = source
     local Character = VORPcore.getUser(_source).getUsedCharacter
     local money = Character.money
     local gold = Character.gold
-    local location = portData.location
-    local currencyType = portData.currencyType
-    local buyPrice = portData.buyPrice
-    
+    local location = outletData.location
+    local currencyType = outletData.currencyType
+    local buyPrice = outletData.buyPrice
 
     if currencyType == "cash" then
         if money >= buyPrice then
