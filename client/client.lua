@@ -38,7 +38,7 @@ Citizen.CreateThread(function()
                             AddBlip(portId)
                         end
                         if Config.ports[portId].BlipHandle then
-                            Citizen.InvokeNative(0x662D364ABF16DE2F, Config.ports[portId].BlipHandle, GetHashKey(portConfig.blipColorClosed))
+                            Citizen.InvokeNative(0x662D364ABF16DE2F, Config.ports[portId].BlipHandle, GetHashKey(portConfig.blipColorClosed)) -- BlipAddModifier
                         end
                         if portConfig.NPC then
                             DeleteEntity(portConfig.NPC)
@@ -55,7 +55,7 @@ Citizen.CreateThread(function()
                             local portClosed = CreateVarString(10, 'LITERAL_STRING', _U("closed") .. portConfig.portOpen .. _U("am") .. portConfig.portClose .. _U("pm"))
                             PromptSetActiveGroupThisFrame(PortPrompt2, portClosed)
 
-                            if Citizen.InvokeNative(0xC92AC953F0A982AE, ClosePorts) then
+                            if Citizen.InvokeNative(0xC92AC953F0A982AE, ClosePorts) then -- UiPromptHasStandardModeCompleted
                                 Wait(100)
                                 VORPcore.NotifyRightTip(_U("closed") .. portConfig.portOpen .. _U("am") .. portConfig.portClose .. _U("pm"), 3000)
                             end
@@ -65,7 +65,7 @@ Citizen.CreateThread(function()
                             AddBlip(portId)
                         end
                         if Config.ports[portId].BlipHandle then
-                            Citizen.InvokeNative(0x662D364ABF16DE2F, Config.ports[portId].BlipHandle, GetHashKey(portConfig.blipColorOpen))
+                            Citizen.InvokeNative(0x662D364ABF16DE2F, Config.ports[portId].BlipHandle, GetHashKey(portConfig.blipColorOpen)) -- BlipAddModifier
                         end
                         if not portConfig.NPC and portConfig.npcAllowed then
                             SpawnNPC(portId)
@@ -80,7 +80,7 @@ Citizen.CreateThread(function()
                                 local portOpened = CreateVarString(10, 'LITERAL_STRING', portConfig.promptName)
                                 PromptSetActiveGroupThisFrame(PortPrompt1, portOpened)
 
-                                if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then
+                                if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then -- UiPromptHasStandardModeCompleted
                                     PortalMenu(portId)
                                     DisplayRadar(false)
                                     TaskStandStill(player, -1)
@@ -96,7 +96,7 @@ Citizen.CreateThread(function()
                                 local portOpened = CreateVarString(10, 'LITERAL_STRING', portConfig.promptName)
                                 PromptSetActiveGroupThisFrame(PortPrompt1, portOpened)
 
-                                if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then
+                                if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then -- UiPromptHasStandardModeCompleted
                                     TriggerServerEvent("oss_portals:getPlayerJob")
                                     Wait(200)
                                     if PlayerJob then
@@ -123,7 +123,7 @@ Citizen.CreateThread(function()
                         AddBlip(portId)
                     end
                     if Config.ports[portId].BlipHandle then
-                        Citizen.InvokeNative(0x662D364ABF16DE2F, Config.ports[portId].BlipHandle, GetHashKey(portConfig.blipColorOpen))
+                        Citizen.InvokeNative(0x662D364ABF16DE2F, Config.ports[portId].BlipHandle, GetHashKey(portConfig.blipColorOpen)) -- BlipAddModifier
                     end
                     if not portConfig.NPC and portConfig.npcAllowed then
                         SpawnNPC(portId)
@@ -138,7 +138,7 @@ Citizen.CreateThread(function()
                             local portOpened = CreateVarString(10, 'LITERAL_STRING', portConfig.promptName)
                             PromptSetActiveGroupThisFrame(PortPrompt1, portOpened)
 
-                            if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then
+                            if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then -- UiPromptHasStandardModeCompleted
                                 PortalMenu(portId)
                                 DisplayRadar(false)
                                 TaskStandStill(player, -1)
@@ -154,7 +154,7 @@ Citizen.CreateThread(function()
                             local portOpened = CreateVarString(10, 'LITERAL_STRING', portConfig.promptName)
                             PromptSetActiveGroupThisFrame(PortPrompt1, portOpened)
 
-                            if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then
+                            if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then -- UiPromptHasStandardModeCompleted
                                 TriggerServerEvent("oss_portals:getPlayerJob")
                                 Wait(200)
                                 if PlayerJob then
@@ -211,8 +211,8 @@ function PortalMenu(portId)
             _G[data.trigger](portId)
         end
         if data.current.value then
-            local portData = data.current.info
-            TriggerServerEvent('oss_portals:BuyPassage', portData, portId)
+            local outletData = data.current.info
+            TriggerServerEvent('oss_portals:BuyPassage', outletData, portId)
 
             menu.close()
             InMenu = false
@@ -233,11 +233,12 @@ RegisterNetEvent("oss_portals:SendPlayer")
 AddEventHandler("oss_portals:SendPlayer", function(location, portId)
     local player = PlayerPedId()
     local destination = location
-    local coords = vector3(Config.ports[destination].playerx, Config.ports[destination].playery, Config.ports[destination].playerz)
+    local portConfig = Config.ports[destination]
+    --local coords = vector4(portConfig.playerx, portConfig.playery, portConfig.playerz, portConfig.playerh)
     DoScreenFadeOut(500)
-    Wait(Config.travelTime)
+    Wait(500)
     --SetEntityCoords(player, coords.x, coords.y, coords.z)
-    Citizen.InvokeNative(0x203BEFFDBE12E96A, player, coords.x, coords.y, coords.z, coords.h) -- _SET_ENTITY_COORDS_AND_HEADING
+    Citizen.InvokeNative(0x203BEFFDBE12E96A, player, portConfig.playerx, portConfig.playery, portConfig.playerz, portConfig.playerh) -- SetEntityCoordsAndHeading
     Wait(Config.travelTime)
     DoScreenFadeIn(500)
 end)
