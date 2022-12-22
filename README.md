@@ -4,7 +4,7 @@
 This is a basic Portals (fast-travel) script for RedM servers using the [VORP framework](https://github.com/VORPCORE). Travel can be arranged through shops. There are 9 shops configured, more shop locations may be added using the `config.lua` file.
 
 #### Features
-- Buy passage to a location from a Travel Shop
+- Buy passage to a location from a Portal Shop
 - Cash or gold may be used for payments
 - Shop hours may be set individually for each shop or disabled to allow the shop to remain open
 - Shop blips are colored and changeable per shop location
@@ -15,25 +15,33 @@ This is a basic Portals (fast-travel) script for RedM servers using the [VORP fr
 Settings can be changed in the `config.lua` file. Here is an example of one shop:
 ```lua
     annesburg = {
-        shopName = "Annesburg Travel", -- Name of Shop on Menu
-        location = "annesburg",
-        promptName = "Annesburg Travel", -- Text Below the Prompt Button
+        portName = "Annesburg Portal", -- Name of Shop on Menu Header
+        promptName = "Annesburg Portal", -- Text Below the Prompt Button
         blipAllowed = true, -- Turns Blips On / Off
-        blipName = "Annesburg Travel", -- Name of the Blip on the Map
-        blipSprite = 784218150,
+        blipName = "Annesburg Portal", -- Name of the Blip on the Map
+        blipSprite = 784218150, -- 2005921736 = Canoe / -1018164873 = Tugboat
         blipColorOpen = "BLIP_MODIFIER_MP_COLOR_32", -- Shop Open - Blip Colors Shown Below
         blipColorClosed = "BLIP_MODIFIER_MP_COLOR_10", -- Shop Closed - Blip Colors Shown Below
-        npcx = 2931.614, npcy = 1283.1109, npcz = 44.65287, npch = 113.62, -- Blip and NPC Positions
-        playerx = 2121.31, playery = -552.65, playerz = 42.7, playerh = 316.34, -- Player Teleport Position
-        distanceShop = 2.0, -- Distance from NPC to Get Menu Prompt
+        npcx = 2926.16, npcy = 1278.9, npcz = 44.63, npch = 59.22, -- Blip and NPC Positions
+        playerx = 2924.99, playery = 1279.23, playerz = 44.63, playerh = 283.09, -- Player Teleport Position
+        distPort = 2.0, -- Distance from NPC to Get Menu Prompt
         npcAllowed = true, -- Turns NPCs On / Off
         npcModel = "A_M_M_UniBoatCrew_01", -- Sets Model for NPCs
-        allowedJobs = {}, -- Empty, Everyone Can Use / Insert Job to limit access - ex. "police"
+        allowedJobs = {"police"}, -- Empty, Everyone Can Use / Insert Job to limit access - ex. "police"
         jobGrade = 0, -- Enter Minimum Rank / Job Grade to Access Shop
-        shopHours = false, -- If You Want the Shops to Use Open and Closed Hours
-        shopOpen = 7, -- Shop Open Time / 24 Hour Clock
-        shopClose = 21, -- Shop Close Time / 24 Hour Clock
-        price = 50, -- Price for Fast Travel
+        portHours = false, -- If You Want the Shops to Use Open and Closed Hours
+        portOpen = 7, -- Shop Open Time / 24 Hour Clock
+        portClose = 21, -- Shop Close Time / 24 Hour Clock
+        outlets = { -- label is the name used in the body of the menu / currencyType = "cash" or "gold" / DO NOT CHANGE "location"
+            armadillo  = { label = "Armadillo",   location = "armadillo",  currencyType = "cash", buyPrice = 50 },
+            blackwater = { label = "Blackwater",  location = "blackwater", currencyType = "cash", buyPrice = 40 },
+            rhodes     = { label = "Rhodes",      location = "rhodes",     currencyType = "cash", buyPrice = 20 },
+            strawberry = { label = "Strawberry",  location = "strawberry", currencyType = "cash", buyPrice = 40 },
+            stdenis    = { label = "Saint Denis", location = "stdenis",    currencyType = "cash", buyPrice = 20 },
+            tumbleweed = { label = "Tumbleweed",  location = "tumbleweed", currencyType = "cash", buyPrice = 50 },
+            valentine  = { label = "Valentine",   location = "valentine",  currencyType = "cash", buyPrice = 30 },
+            vanhorn    = { label = "Van Horn",    location = "vanhorn",    currencyType = "cash", buyPrice = 10 },
+        }
     },
 ```
 
@@ -43,8 +51,8 @@ Settings can be changed in the `config.lua` file. Here is an example of one shop
 
 #### Installation
 - Ensure that the dependancies are added and started
-- Add `oss_fasttravel` folder to your resources folder
-- Add `ensure oss_fasttravel` to your `resources.cfg`
+- Add `oss_portals` folder to your resources folder
+- Add `ensure oss_portals` to your `resources.cfg`
 
 #### Credits
 - vorp_stores
