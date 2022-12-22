@@ -4,7 +4,7 @@ Config.defaultlang = "en_lang"
 -- Open Fast Travel Menu
 Config.portKey = 0x760A9C6F --[G]
 -- Travel Time in Milliseconds Between Locations
-Config.travelTime = 1000 -- Actual travel time = ( Config.travelTime x 2 )
+Config.travelTime = 500 -- min. 500ms
 -- Fast Travel Shops
 Config.ports = {
     annesburg = {
@@ -20,20 +20,20 @@ Config.ports = {
         distPort = 2.0, -- Distance from NPC to Get Menu Prompt
         npcAllowed = true, -- Turns NPCs On / Off
         npcModel = "A_M_M_UniBoatCrew_01", -- Sets Model for NPCs
-        allowedJobs = {"police"}, -- Empty, Everyone Can Use / Insert Job to limit access - ex. "police"
+        allowedJobs = {}, -- Empty, Everyone Can Use / Insert Job to limit access - ex. "police"
         jobGrade = 0, -- Enter Minimum Rank / Job Grade to Access Shop
         portHours = false, -- If You Want the Shops to Use Open and Closed Hours
         portOpen = 7, -- Shop Open Time / 24 Hour Clock
         portClose = 21, -- Shop Close Time / 24 Hour Clock
         outlets = { -- label is the name used in the body of the menu / currencyType = "cash" or "gold" / DO NOT CHANGE "location"
             armadillo  = { label = "Armadillo",   location = "armadillo",  currencyType = "cash", buyPrice = 50 },
-            blackwater = { label = "Blackwater",  location = "blackwater", currencyType = "cash", buyPrice = 50 },
-            rhodes     = { label = "Rhodes",      location = "rhodes",     currencyType = "cash", buyPrice = 50 },
-            strawberry = { label = "Strawberry",  location = "strawberry", currencyType = "cash", buyPrice = 50 },
-            stdenis    = { label = "Saint Denis", location = "stdenis",    currencyType = "cash", buyPrice = 50 },
+            blackwater = { label = "Blackwater",  location = "blackwater", currencyType = "cash", buyPrice = 40 },
+            rhodes     = { label = "Rhodes",      location = "rhodes",     currencyType = "cash", buyPrice = 20 },
+            strawberry = { label = "Strawberry",  location = "strawberry", currencyType = "cash", buyPrice = 40 },
+            stdenis    = { label = "Saint Denis", location = "stdenis",    currencyType = "cash", buyPrice = 20 },
             tumbleweed = { label = "Tumbleweed",  location = "tumbleweed", currencyType = "cash", buyPrice = 50 },
-            valentine  = { label = "Valentine",   location = "valentine",  currencyType = "cash", buyPrice = 50 },
-            vanhorn    = { label = "Van Horn",    location = "vanhorn",    currencyType = "cash", buyPrice = 50 },
+            valentine  = { label = "Valentine",   location = "valentine",  currencyType = "cash", buyPrice = 30 },
+            vanhorn    = { label = "Van Horn",    location = "vanhorn",    currencyType = "cash", buyPrice = 10 },
         }
     },
     armadillo = {
@@ -49,19 +49,19 @@ Config.ports = {
         distPort = 2.0,
         npcAllowed = true,
         npcModel = "A_M_M_UniBoatCrew_01",
-        allowedJobs = {"blacksmith"},
-        jobGrade = 2,
+        allowedJobs = {},
+        jobGrade = 0,
         portHours = false,
         portOpen = 7,
         portClose = 21,
         outlets = {
             annesburg  = { label = "Annesburg",   location = "annesburg",  currencyType = "cash", buyPrice = 50 },
-            blackwater = { label = "Blackwater",  location = "blackwater", currencyType = "cash", buyPrice = 50 },
-            rhodes     = { label = "Rhodes",      location = "rhodes",     currencyType = "cash", buyPrice = 50 },
-            strawberry = { label = "Strawberry",  location = "strawberry", currencyType = "cash", buyPrice = 50 },
-            stdenis    = { label = "Saint Denis", location = "stdenis",    currencyType = "cash", buyPrice = 50 },
-            tumbleweed = { label = "Tumbleweed",  location = "tumbleweed", currencyType = "cash", buyPrice = 50 },
-            valentine  = { label = "Valentine",   location = "valentine",  currencyType = "cash", buyPrice = 50 },
+            blackwater = { label = "Blackwater",  location = "blackwater", currencyType = "cash", buyPrice = 20 },
+            rhodes     = { label = "Rhodes",      location = "rhodes",     currencyType = "cash", buyPrice = 40 },
+            strawberry = { label = "Strawberry",  location = "strawberry", currencyType = "cash", buyPrice = 20 },
+            stdenis    = { label = "Saint Denis", location = "stdenis",    currencyType = "cash", buyPrice = 40 },
+            tumbleweed = { label = "Tumbleweed",  location = "tumbleweed", currencyType = "cash", buyPrice = 10 },
+            valentine  = { label = "Valentine",   location = "valentine",  currencyType = "cash", buyPrice = 30 },
             vanhorn    = { label = "Van Horn",    location = "vanhorn",    currencyType = "cash", buyPrice = 50 },
         }
     },
@@ -80,18 +80,18 @@ Config.ports = {
         npcModel = "A_M_M_UniBoatCrew_01",
         allowedJobs = {},
         jobGrade = 0,
-        portHours = true,
+        portHours = false,
         portOpen = 7,
         portClose = 21,
         outlets = {
-            annesburg  = { label = "Annesburg",   location = "annesburg",  currencyType = "cash", buyPrice = 50 },
-            armadillo  = { label = "Armadillo",   location = "armadillo",  currencyType = "cash", buyPrice = 50 },
-            rhodes     = { label = "Rhodes",      location = "rhodes",     currencyType = "cash", buyPrice = 50 },
-            strawberry = { label = "Strawberry",  location = "strawberry", currencyType = "cash", buyPrice = 50 },
-            stdenis    = { label = "Saint Denis", location = "stdenis",    currencyType = "cash", buyPrice = 50 },
-            tumbleweed = { label = "Tumbleweed",  location = "tumbleweed", currencyType = "cash", buyPrice = 50 },
-            valentine  = { label = "Valentine",   location = "valentine",  currencyType = "cash", buyPrice = 50 },
-            vanhorn    = { label = "Van Horn",    location = "vanhorn",    currencyType = "cash", buyPrice = 50 },
+            annesburg  = { label = "Annesburg",   location = "annesburg",  currencyType = "cash", buyPrice = 40 },
+            armadillo  = { label = "Armadillo",   location = "armadillo",  currencyType = "cash", buyPrice = 20 },
+            rhodes     = { label = "Rhodes",      location = "rhodes",     currencyType = "cash", buyPrice = 30 },
+            strawberry = { label = "Strawberry",  location = "strawberry", currencyType = "cash", buyPrice = 10 },
+            stdenis    = { label = "Saint Denis", location = "stdenis",    currencyType = "cash", buyPrice = 40 },
+            tumbleweed = { label = "Tumbleweed",  location = "tumbleweed", currencyType = "cash", buyPrice = 30 },
+            valentine  = { label = "Valentine",   location = "valentine",  currencyType = "cash", buyPrice = 20 },
+            vanhorn    = { label = "Van Horn",    location = "vanhorn",    currencyType = "cash", buyPrice = 40 },
         }
     },
     rhodes = {
@@ -113,14 +113,14 @@ Config.ports = {
         portOpen = 7,
         portClose = 21,
         outlets = {
-            annesburg  = { label = "Annesburg",   location = "annesburg",  currencyType = "cash", buyPrice = 50 },
-            armadillo  = { label = "Armadillo",   location = "armadillo",  currencyType = "cash", buyPrice = 50 },
-            blackwater = { label = "Blackwater",  location = "blackwater", currencyType = "cash", buyPrice = 50 },
-            strawberry = { label = "Strawberry",  location = "strawberry", currencyType = "cash", buyPrice = 50 },
-            stdenis    = { label = "Saint Denis", location = "stdenis",    currencyType = "cash", buyPrice = 50 },
-            tumbleweed = { label = "Tumbleweed",  location = "tumbleweed", currencyType = "cash", buyPrice = 50 },
-            valentine  = { label = "Valentine",   location = "valentine",  currencyType = "cash", buyPrice = 50 },
-            vanhorn    = { label = "Van Horn",    location = "vanhorn",    currencyType = "cash", buyPrice = 50 },
+            annesburg  = { label = "Annesburg",   location = "annesburg",  currencyType = "cash", buyPrice = 20 },
+            armadillo  = { label = "Armadillo",   location = "armadillo",  currencyType = "cash", buyPrice = 40 },
+            blackwater = { label = "Blackwater",  location = "blackwater", currencyType = "cash", buyPrice = 30 },
+            strawberry = { label = "Strawberry",  location = "strawberry", currencyType = "cash", buyPrice = 30 },
+            stdenis    = { label = "Saint Denis", location = "stdenis",    currencyType = "cash", buyPrice = 10 },
+            tumbleweed = { label = "Tumbleweed",  location = "tumbleweed", currencyType = "cash", buyPrice = 40 },
+            valentine  = { label = "Valentine",   location = "valentine",  currencyType = "cash", buyPrice = 20 },
+            vanhorn    = { label = "Van Horn",    location = "vanhorn",    currencyType = "cash", buyPrice = 20 },
         }
     },
     strawberry = {
@@ -142,14 +142,14 @@ Config.ports = {
         portOpen = 7,
         portClose = 21,
         outlets = {
-            annesburg  = { label = "Annesburg",   location = "annesburg",  currencyType = "cash", buyPrice = 50 },
-            armadillo  = { label = "Armadillo",   location = "armadillo",  currencyType = "cash", buyPrice = 50 },
-            blackwater = { label = "Blackwater",  location = "blackwater", currencyType = "cash", buyPrice = 50 },
-            rhodes     = { label = "Rhodes",      location = "rhodes",     currencyType = "cash", buyPrice = 50 },
-            stdenis    = { label = "Saint Denis", location = "stdenis",    currencyType = "cash", buyPrice = 50 },
-            tumbleweed = { label = "Tumbleweed",  location = "tumbleweed", currencyType = "cash", buyPrice = 50 },
-            valentine  = { label = "Valentine",   location = "valentine",  currencyType = "cash", buyPrice = 50 },
-            vanhorn    = { label = "Van Horn",    location = "vanhorn",    currencyType = "cash", buyPrice = 50 },
+            annesburg  = { label = "Annesburg",   location = "annesburg",  currencyType = "cash", buyPrice = 40 },
+            armadillo  = { label = "Armadillo",   location = "armadillo",  currencyType = "cash", buyPrice = 20 },
+            blackwater = { label = "Blackwater",  location = "blackwater", currencyType = "cash", buyPrice = 10 },
+            rhodes     = { label = "Rhodes",      location = "rhodes",     currencyType = "cash", buyPrice = 30 },
+            stdenis    = { label = "Saint Denis", location = "stdenis",    currencyType = "cash", buyPrice = 30 },
+            tumbleweed = { label = "Tumbleweed",  location = "tumbleweed", currencyType = "cash", buyPrice = 30 },
+            valentine  = { label = "Valentine",   location = "valentine",  currencyType = "cash", buyPrice = 10 },
+            vanhorn    = { label = "Van Horn",    location = "vanhorn",    currencyType = "cash", buyPrice = 40 },
         }
     },
     stdenis = {
@@ -171,14 +171,14 @@ Config.ports = {
         portOpen = 7,
         portClose = 21,
         outlets = {
-            annesburg  = { label = "Annesburg",   location = "annesburg",  currencyType = "cash", buyPrice = 50 },
-            armadillo  = { label = "Armadillo",   location = "armadillo",  currencyType = "cash", buyPrice = 50 },
-            blackwater = { label = "Blackwater",  location = "blackwater", currencyType = "cash", buyPrice = 50 },
-            rhodes     = { label = "Rhodes",      location = "rhodes",     currencyType = "cash", buyPrice = 50 },
-            strawberry = { label = "Strawberry",  location = "strawberry", currencyType = "cash", buyPrice = 50 },
+            annesburg  = { label = "Annesburg",   location = "annesburg",  currencyType = "cash", buyPrice = 20 },
+            armadillo  = { label = "Armadillo",   location = "armadillo",  currencyType = "cash", buyPrice = 40 },
+            blackwater = { label = "Blackwater",  location = "blackwater", currencyType = "cash", buyPrice = 40 },
+            rhodes     = { label = "Rhodes",      location = "rhodes",     currencyType = "cash", buyPrice = 10 },
+            strawberry = { label = "Strawberry",  location = "strawberry", currencyType = "cash", buyPrice = 30 },
             tumbleweed = { label = "Tumbleweed",  location = "tumbleweed", currencyType = "cash", buyPrice = 50 },
-            valentine  = { label = "Valentine",   location = "valentine",  currencyType = "cash", buyPrice = 50 },
-            vanhorn    = { label = "Van Horn",    location = "vanhorn",    currencyType = "cash", buyPrice = 50 },
+            valentine  = { label = "Valentine",   location = "valentine",  currencyType = "cash", buyPrice = 30 },
+            vanhorn    = { label = "Van Horn",    location = "vanhorn",    currencyType = "cash", buyPrice = 20 },
         }
     },
     tumbleweed = {
@@ -201,12 +201,12 @@ Config.ports = {
         portClose = 21,
         outlets = {
             annesburg  = { label = "Annesburg",   location = "annesburg",  currencyType = "cash", buyPrice = 50 },
-            armadillo  = { label = "Armadillo",   location = "armadillo",  currencyType = "cash", buyPrice = 50 },
-            blackwater = { label = "Blackwater",  location = "blackwater", currencyType = "cash", buyPrice = 50 },
-            rhodes     = { label = "Rhodes",      location = "rhodes",     currencyType = "cash", buyPrice = 50 },
-            strawberry = { label = "Strawberry",  location = "strawberry", currencyType = "cash", buyPrice = 50 },
+            armadillo  = { label = "Armadillo",   location = "armadillo",  currencyType = "cash", buyPrice = 10 },
+            blackwater = { label = "Blackwater",  location = "blackwater", currencyType = "cash", buyPrice = 30 },
+            rhodes     = { label = "Rhodes",      location = "rhodes",     currencyType = "cash", buyPrice = 40 },
+            strawberry = { label = "Strawberry",  location = "strawberry", currencyType = "cash", buyPrice = 30 },
             stdenis    = { label = "Saint Denis", location = "stdenis",    currencyType = "cash", buyPrice = 50 },
-            valentine  = { label = "Valentine",   location = "valentine",  currencyType = "cash", buyPrice = 50 },
+            valentine  = { label = "Valentine",   location = "valentine",  currencyType = "cash", buyPrice = 30 },
             vanhorn    = { label = "Van Horn",    location = "vanhorn",    currencyType = "cash", buyPrice = 50 },
         }
     },
@@ -229,14 +229,14 @@ Config.ports = {
         portOpen = 7,
         portClose = 21,
         outlets = {
-            annesburg  = { label = "Annesburg",   location = "annesburg",  currencyType = "cash", buyPrice = 50 },
-            armadillo  = { label = "Armadillo",   location = "armadillo",  currencyType = "cash", buyPrice = 50 },
-            blackwater = { label = "Blackwater",  location = "blackwater", currencyType = "cash", buyPrice = 50 },
-            rhodes     = { label = "Rhodes",      location = "rhodes",     currencyType = "cash", buyPrice = 50 },
-            strawberry = { label = "Strawberry",  location = "strawberry", currencyType = "cash", buyPrice = 50 },
-            stdenis    = { label = "Saint Denis", location = "stdenis",    currencyType = "cash", buyPrice = 50 },
-            tumbleweed = { label = "Tumbleweed",  location = "tumbleweed", currencyType = "cash", buyPrice = 50 },
-            vanhorn    = { label = "Van Horn",    location = "vanhorn",    currencyType = "cash", buyPrice = 50 },
+            annesburg  = { label = "Annesburg",   location = "annesburg",  currencyType = "cash", buyPrice = 30 },
+            armadillo  = { label = "Armadillo",   location = "armadillo",  currencyType = "cash", buyPrice = 30 },
+            blackwater = { label = "Blackwater",  location = "blackwater", currencyType = "cash", buyPrice = 20 },
+            rhodes     = { label = "Rhodes",      location = "rhodes",     currencyType = "cash", buyPrice = 20 },
+            strawberry = { label = "Strawberry",  location = "strawberry", currencyType = "cash", buyPrice = 10 },
+            stdenis    = { label = "Saint Denis", location = "stdenis",    currencyType = "cash", buyPrice = 30 },
+            tumbleweed = { label = "Tumbleweed",  location = "tumbleweed", currencyType = "cash", buyPrice = 30 },
+            vanhorn    = { label = "Van Horn",    location = "vanhorn",    currencyType = "cash", buyPrice = 30 },
         }
     },
     vanhorn = {
@@ -258,14 +258,14 @@ Config.ports = {
         portOpen = 7,
         portClose = 21,
         outlets = {
-            annesburg  = { label = "Annesburg",   location = "annesburg",  currencyType = "cash", buyPrice = 50 },
+            annesburg  = { label = "Annesburg",   location = "annesburg",  currencyType = "cash", buyPrice = 10 },
             armadillo  = { label = "Armadillo",   location = "armadillo",  currencyType = "cash", buyPrice = 50 },
-            blackwater = { label = "Blackwater",  location = "blackwater", currencyType = "cash", buyPrice = 50 },
-            rhodes     = { label = "Rhodes",      location = "rhodes",     currencyType = "cash", buyPrice = 50 },
-            strawberry = { label = "Strawberry",  location = "strawberry", currencyType = "cash", buyPrice = 50 },
-            stdenis    = { label = "Saint Denis", location = "stdenis",    currencyType = "cash", buyPrice = 50 },
+            blackwater = { label = "Blackwater",  location = "blackwater", currencyType = "cash", buyPrice = 40 },
+            rhodes     = { label = "Rhodes",      location = "rhodes",     currencyType = "cash", buyPrice = 20 },
+            strawberry = { label = "Strawberry",  location = "strawberry", currencyType = "cash", buyPrice = 40 },
+            stdenis    = { label = "Saint Denis", location = "stdenis",    currencyType = "cash", buyPrice = 20 },
             tumbleweed = { label = "Tumbleweed",  location = "tumbleweed", currencyType = "cash", buyPrice = 50 },
-            valentine  = { label = "Valentine",   location = "valentine",  currencyType = "cash", buyPrice = 50 },
+            valentine  = { label = "Valentine",   location = "valentine",  currencyType = "cash", buyPrice = 30 },
         }
     }
 }
