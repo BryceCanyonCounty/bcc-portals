@@ -72,7 +72,7 @@ Citizen.CreateThread(function()
                         end
                         if not next(portConfig.allowedJobs) then
                             local coordsDist = vector3(coords.x, coords.y, coords.z)
-                            local coordsPort = vector3(portConfig.shopx, portConfig.shopy, portConfig.shopz)
+                            local coordsPort = vector3(portConfig.npcx, portConfig.npcy, portConfig.npcpz)
                             local distPort = #(coordsDist - coordsPort)
 
                             if (distPort <= portConfig.distPort) then
@@ -88,7 +88,7 @@ Citizen.CreateThread(function()
                             end
                         else
                             local coordsDist = vector3(coords.x, coords.y, coords.z)
-                            local coordsPort = vector3(portConfig.shopx, portConfig.shopy, portConfig.shopz)
+                            local coordsPort = vector3(portConfig.npcx, portConfig.npcy, portConfig.npcz)
                             local distPort = #(coordsDist - coordsPort)
 
                             if (distPort <= portConfig.distPort) then
@@ -130,7 +130,7 @@ Citizen.CreateThread(function()
                     end
                     if not next(portConfig.allowedJobs) then
                         local coordsDist = vector3(coords.x, coords.y, coords.z)
-                        local coordsPort = vector3(portConfig.shopx, portConfig.shopy, portConfig.shopz)
+                        local coordsPort = vector3(portConfig.npcx, portConfig.npcy, portConfig.npcz)
                         local distPort = #(coordsDist - coordsPort)
 
                         if (distPort <= portConfig.distPort) then
@@ -146,7 +146,7 @@ Citizen.CreateThread(function()
                         end
                     else
                         local coordsDist = vector3(coords.x, coords.y, coords.z)
-                        local coordsPort = vector3(portConfig.shopx, portConfig.shopy, portConfig.shopz)
+                        local coordsPort = vector3(portConfig.npcx, portConfig.npcy, portConfig.npcz)
                         local distPort = #(coordsDist - coordsPort)
 
                         if (distPort <= portConfig.distPort) then
@@ -234,22 +234,16 @@ AddEventHandler("oss_portals:SendPlayer", function(location, portId)
     local player = PlayerPedId()
     local destination = location
     local portConfig = Config.ports[destination]
-    Citizen.InvokeNative(0x1E5B70E53DB661E5, 0, 0, 0, 'Portal Active', '', '') -- DisplayLoadingScreens
+    Citizen.InvokeNative(0x1E5B70E53DB661E5, 0, 0, 0, 'Portal: Active', '', '') -- DisplayLoadingScreens
     Wait(Config.travelTime)
     Citizen.InvokeNative(0x203BEFFDBE12E96A, player, portConfig.playerx, portConfig.playery, portConfig.playerz, portConfig.playerh) -- SetEntityCoordsAndHeading
-    Citizen.InvokeNative(0x74E2261D2A66849A, 0) -- SetGuarmaWorldhorizonActive
-    Citizen.InvokeNative(0xA657EC9DBC6CC900, -1868977180) -- SetMinimapZone
-    Citizen.InvokeNative(0xE8770EE02AEE45C2, 0) -- SetWorldWaterType
+    --Citizen.InvokeNative(0x74E2261D2A66849A, 0) -- SetGuarmaWorldhorizonActive
+    --Citizen.InvokeNative(0xA657EC9DBC6CC900, -1868977180) -- SetMinimapZone
+    --Citizen.InvokeNative(0xE8770EE02AEE45C2, 0) -- SetWorldWaterType
     ShutdownLoadingScreen()
     DoScreenFadeIn(1000)
     Wait(1000)
     SetCinematicModeActive(false)
-
-    --[[DoScreenFadeOut(500)
-    Wait(500)
-    Citizen.InvokeNative(0x203BEFFDBE12E96A, player, portConfig.playerx, portConfig.playery, portConfig.playerz, portConfig.playerh) -- SetEntityCoordsAndHeading
-    Wait(Config.travelTime)
-    DoScreenFadeIn(500)]]--
 end)
 
 -- Menu Prompts
@@ -285,7 +279,7 @@ end
 function AddBlip(portId)
     local portConfig = Config.ports[portId]
     if portConfig.blipAllowed then
-        portConfig.BlipHandle = N_0x554d9d53f696d002(1664425300, portConfig.shopx, portConfig.shopy, portConfig.shopz) -- BlipAddForCoords
+        portConfig.BlipHandle = N_0x554d9d53f696d002(1664425300, portConfig.npcx, portConfig.npcy, portConfig.npcz) -- BlipAddForCoords
         SetBlipSprite(portConfig.BlipHandle, portConfig.blipSprite, 1)
         SetBlipScale(portConfig.BlipHandle, 0.2)
         Citizen.InvokeNative(0x9CB1A1623062F402, portConfig.BlipHandle, portConfig.blipName) -- SetBlipNameFromPlayerString
@@ -309,12 +303,6 @@ function SpawnNPC(portId)
     Citizen.InvokeNative(0x283978A15512B2FE, npc, true) -- SetRandomOutfitVariation
     SetEntityCanBeDamaged(npc, false)
     SetEntityInvincible(npc, true)
-    TaskGoToCoordAnyMeans(npc, portConfig.shopx, portConfig.shopy, portConfig.shopz, 1.0, 0, 0, 786603, 0xbf800000)
-    while not IsEntityAtCoord(npc, portConfig.shopx, portConfig.shopy, portConfig.shopz, 1.0, 1.0, 1.0, 0, 1, 0) do
-        Wait(100)
-    end
-    Wait(1000)
-    SetEntityHeading(npc, portConfig.shoph)
     Wait(500)
     FreezeEntityPosition(npc, true)
     SetBlockingOfNonTemporaryEvents(npc, true)
