@@ -3,6 +3,7 @@ Locales["en_lang"] = {
 
     portPrompt = "Press",
     subMenu = "Available Destinations",
+    shopClosed = "Shop is currently closed",
     closed = "~e~CLOSED ~o~",
     am = ":00~q~AM to ~o~",
     pm = ":00~q~PM",
