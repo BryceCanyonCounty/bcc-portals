@@ -58,4 +58,4 @@ Settings can be changed in the `config.lua` file. Here is an example of one shop
 - vorp_stores
 
 #### GitHub
-- https://github.com/JusCampin/oss_boats
+- https://github.com/JusCampin/oss_portals
