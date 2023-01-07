@@ -47,7 +47,7 @@ Citizen.CreateThread(function()
                             portConfig.NPC = nil
                         end
                         local coordsDist = vector3(coords.x, coords.y, coords.z)
-                        local coordsPort = vector3(portConfig.npcx, portConfig.npcy, portConfig.npcz)
+                        local coordsPort = vector3(portConfig.shopx, portConfig.shopy, portConfig.shopz)
                         local distPort = #(coordsDist - coordsPort)
 
                         if (distPort <= portConfig.distPort) then
@@ -57,7 +57,7 @@ Citizen.CreateThread(function()
 
                             if Citizen.InvokeNative(0xC92AC953F0A982AE, ClosePorts) then -- UiPromptHasStandardModeCompleted
                                 Wait(100)
-                                VORPcore.NotifyRightTip(_U("closed") .. portConfig.portOpen .. _U("am") .. portConfig.portClose .. _U("pm"), 3000)
+                                VORPcore.NotifyRightTip(_U("shopClosed"), 4000)
                             end
                         end
                     elseif hour >= portConfig.portOpen then
@@ -72,7 +72,7 @@ Citizen.CreateThread(function()
                         end
                         if not next(portConfig.allowedJobs) then
                             local coordsDist = vector3(coords.x, coords.y, coords.z)
-                            local coordsPort = vector3(portConfig.npcx, portConfig.npcy, portConfig.npcz)
+                            local coordsPort = vector3(portConfig.shopx, portConfig.shopy, portConfig.shopz)
                             local distPort = #(coordsDist - coordsPort)
 
                             if (distPort <= portConfig.distPort) then
@@ -88,7 +88,7 @@ Citizen.CreateThread(function()
                             end
                         else
                             local coordsDist = vector3(coords.x, coords.y, coords.z)
-                            local coordsPort = vector3(portConfig.npcx, portConfig.npcy, portConfig.npcz)
+                            local coordsPort = vector3(portConfig.shopx, portConfig.shopy, portConfig.shopz)
                             local distPort = #(coordsDist - coordsPort)
 
                             if (distPort <= portConfig.distPort) then
@@ -106,13 +106,13 @@ Citizen.CreateThread(function()
                                                 DisplayRadar(false)
                                                 TaskStandStill(player, -1)
                                             else
-                                                VORPcore.NotifyRightTip(_U("needJob") .. JobName .. " " .. portConfig.jobGrade,5000)
+                                                VORPcore.NotifyRightTip(_U("needJob") .. JobName .. " " .. portConfig.jobGrade, 5000)
                                             end
                                         else
-                                            VORPcore.NotifyRightTip(_U("needJob") .. JobName .. " " .. portConfig.jobGrade,5000)
+                                            VORPcore.NotifyRightTip(_U("needJob") .. JobName .. " " .. portConfig.jobGrade, 5000)
                                         end
                                     else
-                                        VORPcore.NotifyRightTip(_U("needJob") .. JobName .. " " .. portConfig.jobGrade,5000)
+                                        VORPcore.NotifyRightTip(_U("needJob") .. JobName .. " " .. portConfig.jobGrade, 5000)
                                     end
                                 end
                             end
@@ -130,7 +130,7 @@ Citizen.CreateThread(function()
                     end
                     if not next(portConfig.allowedJobs) then
                         local coordsDist = vector3(coords.x, coords.y, coords.z)
-                        local coordsPort = vector3(portConfig.npcx, portConfig.npcy, portConfig.npcz)
+                        local coordsPort = vector3(portConfig.shopx, portConfig.shopy, portConfig.shopz)
                         local distPort = #(coordsDist - coordsPort)
 
                         if (distPort <= portConfig.distPort) then
@@ -146,7 +146,7 @@ Citizen.CreateThread(function()
                         end
                     else
                         local coordsDist = vector3(coords.x, coords.y, coords.z)
-                        local coordsPort = vector3(portConfig.npcx, portConfig.npcy, portConfig.npcz)
+                        local coordsPort = vector3(portConfig.shopx, portConfig.shopy, portConfig.shopz)
                         local distPort = #(coordsDist - coordsPort)
 
                         if (distPort <= portConfig.distPort) then
@@ -164,13 +164,13 @@ Citizen.CreateThread(function()
                                             DisplayRadar(false)
                                             TaskStandStill(player, -1)
                                         else
-                                            VORPcore.NotifyRightTip(_U("needJob") .. JobName .. " " .. portConfig.jobGrade,5000)
+                                            VORPcore.NotifyRightTip(_U("needJob") .. JobName .. " " .. portConfig.jobGrade, 5000)
                                         end
                                     else
-                                        VORPcore.NotifyRightTip(_U("needJob") .. JobName .. " " .. portConfig.jobGrade,5000)
+                                        VORPcore.NotifyRightTip(_U("needJob") .. JobName .. " " .. portConfig.jobGrade, 5000)
                                     end
                                 else
-                                    VORPcore.NotifyRightTip(_U("needJob") .. JobName .. " " .. portConfig.jobGrade,5000)
+                                    VORPcore.NotifyRightTip(_U("needJob") .. JobName .. " " .. portConfig.jobGrade, 5000)
                                 end
                             end
                         end
@@ -228,19 +228,28 @@ function PortalMenu(portId)
     end)
 end
 
--- Return Boat Using Prompt at Shop Location
+-- Send Player to Destination
 RegisterNetEvent("oss_portals:SendPlayer")
 AddEventHandler("oss_portals:SendPlayer", function(location, portId)
     local player = PlayerPedId()
     local destination = location
     local portConfig = Config.ports[destination]
-    --local coords = vector4(portConfig.playerx, portConfig.playery, portConfig.playerz, portConfig.playerh)
-    DoScreenFadeOut(500)
+    Citizen.InvokeNative(0x1E5B70E53DB661E5, 0, 0, 0, 'Portal Active', '', '') -- DisplayLoadingScreens
+    Wait(Config.travelTime)
+    Citizen.InvokeNative(0x203BEFFDBE12E96A, player, portConfig.playerx, portConfig.playery, portConfig.playerz, portConfig.playerh) -- SetEntityCoordsAndHeading
+    Citizen.InvokeNative(0x74E2261D2A66849A, 0) -- SetGuarmaWorldhorizonActive
+    Citizen.InvokeNative(0xA657EC9DBC6CC900, -1868977180) -- SetMinimapZone
+    Citizen.InvokeNative(0xE8770EE02AEE45C2, 0) -- SetWorldWaterType
+    ShutdownLoadingScreen()
+    DoScreenFadeIn(1000)
+    Wait(1000)
+    SetCinematicModeActive(false)
+
+    --[[DoScreenFadeOut(500)
     Wait(500)
-    --SetEntityCoords(player, coords.x, coords.y, coords.z)
     Citizen.InvokeNative(0x203BEFFDBE12E96A, player, portConfig.playerx, portConfig.playery, portConfig.playerz, portConfig.playerh) -- SetEntityCoordsAndHeading
     Wait(Config.travelTime)
-    DoScreenFadeIn(500)
+    DoScreenFadeIn(500)]]--
 end)
 
 -- Menu Prompts
@@ -276,7 +285,7 @@ end
 function AddBlip(portId)
     local portConfig = Config.ports[portId]
     if portConfig.blipAllowed then
-        portConfig.BlipHandle = N_0x554d9d53f696d002(1664425300, portConfig.npcx, portConfig.npcy, portConfig.npcz) -- BlipAddForCoords
+        portConfig.BlipHandle = N_0x554d9d53f696d002(1664425300, portConfig.shopx, portConfig.shopy, portConfig.shopz) -- BlipAddForCoords
         SetBlipSprite(portConfig.BlipHandle, portConfig.blipSprite, 1)
         SetBlipScale(portConfig.BlipHandle, 0.2)
         Citizen.InvokeNative(0x9CB1A1623062F402, portConfig.BlipHandle, portConfig.blipName) -- SetBlipNameFromPlayerString
@@ -296,16 +305,20 @@ end
 function SpawnNPC(portId)
     local portConfig = Config.ports[portId]
     LoadModel(portConfig.npcModel)
-    if portConfig.npcAllowed then
-        local npc = CreatePed(portConfig.npcModel, portConfig.npcx, portConfig.npcy, portConfig.npcz, portConfig.npch, false, true, true, true)
-        Citizen.InvokeNative(0x283978A15512B2FE, npc, true) -- SetRandomOutfitVariation
-        SetEntityCanBeDamaged(npc, false)
-        SetEntityInvincible(npc, true)
-        Wait(500)
-        FreezeEntityPosition(npc, true)
-        SetBlockingOfNonTemporaryEvents(npc, true)
-        Config.ports[portId].NPC = npc
+    local npc = CreatePed(portConfig.npcModel, portConfig.npcx, portConfig.npcy, portConfig.npcz, portConfig.npch, false, true, true, true)
+    Citizen.InvokeNative(0x283978A15512B2FE, npc, true) -- SetRandomOutfitVariation
+    SetEntityCanBeDamaged(npc, false)
+    SetEntityInvincible(npc, true)
+    TaskGoToCoordAnyMeans(npc, portConfig.shopx, portConfig.shopy, portConfig.shopz, 1.0, 0, 0, 786603, 0xbf800000)
+    while not IsEntityAtCoord(npc, portConfig.shopx, portConfig.shopy, portConfig.shopz, 1.0, 1.0, 1.0, 0, 1, 0) do
+        Wait(100)
     end
+    Wait(1000)
+    SetEntityHeading(npc, portConfig.shoph)
+    Wait(500)
+    FreezeEntityPosition(npc, true)
+    SetBlockingOfNonTemporaryEvents(npc, true)
+    Config.ports[portId].NPC = npc
 end
 
 -- Check if Player has Job
