@@ -4,7 +4,7 @@ Config.defaultlang = "en_lang"
 -- Open Fast Travel Menu
 Config.portKey = 0x760A9C6F --[G]
 -- Travel Time in Milliseconds Between Locations
-Config.travelTime = 500 -- min. 500ms
+Config.travelTime = 15000 -- Default: 15000ms = 15 Seconds
 -- Fast Travel Shops
 Config.ports = {
     annesburg = {
@@ -15,7 +15,8 @@ Config.ports = {
         blipSprite = 784218150, -- 2005921736 = Canoe / -1018164873 = Tugboat
         blipColorOpen = "BLIP_MODIFIER_MP_COLOR_32", -- Shop Open - Blip Colors Shown Below
         blipColorClosed = "BLIP_MODIFIER_MP_COLOR_10", -- Shop Closed - Blip Colors Shown Below
-        npcx = 2926.16, npcy = 1278.9, npcz = 44.63, npch = 59.22, -- Blip and NPC Positions
+        shopx = 2926.16, shopy = 1278.9, shopz = 44.63, shoph = 59.22, -- Blip and Shop Positions
+        npcx = 2941.59, npcy = 1273.58, npcz = 44.64, npch = 237.13, -- NPC Position when Shop is Closed
         playerx = 2924.99, playery = 1279.23, playerz = 44.63, playerh = 283.09, -- Player Teleport Position
         distPort = 2.0, -- Distance from NPC to Get Menu Prompt
         npcAllowed = true, -- Turns NPCs On / Off
@@ -44,6 +45,7 @@ Config.ports = {
         blipSprite = 784218150,
         blipColorOpen = "BLIP_MODIFIER_MP_COLOR_32",
         blipColorClosed = "BLIP_MODIFIER_MP_COLOR_10",
+        shopx = -3724.68, shopy = -2602.43, shopz = -12.91, shoph = 246.94,
         npcx = -3724.68, npcy = -2602.43, npcz = -12.91, npch = 246.94,
         playerx = -3724.04, playery = -2603.28, playerz = -12.94, playerh = 16.65,
         distPort = 2.0,
@@ -73,6 +75,7 @@ Config.ports = {
         blipSprite = 784218150,
         blipColorOpen = "BLIP_MODIFIER_MP_COLOR_32",
         blipColorClosed = "BLIP_MODIFIER_MP_COLOR_10",
+        shopx = -732.87, shopy = -1232.39, shopz = 44.73, shoph = 133.34,
         npcx = -732.87, npcy = -1232.39, npcz = 44.73, npch = 133.34,
         playerx = -733.99, playery = -1233.41, playerz = 44.73, playerh = 313.2,
         distPort = 2.0,
@@ -102,6 +105,7 @@ Config.ports = {
         blipSprite = 784218150,
         blipColorOpen = "BLIP_MODIFIER_MP_COLOR_32",
         blipColorClosed = "BLIP_MODIFIER_MP_COLOR_10",
+        shopx = 1233.52, shopy = -1287.75, shopz = 76.97, shoph = 284.16,
         npcx = 1233.52, npcy = -1287.75, npcz = 76.97, npch = 284.16,
         playerx = 1234.95, playery = -1287.43, playerz = 76.97, playerh = 103.86,
         distPort = 2.0,
@@ -131,6 +135,7 @@ Config.ports = {
         blipSprite = 784218150,
         blipColorOpen = "BLIP_MODIFIER_MP_COLOR_32",
         blipColorClosed = "BLIP_MODIFIER_MP_COLOR_10",
+        shopx = -1836.82, shopy = -422.29, shopz = 160.86, shoph = 244.28,
         npcx = -1836.82, npcy = -422.29, npcz = 160.86, npch = 244.28,
         playerx = -1835.75, playery = -422.89, playerz = 160.83, playerh = 58.27,
         distPort = 2.0,
@@ -160,6 +165,7 @@ Config.ports = {
         blipSprite = 784218150,
         blipColorOpen = "BLIP_MODIFIER_MP_COLOR_32",
         blipColorClosed = "BLIP_MODIFIER_MP_COLOR_10",
+        shopx = 2740.99, shopy = -1391.48, shopz = 46.21, shoph = 17.09,
         npcx = 2740.99, npcy = -1391.48, npcz = 46.21, npch = 17.09,
         playerx = 2740.67, playery = -1390.49, playerz = 46.23, playerh = 201.54,
         distPort = 2.0,
@@ -189,6 +195,7 @@ Config.ports = {
         blipSprite = 784218150,
         blipColorOpen = "BLIP_MODIFIER_MP_COLOR_32",
         blipColorClosed = "BLIP_MODIFIER_MP_COLOR_10",
+        shopx = -5495.56, shopy = -2958.57, shopz = -0.69, shoph = 314.82,
         npcx = -5495.56, npcy = -2958.57, npcz = -0.69, npch = 314.82,
         playerx = -5494.4, playery = -2957.35, playerz = -0.71, playerh = 149.64,
         distPort = 2.0,
@@ -218,6 +225,7 @@ Config.ports = {
         blipSprite = 784218150,
         blipColorOpen = "BLIP_MODIFIER_MP_COLOR_32",
         blipColorClosed = "BLIP_MODIFIER_MP_COLOR_10",
+        shopx = -184.38, shopy = 642.8, shopz = 113.59, shoph = 50.3,
         npcx = -184.38, npcy = 642.8, npcz = 113.59, npch = 50.3,
         playerx = -185.79, playery = 643.63, playerz = 113.44, playerh = 239.31,
         distPort = 2.0,
@@ -247,6 +255,7 @@ Config.ports = {
         blipSprite = 784218150,
         blipColorOpen = "BLIP_MODIFIER_MP_COLOR_32",
         blipColorClosed = "BLIP_MODIFIER_MP_COLOR_10",
+        shopx = 2893.08, shopy = 623.51, shopz = 57.72, shoph = 64.27,
         npcx = 2893.08, npcy = 623.51, npcz = 57.72, npch = 64.27,
         playerx = 2891.88, playery = 623.66, playerz = 57.77, playerh = 254.74,
         distPort = 2.0,
