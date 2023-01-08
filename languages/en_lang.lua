@@ -11,4 +11,5 @@ Locales["en_lang"] = {
     shortCash = "You don't have enough money",
     needJob = "To use this portal you need job: ~o~",
     price = "Price: ",
+    traveling = "Traveling to "
 }

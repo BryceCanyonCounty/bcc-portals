@@ -10,6 +10,7 @@ This is a basic Portals (fast-travel) script for RedM servers using the [VORP fr
 - Shop blips are colored and changeable per shop location
 - Blips can change color reflecting if shop is open or closed
 - Shop access can be limited by job and jobgrade
+- Travel modes: "Normal" = Configurable time while playing loading screens. "Blink" = Fast travel time with a fade to black effect.
 
 #### Configuration
 Settings can be changed in the `config.lua` file. Here is an example of one shop:
@@ -19,15 +20,15 @@ Settings can be changed in the `config.lua` file. Here is an example of one shop
         promptName = "Annesburg Portal", -- Text Below the Prompt Button
         blipAllowed = true, -- Turns Blips On / Off
         blipName = "Annesburg Portal", -- Name of the Blip on the Map
-        blipSprite = 784218150, -- 2005921736 = Canoe / -1018164873 = Tugboat
+        blipSprite = 784218150, -- 784218150 = Default
         blipColorOpen = "BLIP_MODIFIER_MP_COLOR_32", -- Shop Open - Blip Colors Shown Below
         blipColorClosed = "BLIP_MODIFIER_MP_COLOR_10", -- Shop Closed - Blip Colors Shown Below
-        npcx = 2926.16, npcy = 1278.9, npcz = 44.63, npch = 59.22, -- Blip and NPC Positions
+        npcx = 2941.59, npcy = 1273.58, npcz = 43.64, npch = 237.13, -- NPC and Shop Blip Positions
         playerx = 2924.99, playery = 1279.23, playerz = 44.63, playerh = 283.09, -- Player Teleport Position
         distPort = 2.0, -- Distance from NPC to Get Menu Prompt
         npcAllowed = true, -- Turns NPCs On / Off
         npcModel = "A_M_M_UniBoatCrew_01", -- Sets Model for NPCs
-        allowedJobs = {"police"}, -- Empty, Everyone Can Use / Insert Job to limit access - ex. "police"
+        allowedJobs = {}, -- Empty, Everyone Can Use / Insert Job to limit access - ex. "police"
         jobGrade = 0, -- Enter Minimum Rank / Job Grade to Access Shop
         portHours = false, -- If You Want the Shops to Use Open and Closed Hours
         portOpen = 7, -- Shop Open Time / 24 Hour Clock
@@ -56,6 +57,7 @@ Settings can be changed in the `config.lua` file. Here is an example of one shop
 
 #### Credits
 - vorp_stores
+- rsg_fasttravel
 
 #### GitHub
 - https://github.com/JusCampin/oss_portals
