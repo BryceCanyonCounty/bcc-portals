@@ -1,7 +1,7 @@
 # Portals
 
 #### Description
-This is a basic Portals (fast-travel) script for RedM servers using the [VORP framework](https://github.com/VORPCORE). Travel can be arranged through shops. There are 9 shops configured, more shop locations may be added using the `config.lua` file.
+This is a basic fast-travel script for RedM servers using the [VORP framework](https://github.com/VORPCORE). Travel can be arranged through shops. There are 9 shops configured, more shop locations may be added using the `config.lua` file.
 
 #### Features
 - Buy passage to a location from a Portal Shop
