@@ -17,7 +17,7 @@ TriggerEvent("menuapi:getData", function(call)
     MenuData = call
 end)
 
--- Start Boats
+-- Start Portals
 Citizen.CreateThread(function()
     PortOpen()
     PortClosed()
@@ -234,16 +234,26 @@ AddEventHandler("oss_portals:SendPlayer", function(location, portId)
     local player = PlayerPedId()
     local destination = location
     local portConfig = Config.ports[destination]
-    Citizen.InvokeNative(0x1E5B70E53DB661E5, 0, 0, 0, 'Portal: Active', '', '') -- DisplayLoadingScreens
-    Wait(Config.travelTime)
-    Citizen.InvokeNative(0x203BEFFDBE12E96A, player, portConfig.playerx, portConfig.playery, portConfig.playerz, portConfig.playerh) -- SetEntityCoordsAndHeading
-    --Citizen.InvokeNative(0x74E2261D2A66849A, 0) -- SetGuarmaWorldhorizonActive
-    --Citizen.InvokeNative(0xA657EC9DBC6CC900, -1868977180) -- SetMinimapZone
-    --Citizen.InvokeNative(0xE8770EE02AEE45C2, 0) -- SetWorldWaterType
-    ShutdownLoadingScreen()
-    DoScreenFadeIn(1000)
-    Wait(1000)
-    SetCinematicModeActive(false)
+    local travelMode = Config.travelMode
+    local travelTime = Config.travelTime
+    if travelMode == "normal" then
+        DoScreenFadeOut(1000)
+        Wait(1000)
+        Citizen.InvokeNative(0x1E5B70E53DB661E5, 0, 0, 0, _U('traveling') .. portConfig.portName, '', '') -- DisplayLoadingScreens
+        Wait(travelTime)
+        Citizen.InvokeNative(0x203BEFFDBE12E96A, player, portConfig.playerx, portConfig.playery, portConfig.playerz, portConfig.playerh) -- SetEntityCoordsAndHeading
+        ShutdownLoadingScreen()
+        DoScreenFadeIn(1000)
+        Wait(1000)
+        SetCinematicModeActive(false)
+    elseif travelMode == "blink" then
+        DoScreenFadeOut(500)
+        Wait(500)
+        Citizen.InvokeNative(0x203BEFFDBE12E96A, player, portConfig.playerx, portConfig.playery, portConfig.playerz, portConfig.playerh) -- SetEntityCoordsAndHeading
+        Wait(1000)
+        DoScreenFadeIn(500)
+        Wait(500)
+    end
 end)
 
 -- Menu Prompts
