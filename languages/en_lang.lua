@@ -1,12 +1,12 @@
 ---------------------------------- ENGLISH -------------------------------------------
 Locales["en_lang"] = {
 
-    portPrompt = "Press",
+    portPrompt = "Menu",
     subMenu = "Available Destinations",
-    shopClosed = "Shop is currently closed",
-    closed = "~e~CLOSED ~o~",
-    am = ":00~q~AM to ~o~",
-    pm = ":00~q~PM",
+    closed = " ~o~: ~e~CLOSED",
+    to = ":00~q~ to ~o~",
+    hundred = ":00",
+    hours = " is open from ~o~",
     shortGold = "You don't have enough gold",
     shortCash = "You don't have enough money",
     needJob = "To use this portal you need job: ~o~",

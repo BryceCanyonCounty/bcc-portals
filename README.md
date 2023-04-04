@@ -1,16 +1,15 @@
 # Portals
 
 #### Description
-This is a basic fast-travel script for RedM servers using the [VORP framework](https://github.com/VORPCORE). Travel can be arranged through shops. There are 9 shops configured, more shop locations may be added using the `config.lua` file.
+This is a fast-travel script for RedM servers using the [VORP framework](https://github.com/VORPCORE). Travel can be arranged through shops. There are 9 shops configured, more shop locations may be added using the `config.lua` file.
 
 #### Features
 - Buy passage to a location from a Portal Shop
 - Cash or gold may be used for payments
 - Shop hours may be set individually for each shop or disabled to allow the shop to remain open
 - Shop blips are colored and changeable per shop location
-- Blips can change color reflecting if shop is open or closed
+- Blips can change color reflecting if shop is open, closed or job locked
 - Shop access can be limited by job and jobgrade
-- Travel modes: "Normal" = Configurable time while playing loading screens. "Blink" = Fast travel time with a fade to black effect.
 
 #### Configuration
 Settings can be changed in the `config.lua` file. Here is an example of one shop:
@@ -23,8 +22,9 @@ Settings can be changed in the `config.lua` file. Here is an example of one shop
         blipSprite = 784218150, -- 784218150 = Default
         blipColorOpen = "BLIP_MODIFIER_MP_COLOR_32", -- Shop Open - Blip Colors Shown Below
         blipColorClosed = "BLIP_MODIFIER_MP_COLOR_10", -- Shop Closed - Blip Colors Shown Below
-        npcx = 2941.59, npcy = 1273.58, npcz = 43.64, npch = 237.13, -- NPC and Shop Blip Positions
-        playerx = 2924.99, playery = 1279.23, playerz = 44.63, playerh = 283.09, -- Player Teleport Position
+        blipColorJob = "BLIP_MODIFIER_MP_COLOR_23", -- Shop Job Locked - Default: Yellow - Blip Colors Shown Below
+        npc = {x = 2941.59, y = 1273.58, z = 43.64, h = 237.13}, -- NPC and Shop Blip Positions
+        player = {x = 2942.39, y = 1272.97, z = 44.64, h = 52.18}, -- Player Teleport Position
         distPort = 2.0, -- Distance from NPC to Get Menu Prompt
         npcAllowed = true, -- Turns NPCs On / Off
         npcModel = "A_M_M_UniBoatCrew_01", -- Sets Model for NPCs
@@ -56,7 +56,6 @@ Settings can be changed in the `config.lua` file. Here is an example of one shop
 - Add `ensure oss_portals` to your `resources.cfg`
 
 #### Credits
-- vorp_stores
 - rsg_fasttravel
 
 #### GitHub

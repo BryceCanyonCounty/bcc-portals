@@ -5,7 +5,7 @@ end)
 
 -- Buy New Boats
 RegisterServerEvent('oss_portals:BuyPassage')
-AddEventHandler('oss_portals:BuyPassage', function(outletData, portId)
+AddEventHandler('oss_portals:BuyPassage', function(outletData)
     local src = source
     local Character = VORPcore.getUser(src).getUsedCharacter
     local location = outletData.location
@@ -16,7 +16,7 @@ AddEventHandler('oss_portals:BuyPassage', function(outletData, portId)
         local money = Character.money
         if money >= buyPrice then
             Character.removeCurrency(0, buyPrice)
-            TriggerClientEvent('oss_portals:SendPlayer', src, location, portId)
+            TriggerClientEvent('oss_portals:SendPlayer', src, location)
         else
             VORPcore.NotifyRightTip(src, _U("shortCash"), 4000)
         end
@@ -25,7 +25,7 @@ AddEventHandler('oss_portals:BuyPassage', function(outletData, portId)
         local gold = Character.gold
         if gold >= buyPrice then
             Character.removeCurrency(1, buyPrice)
-            TriggerClientEvent('oss_portals:SendPlayer', src, location, portId)
+            TriggerClientEvent('oss_portals:SendPlayer', src, location)
         else
             VORPcore.NotifyRightTip(src, _U("shortGold"), 4000)
         end
