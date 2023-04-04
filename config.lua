@@ -1,13 +1,18 @@
 -- oss_portals
 Config = {}
+
 -- Set Language
 Config.defaultlang = "en_lang"
+
 -- Open Portals Menu
 Config.portKey = 0x760A9C6F --[G]
--- Choose Travel Mode
-Config.travelMode = "normal" -- "normal" = Slower and Play Loading Screen / "blink" = Fast and Fade to Black
+
 -- Travel Time in Milliseconds Between Locations
-Config.travelTime = 15000 -- For Normal Mode ONLY / Default: 15000ms = 15 Seconds
+Config.travelTime = 15000 -- Default: 15000ms = 15 Seconds
+
+-- Allow Blips on Map when Stable is Closed
+Config.blipAllowedClosed = true -- true = Show Blips / false = Remove Blips
+
 -- Portal Shops
 Config.ports = {
     annesburg = {
@@ -18,8 +23,9 @@ Config.ports = {
         blipSprite = 784218150, -- 784218150 = Default
         blipColorOpen = "BLIP_MODIFIER_MP_COLOR_32", -- Shop Open - Blip Colors Shown Below
         blipColorClosed = "BLIP_MODIFIER_MP_COLOR_10", -- Shop Closed - Blip Colors Shown Below
-        npcx = 2941.59, npcy = 1273.58, npcz = 43.64, npch = 237.13, -- NPC and Shop Blip Positions
-        playerx = 2942.39, playery = 1272.97, playerz = 44.64, playerh = 52.18, -- Player Teleport Position
+        blipColorJob = "BLIP_MODIFIER_MP_COLOR_23", -- Shop Job Locked - Default: Yellow - Blip Colors Shown Below
+        npc = {x = 2941.59, y = 1273.58, z = 43.64, h = 237.13}, -- NPC and Shop Blip Positions
+        player = {x = 2942.39, y = 1272.97, z = 44.64, h = 52.18}, -- Player Teleport Position
         distPort = 2.0, -- Distance from NPC to Get Menu Prompt
         npcAllowed = true, -- Turns NPCs On / Off
         npcModel = "A_M_M_UniBoatCrew_01", -- Sets Model for NPCs
@@ -47,8 +53,9 @@ Config.ports = {
         blipSprite = 784218150,
         blipColorOpen = "BLIP_MODIFIER_MP_COLOR_32",
         blipColorClosed = "BLIP_MODIFIER_MP_COLOR_10",
-        npcx = -3724.68, npcy = -2602.43, npcz = -13.91, npch = 246.94,
-        playerx = -3724.04, playery = -2603.28, playerz = -12.94, playerh = 16.65,
+        blipColorJob = "BLIP_MODIFIER_MP_COLOR_23",
+        npc = {x = -3724.68, y = -2602.43, z = -13.91, h = 246.94},
+        player = {x = -3724.04, y = -2603.28, z = -12.94, h = 16.65},
         distPort = 2.0,
         npcAllowed = true,
         npcModel = "A_M_M_UniBoatCrew_01",
@@ -76,8 +83,9 @@ Config.ports = {
         blipSprite = 784218150,
         blipColorOpen = "BLIP_MODIFIER_MP_COLOR_32",
         blipColorClosed = "BLIP_MODIFIER_MP_COLOR_10",
-        npcx = -732.87, npcy = -1232.39, npcz = 43.73, npch = 133.34,
-        playerx = -733.99, playery = -1233.41, playerz = 44.73, playerh = 313.2,
+        blipColorJob = "BLIP_MODIFIER_MP_COLOR_23",
+        npc = {x = -732.87, y = -1232.39, z = 43.73, h = 133.34},
+        player = {x = -733.99, y = -1233.41, z = 44.73, h = 313.2},
         distPort = 2.0,
         npcAllowed = true,
         npcModel = "A_M_M_UniBoatCrew_01",
@@ -105,8 +113,9 @@ Config.ports = {
         blipSprite = 784218150,
         blipColorOpen = "BLIP_MODIFIER_MP_COLOR_32",
         blipColorClosed = "BLIP_MODIFIER_MP_COLOR_10",
-        npcx = 1233.52, npcy = -1287.75, npcz = 75.97, npch = 284.16,
-        playerx = 1234.95, playery = -1287.43, playerz = 76.97, playerh = 103.86,
+        blipColorJob = "BLIP_MODIFIER_MP_COLOR_23",
+        npc = {x = 1233.52, y = -1287.75, z = 75.97, h = 284.16},
+        player = {x = 1234.95, y = -1287.43, z = 76.97, h = 103.86},
         distPort = 2.0,
         npcAllowed = true,
         npcModel = "A_M_M_UniBoatCrew_01",
@@ -134,8 +143,9 @@ Config.ports = {
         blipSprite = 784218150,
         blipColorOpen = "BLIP_MODIFIER_MP_COLOR_32",
         blipColorClosed = "BLIP_MODIFIER_MP_COLOR_10",
-        npcx = -1836.82, npcy = -422.29, npcz = 159.86, npch = 244.28,
-        playerx = -1835.75, playery = -422.89, playerz = 160.83, playerh = 58.27,
+        blipColorJob = "BLIP_MODIFIER_MP_COLOR_23",
+        npc = {x = -1836.82, y = -422.29, z = 159.86, h = 244.28},
+        player = {x = -1835.75, y = -422.89, z = 160.83, h = 58.27},
         distPort = 2.0,
         npcAllowed = true,
         npcModel = "A_M_M_UniBoatCrew_01",
@@ -163,8 +173,9 @@ Config.ports = {
         blipSprite = 784218150,
         blipColorOpen = "BLIP_MODIFIER_MP_COLOR_32",
         blipColorClosed = "BLIP_MODIFIER_MP_COLOR_10",
-        npcx = 2740.99, npcy = -1391.48, npcz = 45.21, npch = 17.09,
-        playerx = 2740.67, playery = -1390.49, playerz = 46.23, playerh = 201.54,
+        blipColorJob = "BLIP_MODIFIER_MP_COLOR_23",
+        npc = {x = 2740.99, y = -1391.48, z = 45.21, h = 17.09},
+        player = {x = 2740.67, y = -1390.49, z = 46.23, h = 201.54},
         distPort = 2.0,
         npcAllowed = true,
         npcModel = "A_M_M_UniBoatCrew_01",
@@ -192,8 +203,9 @@ Config.ports = {
         blipSprite = 784218150,
         blipColorOpen = "BLIP_MODIFIER_MP_COLOR_32",
         blipColorClosed = "BLIP_MODIFIER_MP_COLOR_10",
-        npcx = -5495.56, npcy = -2958.57, npcz = -1.69, npch = 314.82,
-        playerx = -5494.4, playery = -2957.35, playerz = -0.71, playerh = 149.64,
+        blipColorJob = "BLIP_MODIFIER_MP_COLOR_23",
+        npc = {x = -5495.56, y = -2958.57, z = -1.69, h = 314.82},
+        player = {x = -5494.4, y = -2957.35, z = -0.71, h = 149.64},
         distPort = 2.0,
         npcAllowed = true,
         npcModel = "A_M_M_UniBoatCrew_01",
@@ -221,8 +233,9 @@ Config.ports = {
         blipSprite = 784218150,
         blipColorOpen = "BLIP_MODIFIER_MP_COLOR_32",
         blipColorClosed = "BLIP_MODIFIER_MP_COLOR_10",
-        npcx = -184.38, npcy = 642.8, npcz = 112.59, npch = 50.3,
-        playerx = -185.79, playery = 643.63, playerz = 113.44, playerh = 239.31,
+        blipColorJob = "BLIP_MODIFIER_MP_COLOR_23",
+        npc = {x = -184.38, y = 642.8, z = 112.59, h = 50.3},
+        player = {x = -185.79, y = 643.63, z = 113.44, h = 239.31},
         distPort = 2.0,
         npcAllowed = true,
         npcModel = "A_M_M_UniBoatCrew_01",
@@ -250,8 +263,9 @@ Config.ports = {
         blipSprite = 784218150,
         blipColorOpen = "BLIP_MODIFIER_MP_COLOR_32",
         blipColorClosed = "BLIP_MODIFIER_MP_COLOR_10",
-        npcx = 2893.08, npcy = 623.51, npcz = 56.72, npch = 64.27,
-        playerx = 2891.88, playery = 623.66, playerz = 57.77, playerh = 254.74,
+        blipColorJob = "BLIP_MODIFIER_MP_COLOR_23",
+        npc = {x = 2893.08, y = 623.51, z = 56.72, h = 64.27},
+        player = {x = 2891.88, y = 623.66, z = 57.77, h = 254.74},
         distPort = 2.0,
         npcAllowed = true,
         npcModel = "A_M_M_UniBoatCrew_01",

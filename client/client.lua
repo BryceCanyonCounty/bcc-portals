@@ -2,14 +2,16 @@ local VORPcore = {}
 TriggerEvent("getCore", function(core)
     VORPcore = core
 end)
-
+-- Prompts
 local OpenPorts
 local ClosePorts
 local PortPrompt1 = GetRandomIntInRange(0, 0xffffff)
 local PortPrompt2 = GetRandomIntInRange(0, 0xffffff)
+-- Jobs
 local PlayerJob
 local JobName
 local JobGrade
+-- Menu
 local InMenu = false
 MenuData = {}
 
@@ -33,12 +35,20 @@ Citizen.CreateThread(function()
         if InMenu == false and not dead then
             for portId, portConfig in pairs(Config.ports) do
                 if portConfig.portHours then
+                    -- Using Port Hours - Port Closed
                     if hour >= portConfig.portClose or hour < portConfig.portOpen then
-                        if not Config.ports[portId].BlipHandle and portConfig.blipAllowed then
-                            AddBlip(portId)
+                        if Config.blipAllowedClosed then
+                            if not Config.ports[portId].BlipHandle and portConfig.blipAllowed then
+                                AddBlip(portId)
+                            end
+                        else
+                            if Config.ports[portId].BlipHandle then
+                                RemoveBlip(Config.ports[portId].BlipHandle)
+                                Config.ports[portId].BlipHandle = nil
+                            end
                         end
                         if Config.ports[portId].BlipHandle then
-                            Citizen.InvokeNative(0x662D364ABF16DE2F, Config.ports[portId].BlipHandle, GetHashKey(portConfig.blipColorClosed)) -- BlipAddModifier
+                            Citizen.InvokeNative(0x662D364ABF16DE2F, Config.ports[portId].BlipHandle, joaat(portConfig.blipColorClosed)) -- BlipAddModifier
                         end
                         if portConfig.NPC then
                             DeleteEntity(portConfig.NPC)
@@ -47,32 +57,33 @@ Citizen.CreateThread(function()
                             portConfig.NPC = nil
                         end
                         local coordsDist = vector3(coords.x, coords.y, coords.z)
-                        local coordsPort = vector3(portConfig.shopx, portConfig.shopy, portConfig.shopz)
+                        local coordsPort = vector3(portConfig.npc.x, portConfig.npc.y, portConfig.npc.z)
                         local distPort = #(coordsDist - coordsPort)
 
                         if (distPort <= portConfig.distPort) then
                             sleep = false
-                            local portClosed = CreateVarString(10, 'LITERAL_STRING', _U("closed") .. portConfig.portOpen .. _U("am") .. portConfig.portClose .. _U("pm"))
+                            local portClosed = CreateVarString(10, 'LITERAL_STRING', portConfig.portName .. _U("closed"))
                             PromptSetActiveGroupThisFrame(PortPrompt2, portClosed)
 
                             if Citizen.InvokeNative(0xC92AC953F0A982AE, ClosePorts) then -- UiPromptHasStandardModeCompleted
                                 Wait(100)
-                                VORPcore.NotifyRightTip(_U("shopClosed"), 4000)
+                                VORPcore.NotifyRightTip(portConfig.portName .. _U("hours") .. portConfig.portOpen .. _U("to") .. portConfig.portClose .. _U("hundred"), 4000)
                             end
                         end
                     elseif hour >= portConfig.portOpen then
+                        -- Using Port Hours - Port Open
                         if not Config.ports[portId].BlipHandle and portConfig.blipAllowed then
                             AddBlip(portId)
-                        end
-                        if Config.ports[portId].BlipHandle then
-                            Citizen.InvokeNative(0x662D364ABF16DE2F, Config.ports[portId].BlipHandle, GetHashKey(portConfig.blipColorOpen)) -- BlipAddModifier
                         end
                         if not portConfig.NPC and portConfig.npcAllowed then
                             SpawnNPC(portId)
                         end
                         if not next(portConfig.allowedJobs) then
+                            if Config.ports[portId].BlipHandle then
+                                Citizen.InvokeNative(0x662D364ABF16DE2F, Config.ports[portId].BlipHandle, joaat(portConfig.blipColorOpen)) -- BlipAddModifier
+                            end
                             local coordsDist = vector3(coords.x, coords.y, coords.z)
-                            local coordsPort = vector3(portConfig.npcx, portConfig.npcy, portConfig.npcpz)
+                            local coordsPort = vector3(portConfig.npc.x, portConfig.npc.y, portConfig.npc.z)
                             local distPort = #(coordsDist - coordsPort)
 
                             if (distPort <= portConfig.distPort) then
@@ -87,8 +98,12 @@ Citizen.CreateThread(function()
                                 end
                             end
                         else
+                            -- Using Port Hours - Port Open - Job Locked
+                            if Config.ports[portId].BlipHandle then
+                                Citizen.InvokeNative(0x662D364ABF16DE2F, Config.ports[portId].BlipHandle, joaat(portConfig.blipColorJob)) -- BlipAddModifier
+                            end
                             local coordsDist = vector3(coords.x, coords.y, coords.z)
-                            local coordsPort = vector3(portConfig.npcx, portConfig.npcy, portConfig.npcz)
+                            local coordsPort = vector3(portConfig.npc.x, portConfig.npc.y, portConfig.npc.z)
                             local distPort = #(coordsDist - coordsPort)
 
                             if (distPort <= portConfig.distPort) then
@@ -119,18 +134,19 @@ Citizen.CreateThread(function()
                         end
                     end
                 else
+                    -- Not Using Port Hours - Port Always Open
                     if not Config.ports[portId].BlipHandle and portConfig.blipAllowed then
                         AddBlip(portId)
-                    end
-                    if Config.ports[portId].BlipHandle then
-                        Citizen.InvokeNative(0x662D364ABF16DE2F, Config.ports[portId].BlipHandle, GetHashKey(portConfig.blipColorOpen)) -- BlipAddModifier
                     end
                     if not portConfig.NPC and portConfig.npcAllowed then
                         SpawnNPC(portId)
                     end
                     if not next(portConfig.allowedJobs) then
+                        if Config.ports[portId].BlipHandle then
+                            Citizen.InvokeNative(0x662D364ABF16DE2F, Config.ports[portId].BlipHandle, joaat(portConfig.blipColorOpen)) -- BlipAddModifier
+                        end
                         local coordsDist = vector3(coords.x, coords.y, coords.z)
-                        local coordsPort = vector3(portConfig.npcx, portConfig.npcy, portConfig.npcz)
+                        local coordsPort = vector3(portConfig.npc.x, portConfig.npc.y, portConfig.npc.z)
                         local distPort = #(coordsDist - coordsPort)
 
                         if (distPort <= portConfig.distPort) then
@@ -145,8 +161,12 @@ Citizen.CreateThread(function()
                             end
                         end
                     else
+                        -- Not Using Port Hours - Port Always Open - Job Locked
+                        if Config.ports[portId].BlipHandle then
+                            Citizen.InvokeNative(0x662D364ABF16DE2F, Config.ports[portId].BlipHandle, joaat(portConfig.blipColorJob)) -- BlipAddModifier
+                        end
                         local coordsDist = vector3(coords.x, coords.y, coords.z)
-                        local coordsPort = vector3(portConfig.npcx, portConfig.npcy, portConfig.npcz)
+                        local coordsPort = vector3(portConfig.npc.x, portConfig.npc.y, portConfig.npc.z)
                         local distPort = #(coordsDist - coordsPort)
 
                         if (distPort <= portConfig.distPort) then
@@ -230,30 +250,19 @@ end
 
 -- Send Player to Destination
 RegisterNetEvent("oss_portals:SendPlayer")
-AddEventHandler("oss_portals:SendPlayer", function(location, portId)
+AddEventHandler("oss_portals:SendPlayer", function(location)
     local player = PlayerPedId()
     local destination = location
     local portConfig = Config.ports[destination]
-    local travelMode = Config.travelMode
-    local travelTime = Config.travelTime
-    if travelMode == "normal" then
-        DoScreenFadeOut(1000)
-        Wait(1000)
-        Citizen.InvokeNative(0x1E5B70E53DB661E5, 0, 0, 0, _U('traveling') .. portConfig.portName, '', '') -- DisplayLoadingScreens
-        Wait(travelTime)
-        Citizen.InvokeNative(0x203BEFFDBE12E96A, player, portConfig.playerx, portConfig.playery, portConfig.playerz, portConfig.playerh) -- SetEntityCoordsAndHeading
-        ShutdownLoadingScreen()
-        DoScreenFadeIn(1000)
-        Wait(1000)
-        SetCinematicModeActive(false)
-    elseif travelMode == "blink" then
-        DoScreenFadeOut(500)
-        Wait(500)
-        Citizen.InvokeNative(0x203BEFFDBE12E96A, player, portConfig.playerx, portConfig.playery, portConfig.playerz, portConfig.playerh) -- SetEntityCoordsAndHeading
-        Wait(1000)
-        DoScreenFadeIn(500)
-        Wait(500)
-    end
+    DoScreenFadeOut(1000)
+    Wait(1000)
+    Citizen.InvokeNative(0x1E5B70E53DB661E5, 0, 0, 0, _U('traveling') .. portConfig.portName, '', '') -- DisplayLoadingScreens
+    Wait(Config.travelTime)
+    Citizen.InvokeNative(0x203BEFFDBE12E96A, player, portConfig.player.x, portConfig.player.y, portConfig.player.z, portConfig.player.h) -- SetEntityCoordsAndHeading
+    ShutdownLoadingScreen()
+    DoScreenFadeIn(1000)
+    Wait(1000)
+    SetCinematicModeActive(false)
 end)
 
 -- Menu Prompts
@@ -289,7 +298,7 @@ end
 function AddBlip(portId)
     local portConfig = Config.ports[portId]
     if portConfig.blipAllowed then
-        portConfig.BlipHandle = N_0x554d9d53f696d002(1664425300, portConfig.npcx, portConfig.npcy, portConfig.npcz) -- BlipAddForCoords
+        portConfig.BlipHandle = N_0x554d9d53f696d002(1664425300, portConfig.npc.x, portConfig.npc.y, portConfig.npc.z) -- BlipAddForCoords
         SetBlipSprite(portConfig.BlipHandle, portConfig.blipSprite, 1)
         SetBlipScale(portConfig.BlipHandle, 0.2)
         Citizen.InvokeNative(0x9CB1A1623062F402, portConfig.BlipHandle, portConfig.blipName) -- SetBlipNameFromPlayerString
@@ -297,19 +306,10 @@ function AddBlip(portId)
 end
 
 -- NPCs
-function LoadModel(npcModel)
-    local model = GetHashKey(npcModel)
-    RequestModel(model)
-    while not HasModelLoaded(model) do
-        RequestModel(model)
-        Citizen.Wait(100)
-    end
-end
-
 function SpawnNPC(portId)
     local portConfig = Config.ports[portId]
     LoadModel(portConfig.npcModel)
-    local npc = CreatePed(portConfig.npcModel, portConfig.npcx, portConfig.npcy, portConfig.npcz, portConfig.npch, false, true, true, true)
+    local npc = CreatePed(portConfig.npcModel, portConfig.npc.x, portConfig.npc.y, portConfig.npc.z, portConfig.npc.h, false, true, true, true)
     Citizen.InvokeNative(0x283978A15512B2FE, npc, true) -- SetRandomOutfitVariation
     SetEntityCanBeDamaged(npc, false)
     SetEntityInvincible(npc, true)
@@ -317,6 +317,15 @@ function SpawnNPC(portId)
     FreezeEntityPosition(npc, true)
     SetBlockingOfNonTemporaryEvents(npc, true)
     Config.ports[portId].NPC = npc
+end
+
+function LoadModel(npcModel)
+    local model = joaat(npcModel)
+    RequestModel(model)
+    while not HasModelLoaded(model) do
+        RequestModel(model)
+        Citizen.Wait(100)
+    end
 end
 
 -- Check if Player has Job
