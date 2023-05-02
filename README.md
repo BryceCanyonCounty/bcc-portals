@@ -1,10 +1,10 @@
 # Portals
 
 #### Description
-This is a fast-travel script for RedM servers using the [VORP framework](https://github.com/VORPCORE). Travel can be arranged through shops. There are 9 shops configured, more shop locations may be added using the `config.lua` file.
+This is a fast-travel script for RedM servers using the [VORP framework](https://github.com/VORPCORE). Travel can be arranged through Ticket sellers. There are 9 sellers configured, more may be added using the `config.lua` file.
 
 #### Features
-- Buy passage to a location from a Portal Shop
+- Buy passage to a location from a ticket seller
 - Cash or gold may be used for payments
 - Shop hours may be set individually for each shop or disabled to allow the shop to remain open
 - Shop blips are colored and changeable per shop location
@@ -27,21 +27,21 @@ Settings can be changed in the `config.lua` file. Here is an example of one shop
         player = {x = 2942.39, y = 1272.97, z = 44.64, h = 52.18}, -- Player Teleport Position
         distPort = 2.0, -- Distance from NPC to Get Menu Prompt
         npcAllowed = true, -- Turns NPCs On / Off
-        npcModel = "A_M_M_UniBoatCrew_01", -- Sets Model for NPCs
+        npcModel = "s_m_m_sdticketseller_01", -- Sets Model for NPCs
         allowedJobs = {}, -- Empty, Everyone Can Use / Insert Job to limit access - ex. "police"
         jobGrade = 0, -- Enter Minimum Rank / Job Grade to Access Shop
         portHours = false, -- If You Want the Shops to Use Open and Closed Hours
         portOpen = 7, -- Shop Open Time / 24 Hour Clock
         portClose = 21, -- Shop Close Time / 24 Hour Clock
         outlets = { -- label is the name used in the body of the menu / currencyType = "cash" or "gold" / DO NOT CHANGE "location"
-            armadillo  = { label = "Armadillo",   location = "armadillo",  currencyType = "cash", buyPrice = 50 },
-            blackwater = { label = "Blackwater",  location = "blackwater", currencyType = "cash", buyPrice = 40 },
-            rhodes     = { label = "Rhodes",      location = "rhodes",     currencyType = "cash", buyPrice = 20 },
-            strawberry = { label = "Strawberry",  location = "strawberry", currencyType = "cash", buyPrice = 40 },
-            stdenis    = { label = "Saint Denis", location = "stdenis",    currencyType = "cash", buyPrice = 20 },
-            tumbleweed = { label = "Tumbleweed",  location = "tumbleweed", currencyType = "cash", buyPrice = 50 },
-            valentine  = { label = "Valentine",   location = "valentine",  currencyType = "cash", buyPrice = 30 },
-            vanhorn    = { label = "Van Horn",    location = "vanhorn",    currencyType = "cash", buyPrice = 10 },
+            { label = "Armadillo",   location = "armadillo",  currencyType = "cash", buyPrice = 100 },
+            { label = "Blackwater",  location = "blackwater", currencyType = "cash", buyPrice = 80  },
+            { label = "Rhodes",      location = "rhodes",     currencyType = "cash", buyPrice = 40  },
+            { label = "Strawberry",  location = "strawberry", currencyType = "cash", buyPrice = 80  },
+            { label = "Saint Denis", location = "stdenis",    currencyType = "cash", buyPrice = 40  },
+            { label = "Tumbleweed",  location = "tumbleweed", currencyType = "cash", buyPrice = 100 },
+            { label = "Valentine",   location = "valentine",  currencyType = "cash", buyPrice = 60  },
+            { label = "Van Horn",    location = "vanhorn",    currencyType = "cash", buyPrice = 20  },
         }
     },
 ```
@@ -54,9 +54,6 @@ Settings can be changed in the `config.lua` file. Here is an example of one shop
 - Ensure that the dependancies are added and started
 - Add `oss_portals` folder to your resources folder
 - Add `ensure oss_portals` to your `resources.cfg`
-
-#### Credits
-- rsg_fasttravel
 
 #### GitHub
 - https://github.com/JusCampin/oss_portals
