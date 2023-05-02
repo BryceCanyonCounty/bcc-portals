@@ -112,7 +112,7 @@ Citizen.CreateThread(function()
                                 PromptSetActiveGroupThisFrame(PortPrompt1, portOpened)
 
                                 if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then -- UiPromptHasStandardModeCompleted
-                                    TriggerServerEvent("oss_portals:getPlayerJob")
+                                    TriggerServerEvent("bcc-portals:getPlayerJob")
                                     Wait(200)
                                     if PlayerJob then
                                         if CheckJob(portConfig.allowedJobs, PlayerJob) then
@@ -175,7 +175,7 @@ Citizen.CreateThread(function()
                             PromptSetActiveGroupThisFrame(PortPrompt1, portOpened)
 
                             if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then -- UiPromptHasStandardModeCompleted
-                                TriggerServerEvent("oss_portals:getPlayerJob")
+                                TriggerServerEvent("bcc-portals:getPlayerJob")
                                 Wait(200)
                                 if PlayerJob then
                                     if CheckJob(portConfig.allowedJobs, PlayerJob) then
@@ -232,7 +232,7 @@ function PortalMenu(portId)
         end
         if data.current.value then
             local outletData = data.current.info
-            TriggerServerEvent('oss_portals:BuyPassage', outletData, portId)
+            TriggerServerEvent('bcc-portals:BuyPassage', outletData, portId)
 
             menu.close()
             InMenu = false
@@ -249,8 +249,8 @@ function PortalMenu(portId)
 end
 
 -- Send Player to Destination
-RegisterNetEvent("oss_portals:SendPlayer")
-AddEventHandler("oss_portals:SendPlayer", function(location)
+RegisterNetEvent("bcc-portals:SendPlayer")
+AddEventHandler("bcc-portals:SendPlayer", function(location)
     local player = PlayerPedId()
     local destination = location
     local portConfig = Config.ports[destination]
@@ -339,8 +339,8 @@ function CheckJob(allowedJob, playerJob)
     return false
 end
 
-RegisterNetEvent("oss_portals:sendPlayerJob")
-AddEventHandler("oss_portals:sendPlayerJob", function(Job, grade)
+RegisterNetEvent("bcc-portals:sendPlayerJob")
+AddEventHandler("bcc-portals:sendPlayerJob", function(Job, grade)
     PlayerJob = Job
     JobGrade = grade
 end)

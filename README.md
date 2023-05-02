@@ -52,8 +52,5 @@ Settings can be changed in the `config.lua` file. Here is an example of one shop
 
 #### Installation
 - Ensure that the dependancies are added and started
-- Add `oss_portals` folder to your resources folder
-- Add `ensure oss_portals` to your `resources.cfg`
-
-#### GitHub
-- https://github.com/JusCampin/oss_portals
+- Add `bcc-portals` folder to your resources folder
+- Add `ensure bcc-portals` to your `resources.cfg`

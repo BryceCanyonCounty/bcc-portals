@@ -1,4 +1,4 @@
--- oss_portals
+-- bcc-portals
 Config = {}
 
 -- Set Language
