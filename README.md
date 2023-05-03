@@ -1,7 +1,7 @@
-# Portals
+# BCC Portals
 
 #### Description
-This is a fast-travel script for RedM servers using the [VORP framework](https://github.com/VORPCORE). Travel can be arranged through Ticket sellers. There are 9 sellers configured, more may be added using the `config.lua` file.
+Looking for fast and convenient travel in your server? Our script has got you covered! With multiple ticket sellers to choose from and the option to add more, you'll have access to quick transportation to your desired location. Plus, with customizable shop hours and access restrictions based on job and job grade, you can tailor the script to fit your needs perfectly. 
 
 #### Features
 - Buy passage to a location from a ticket seller
