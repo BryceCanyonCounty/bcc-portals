@@ -30,10 +30,9 @@ CreateThread(function()
         local player = PlayerPedId()
         local coords = GetEntityCoords(player)
         local sleep = true
-        local dead = IsEntityDead(player)
         local hour = GetClockHours()
 
-        if not InMenu and not dead then
+        if not InMenu and not IsEntityDead(player) then
             for shopId, shopConfig in pairs(Config.shops) do
                 if shopConfig.shopHours then
                     -- Using Shop Hours - Shop Closed
@@ -59,7 +58,7 @@ CreateThread(function()
                         local scoords = vector3(shopConfig.npc.x, shopConfig.npc.y, shopConfig.npc.z)
                         local sDistance = #(pcoords - scoords)
 
-                        if (sDistance <= shopConfig.sDistance) then
+                        if sDistance <= shopConfig.sDistance then
                             sleep = false
                             local shopClosed = CreateVarString(10, 'LITERAL_STRING', shopConfig.shopName .. _U('closed'))
                             PromptSetActiveGroupThisFrame(PortPrompt2, shopClosed)
@@ -92,13 +91,13 @@ CreateThread(function()
                                     shopConfig.NPC = nil
                                 end
                             end
-                            if (sDistance <= shopConfig.sDistance) then
+                            if sDistance <= shopConfig.sDistance then
                                 sleep = false
                                 local shopOpen = CreateVarString(10, 'LITERAL_STRING', shopConfig.promptName)
                                 PromptSetActiveGroupThisFrame(PortPrompt1, shopOpen)
 
                                 if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then -- UiPromptHasStandardModeCompleted
-                                    PortalMenu(shopId)
+                                    MainMenu(pcoords, shopId)
                                     DisplayRadar(false)
                                     TaskStandStill(player, -1)
                                 end
@@ -122,7 +121,7 @@ CreateThread(function()
                                     shopConfig.NPC = nil
                                 end
                             end
-                            if (sDistance <= shopConfig.sDistance) then
+                            if sDistance <= shopConfig.sDistance then
                                 sleep = false
                                 local shopOpen = CreateVarString(10, 'LITERAL_STRING', shopConfig.promptName)
                                 PromptSetActiveGroupThisFrame(PortPrompt1, shopOpen)
@@ -133,7 +132,7 @@ CreateThread(function()
                                     if PlayerJob then
                                         if CheckJob(shopConfig.allowedJobs, PlayerJob) then
                                             if tonumber(shopConfig.jobGrade) <= tonumber(JobGrade) then
-                                                PortalMenu(shopId)
+                                                MainMenu(pcoords, shopId)
                                                 DisplayRadar(false)
                                                 TaskStandStill(player, -1)
                                             else
@@ -172,13 +171,13 @@ CreateThread(function()
                                 shopConfig.NPC = nil
                             end
                         end
-                        if (sDistance <= shopConfig.sDistance) then
+                        if sDistance <= shopConfig.sDistance then
                             sleep = false
                             local shopOpen = CreateVarString(10, 'LITERAL_STRING', shopConfig.promptName)
                             PromptSetActiveGroupThisFrame(PortPrompt1, shopOpen)
 
                             if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then -- UiPromptHasStandardModeCompleted
-                                PortalMenu(shopId)
+                                MainMenu(pcoords, shopId)
                                 DisplayRadar(false)
                                 TaskStandStill(player, -1)
                             end
@@ -202,7 +201,7 @@ CreateThread(function()
                                 shopConfig.NPC = nil
                             end
                         end
-                        if (sDistance <= shopConfig.sDistance) then
+                        if sDistance <= shopConfig.sDistance then
                             sleep = false
                             local shopOpen = CreateVarString(10, 'LITERAL_STRING', shopConfig.promptName)
                             PromptSetActiveGroupThisFrame(PortPrompt1, shopOpen)
@@ -213,7 +212,7 @@ CreateThread(function()
                                 if PlayerJob then
                                     if CheckJob(shopConfig.allowedJobs, PlayerJob) then
                                         if tonumber(shopConfig.jobGrade) <= tonumber(JobGrade) then
-                                            PortalMenu(shopId)
+                                            MainMenu(pcoords, shopId)
                                             DisplayRadar(false)
                                             TaskStandStill(player, -1)
                                         else
@@ -238,24 +237,65 @@ CreateThread(function()
 end)
 
 -- Portal Menu to Choose Destination
-function PortalMenu(shopId)
+function MainMenu(pcoords, shopId)
     MenuData.CloseAll()
     InMenu = true
     local elements = {}
-    local player = PlayerPedId()
 
-    for outlet, outletConfig in pairs(Config.shops[shopId].outlets) do
+    for k, v in pairs(Config.shops[shopId].outlets) do
         elements[#elements + 1] = {
-            label = outletConfig.label,
-            value = outlet,
-            desc = _U('price') .. outletConfig.buyPrice .. ' ' .. outletConfig.currencyType,
-            info = outletConfig,
+            label = v.label,
+            value = k,
+            desc = '<span style=color:#C0C0C0;>' .. _U('choose') .. '</span>',
+            location = v.location,
         }
     end
     MenuData.Open('default', GetCurrentResourceName(), 'menuapi',
     {
-        title = Config.shops[shopId].shopName,
-        subtext = _U('subMenu'),
+        title = '<span style=color:#999;>' .. Config.shops[shopId].shopName .. '</span>',
+        subtext = '<span style=color:#C0C0C0;>' .. _U('subMenu') .. '</span>',
+        align = 'top-left',
+        elements = elements,
+        lastmenu = '',
+    },
+    function(data, menu)
+        if data.current == 'backup' then
+            _G[data.trigger]()
+        end
+        if data.current.value then
+            TriggerServerEvent('bcc-portals:GetData', data.current.location, pcoords, shopId)
+        end
+    end,
+    function(data, menu)
+        menu.close()
+        InMenu = false
+        ClearPedTasksImmediately(PlayerPedId())
+        DisplayRadar(true)
+    end)
+end
+
+RegisterNetEvent('bcc-portals:DestinationMenu', function(location, cashPrice, goldPrice, time, displayTime, shopId)
+    MenuData.CloseAll()
+    InMenu = true
+    local player = PlayerPedId()
+    local elements = {
+        {
+            label = 'Cash',
+            value = 'cash',
+            desc = '<span style=color:#C0C0C0;>' .. 'Price: ' .. '</span>' ..  '<span style=color:#278664;>' .. ' $' .. cashPrice .. '</span>' .. '<br>' ..
+            '<span style=color:#C0C0C0;>' .. 'Travel Time: ' .. '</span>' .. '<span style=color:#888;>' .. ' ' .. displayTime .. ' seconds' .. '</span>'
+        },
+        {
+            label = 'Gold',
+            value = 'gold',
+            desc = '<span style=color:#C0C0C0;>' .. 'Price: ' .. '</span>' .. '<span style=color:#CC9900;>' .. goldPrice .. ' ' .. 'gold' .. '</span>' .. '<br>' ..
+            '<span style=color:#C0C0C0;>' .. 'Travel Time: ' .. '</span>' .. '<span style=color:#888;>' .. ' ' .. displayTime .. ' seconds' .. '</span>'
+        }
+    }
+    MenuData.Open('default', GetCurrentResourceName(), 'menuapi',
+    {
+        title = '<span style=color:#999;>' .. Config.shops[shopId].shopName .. '</span>',
+        subtext = '<span style=color:#C0C0C0;>' .. _U('destination') .. '</span>' .. '<span style=color:#CC9900;>' .. Config.shops[location].shopName .. '</span>',
         align = 'top-left',
         elements = elements,
         lastmenu = '',
@@ -264,15 +304,16 @@ function PortalMenu(shopId)
         if data.current == 'backup' then
             _G[data.trigger](shopId)
         end
-        if data.current.value then
-            local outletData = data.current.info
-            TriggerServerEvent('bcc-portals:BuyPassage', outletData, shopId)
-
-            menu.close()
-            InMenu = false
-            ClearPedTasksImmediately(player)
-            DisplayRadar(true)
+        if data.current.value == 'cash' then
+            TriggerServerEvent('bcc-portals:BuyPassage', location, cashPrice, time, true)
+        else
+            TriggerServerEvent('bcc-portals:BuyPassage', location, goldPrice, time, false)
         end
+
+        menu.close()
+        InMenu = false
+        ClearPedTasksImmediately(player)
+        DisplayRadar(true)
     end,
     function(data, menu)
         menu.close()
@@ -280,15 +321,15 @@ function PortalMenu(shopId)
         ClearPedTasksImmediately(player)
         DisplayRadar(true)
     end)
-end
+end)
 
 -- Send Player to Destination
-RegisterNetEvent('bcc-portals:SendPlayer', function(location)
+RegisterNetEvent('bcc-portals:SendPlayer', function(location, time)
     local shopConfig = Config.shops[location]
     DoScreenFadeOut(1000)
     Wait(1000)
     Citizen.InvokeNative(0x1E5B70E53DB661E5, 0, 0, 0, _U('traveling') .. shopConfig.shopName, '', '') -- DisplayLoadingScreens
-    Wait(Config.travelTime * 1000)
+    Wait(time)
     Citizen.InvokeNative(0x203BEFFDBE12E96A, PlayerPedId(), shopConfig.player.x, shopConfig.player.y, shopConfig.player.z, shopConfig.player.h) -- SetEntityCoordsAndHeading
     ShutdownLoadingScreen()
     DoScreenFadeIn(1000)
@@ -300,7 +341,7 @@ end)
 function PortOpen()
     local str = _U('portPrompt')
     OpenPorts = PromptRegisterBegin()
-    PromptSetControlAction(OpenPorts, Config.portKey)
+    PromptSetControlAction(OpenPorts, Config.key)
     str = CreateVarString(10, 'LITERAL_STRING', str)
     PromptSetText(OpenPorts, str)
     PromptSetEnabled(OpenPorts, 1)
@@ -313,7 +354,7 @@ end
 function PortClosed()
     local str = _U('portPrompt')
     ClosePorts = PromptRegisterBegin()
-    PromptSetControlAction(ClosePorts, Config.portKey)
+    PromptSetControlAction(ClosePorts, Config.key)
     str = CreateVarString(10, 'LITERAL_STRING', str)
     PromptSetText(ClosePorts, str)
     PromptSetEnabled(ClosePorts, 1)
@@ -374,7 +415,7 @@ AddEventHandler('onResourceStop', function(resourceName)
     if (GetCurrentResourceName() ~= resourceName) then
         return
     end
-    if InMenu == true then
+    if InMenu then
         ClearPedTasksImmediately(PlayerPedId())
         PromptDelete(OpenPorts)
         PromptDelete(ClosePorts)
@@ -387,8 +428,7 @@ AddEventHandler('onResourceStop', function(resourceName)
         end
         if shopConfig.NPC then
             DeleteEntity(shopConfig.NPC)
-            DeletePed(shopConfig.NPC)
-            SetEntityAsNoLongerNeeded(shopConfig.NPC)
+            shopConfig.NPC = nil
         end
     end
 end)
