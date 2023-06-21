@@ -3,25 +3,37 @@ TriggerEvent('getCore', function(core)
     VORPcore = core
 end)
 
+-- Get Travel Time and Price Data
+RegisterNetEvent('bcc-portals:GetData', function(location, pcoords,shopId)
+    local _source = source
+    local shopConfig = Config.shops[location]
+    local dcoords = vector3(shopConfig.npc.x, shopConfig.npc.y, shopConfig.npc.z)
+    local distance = #(pcoords - dcoords)
+    local cashPrice = math.ceil(distance * Config.price)
+    local goldPrice = math.ceil(cashPrice / 20.67) -- 1899 Gold Price = $20.67
+    local time = math.ceil(distance * Config.time)
+    local displayTime = math.ceil(time / 1000)
+
+    TriggerClientEvent('bcc-portals:DestinationMenu', _source, location, cashPrice, goldPrice, time, displayTime, shopId)
+end)
+
 -- Buy Portal Passage
-RegisterNetEvent('bcc-portals:BuyPassage', function(data)
+RegisterNetEvent('bcc-portals:BuyPassage', function(location, price, time, isCash)
     local _source = source
     local Character = VORPcore.getUser(_source).getUsedCharacter
-    local currencyType = data.currencyType
-    local buyPrice = data.buyPrice
+    local buyPrice = price
 
-    if currencyType == 'cash' then
+    if isCash then
         if Character.money >= buyPrice then
             Character.removeCurrency(0, buyPrice)
-            TriggerClientEvent('bcc-portals:SendPlayer', _source, data.location)
+            TriggerClientEvent('bcc-portals:SendPlayer', _source, location, time)
         else
             VORPcore.NotifyRightTip(_source, _U('shortCash'), 4000)
         end
-
-    elseif currencyType == 'gold' then
+    else
         if Character.gold >= buyPrice then
             Character.removeCurrency(1, buyPrice)
-            TriggerClientEvent('bcc-portals:SendPlayer', _source, data.location)
+            TriggerClientEvent('bcc-portals:SendPlayer', _source, location, time)
         else
             VORPcore.NotifyRightTip(_source, _U('shortGold'), 4000)
         end

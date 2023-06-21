@@ -2,7 +2,7 @@
 Locales["it_lang"] = {
 
     portPrompt = "Menu",
-    subMenu = "Destinazioni disponibili",
+    subMenu = "Available Portals",
     closed = " ~o~: ~e~CHIUSO",
     to = ":00~q~ a ~o~",
     hundred = ":00",
@@ -10,6 +10,7 @@ Locales["it_lang"] = {
     shortGold = "Non hai abbastanza oro",
     shortCash = "Non hai abbastanza dollari",
     needJob = "Per viaggiare hai bisogno del lavoro: ~o~",
-    price = "Costo: ",
-    traveling = "Viaggiando verso "
+    traveling = "Viaggiando verso ",
+    destination = "Destination: ",
+    choose = "Choose Your Destination"
 }

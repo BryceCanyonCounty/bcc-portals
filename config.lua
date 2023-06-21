@@ -6,14 +6,16 @@ Config.defaultlang = 'en_lang'
 -----------------------------------------------------
 
 -- Open Portals Menu
-Config.portKey = 0x760A9C6F --[G]
+Config.key = 0x760A9C6F --[G]
 -----------------------------------------------------
 
--- Travel Time in Seconds Between Locations
-Config.travelTime = 15 -- Default: 15
+-- Travel Time and Price are Computed Based on Distance
+Config.time = 3.0 -- Default: 3.0 / Travel Time Multiplier
+
+Config.price = 0.012 -- Default: 0.012 / Price Multiplier
 -----------------------------------------------------
 
--- Allow Blips on Map when Stable is Closed
+-- Allow Blips on Map when Shop is Closed
 Config.blipOnClosed = true -- true = Show Blips / false = Remove Blips
 -----------------------------------------------------
 
@@ -24,7 +26,7 @@ Config.shops = {
         promptName = 'Annesburg Portal', -- Text Below the Prompt Button
         blipOn = true, -- Turns Blips On / Off
         blipName = 'Annesburg Portal', -- Name of the Blip on the Map
-        blipSprite = 784218150, -- 784218150 = Default
+        blipSprite = 784218150, -- Default: 784218150
         blipColorOpen = 'WHITE', -- Shop Open - Default: White - Blip Colors Shown Below
         blipColorClosed = 'RED', -- Shop Closed - Deafault: Red - Blip Colors Shown Below
         blipColorJob = 'YELLOW_ORANGE', -- Shop Job Locked - Default: Yellow - Blip Colors Shown Below
@@ -39,15 +41,15 @@ Config.shops = {
         shopHours = false, -- If You Want the Shops to Use Open and Closed Hours
         shopOpen = 7, -- Shop Open Time / 24 Hour Clock
         shopClose = 21, -- Shop Close Time / 24 Hour Clock
-        outlets = { -- label is the name used in the body of the menu / currencyType = 'cash' or 'gold' / DO NOT CHANGE 'location'
-            { label = 'Armadillo',   location = 'armadillo',  currencyType = 'cash', buyPrice = 100 },
-            { label = 'Blackwater',  location = 'blackwater', currencyType = 'cash', buyPrice = 80  },
-            { label = 'Rhodes',      location = 'rhodes',     currencyType = 'cash', buyPrice = 40  },
-            { label = 'Strawberry',  location = 'strawberry', currencyType = 'cash', buyPrice = 80  },
-            { label = 'Saint Denis', location = 'stdenis',    currencyType = 'cash', buyPrice = 40  },
-            { label = 'Tumbleweed',  location = 'tumbleweed', currencyType = 'cash', buyPrice = 100 },
-            { label = 'Valentine',   location = 'valentine',  currencyType = 'cash', buyPrice = 60  },
-            { label = 'Van Horn',    location = 'vanhorn',    currencyType = 'cash', buyPrice = 20  },
+        outlets = { -- label is the name used in the body of the menu / DO NOT CHANGE 'location'
+            { label = 'Armadillo',   location = 'armadillo',  },
+            { label = 'Blackwater',  location = 'blackwater', },
+            { label = 'Rhodes',      location = 'rhodes',     },
+            { label = 'Strawberry',  location = 'strawberry', },
+            { label = 'Saint Denis', location = 'stdenis',    },
+            { label = 'Tumbleweed',  location = 'tumbleweed', },
+            { label = 'Valentine',   location = 'valentine',  },
+            { label = 'Van Horn',    location = 'vanhorn',    },
         }
     },
     armadillo = {
@@ -71,14 +73,14 @@ Config.shops = {
         shopOpen = 7,
         shopClose = 21,
         outlets = {
-            { label = 'Annesburg',   location = 'annesburg',  currencyType = 'cash', buyPrice = 100 },
-            { label = 'Blackwater',  location = 'blackwater', currencyType = 'cash', buyPrice = 40  },
-            { label = 'Rhodes',      location = 'rhodes',     currencyType = 'cash', buyPrice = 80  },
-            { label = 'Strawberry',  location = 'strawberry', currencyType = 'cash', buyPrice = 40  },
-            { label = 'Saint Denis', location = 'stdenis',    currencyType = 'cash', buyPrice = 80  },
-            { label = 'Tumbleweed',  location = 'tumbleweed', currencyType = 'cash', buyPrice = 20  },
-            { label = 'Valentine',   location = 'valentine',  currencyType = 'cash', buyPrice = 60  },
-            { label = 'Van Horn',    location = 'vanhorn',    currencyType = 'cash', buyPrice = 100 },
+            { label = 'Annesburg',   location = 'annesburg',  },
+            { label = 'Blackwater',  location = 'blackwater', },
+            { label = 'Rhodes',      location = 'rhodes',     },
+            { label = 'Strawberry',  location = 'strawberry', },
+            { label = 'Saint Denis', location = 'stdenis',    },
+            { label = 'Tumbleweed',  location = 'tumbleweed', },
+            { label = 'Valentine',   location = 'valentine',  },
+            { label = 'Van Horn',    location = 'vanhorn',    },
         }
     },
     blackwater = {
@@ -102,14 +104,14 @@ Config.shops = {
         shopOpen = 7,
         shopClose = 21,
         outlets = {
-            { label = 'Annesburg',   location = 'annesburg',  currencyType = 'cash', buyPrice = 80 },
-            { label = 'Armadillo',   location = 'armadillo',  currencyType = 'cash', buyPrice = 40 },
-            { label = 'Rhodes',      location = 'rhodes',     currencyType = 'cash', buyPrice = 60 },
-            { label = 'Strawberry',  location = 'strawberry', currencyType = 'cash', buyPrice = 20 },
-            { label = 'Saint Denis', location = 'stdenis',    currencyType = 'cash', buyPrice = 80 },
-            { label = 'Tumbleweed',  location = 'tumbleweed', currencyType = 'cash', buyPrice = 60 },
-            { label = 'Valentine',   location = 'valentine',  currencyType = 'cash', buyPrice = 40 },
-            { label = 'Van Horn',    location = 'vanhorn',    currencyType = 'cash', buyPrice = 80 },
+            { label = 'Annesburg',   location = 'annesburg',  },
+            { label = 'Armadillo',   location = 'armadillo',  },
+            { label = 'Rhodes',      location = 'rhodes',     },
+            { label = 'Strawberry',  location = 'strawberry', },
+            { label = 'Saint Denis', location = 'stdenis',    },
+            { label = 'Tumbleweed',  location = 'tumbleweed', },
+            { label = 'Valentine',   location = 'valentine',  },
+            { label = 'Van Horn',    location = 'vanhorn',    },
         }
     },
     rhodes = {
@@ -133,14 +135,14 @@ Config.shops = {
         shopOpen = 7,
         shopClose = 21,
         outlets = {
-            { label = 'Annesburg',   location = 'annesburg',  currencyType = 'cash', buyPrice = 40 },
-            { label = 'Armadillo',   location = 'armadillo',  currencyType = 'cash', buyPrice = 80 },
-            { label = 'Blackwater',  location = 'blackwater', currencyType = 'cash', buyPrice = 60 },
-            { label = 'Strawberry',  location = 'strawberry', currencyType = 'cash', buyPrice = 60 },
-            { label = 'Saint Denis', location = 'stdenis',    currencyType = 'cash', buyPrice = 20 },
-            { label = 'Tumbleweed',  location = 'tumbleweed', currencyType = 'cash', buyPrice = 80 },
-            { label = 'Valentine',   location = 'valentine',  currencyType = 'cash', buyPrice = 40 },
-            { label = 'Van Horn',    location = 'vanhorn',    currencyType = 'cash', buyPrice = 40 },
+            { label = 'Annesburg',   location = 'annesburg',  },
+            { label = 'Armadillo',   location = 'armadillo',  },
+            { label = 'Blackwater',  location = 'blackwater', },
+            { label = 'Strawberry',  location = 'strawberry', },
+            { label = 'Saint Denis', location = 'stdenis',    },
+            { label = 'Tumbleweed',  location = 'tumbleweed', },
+            { label = 'Valentine',   location = 'valentine',  },
+            { label = 'Van Horn',    location = 'vanhorn',    },
         }
     },
     strawberry = {
@@ -164,14 +166,14 @@ Config.shops = {
         shopOpen = 7,
         shopClose = 21,
         outlets = {
-            { label = 'Annesburg',   location = 'annesburg',  currencyType = 'cash', buyPrice = 80 },
-            { label = 'Armadillo',   location = 'armadillo',  currencyType = 'cash', buyPrice = 40 },
-            { label = 'Blackwater',  location = 'blackwater', currencyType = 'cash', buyPrice = 20 },
-            { label = 'Rhodes',      location = 'rhodes',     currencyType = 'cash', buyPrice = 60 },
-            { label = 'Saint Denis', location = 'stdenis',    currencyType = 'cash', buyPrice = 60 },
-            { label = 'Tumbleweed',  location = 'tumbleweed', currencyType = 'cash', buyPrice = 60 },
-            { label = 'Valentine',   location = 'valentine',  currencyType = 'cash', buyPrice = 20 },
-            { label = 'Van Horn',    location = 'vanhorn',    currencyType = 'cash', buyPrice = 80 },
+            { label = 'Annesburg',   location = 'annesburg',  },
+            { label = 'Armadillo',   location = 'armadillo',  },
+            { label = 'Blackwater',  location = 'blackwater', },
+            { label = 'Rhodes',      location = 'rhodes',     },
+            { label = 'Saint Denis', location = 'stdenis',    },
+            { label = 'Tumbleweed',  location = 'tumbleweed', },
+            { label = 'Valentine',   location = 'valentine',  },
+            { label = 'Van Horn',    location = 'vanhorn',    },
         }
     },
     stdenis = {
@@ -195,14 +197,14 @@ Config.shops = {
         shopOpen = 7,
         shopClose = 21,
         outlets = {
-            { label = 'Annesburg',   location = 'annesburg',  currencyType = 'cash', buyPrice = 40  },
-            { label = 'Armadillo',   location = 'armadillo',  currencyType = 'cash', buyPrice = 80  },
-            { label = 'Blackwater',  location = 'blackwater', currencyType = 'cash', buyPrice = 80  },
-            { label = 'Rhodes',      location = 'rhodes',     currencyType = 'cash', buyPrice = 20  },
-            { label = 'Strawberry',  location = 'strawberry', currencyType = 'cash', buyPrice = 60  },
-            { label = 'Tumbleweed',  location = 'tumbleweed', currencyType = 'cash', buyPrice = 100 },
-            { label = 'Valentine',   location = 'valentine',  currencyType = 'cash', buyPrice = 60  },
-            { label = 'Van Horn',    location = 'vanhorn',    currencyType = 'cash', buyPrice = 40  },
+            { label = 'Annesburg',   location = 'annesburg',  },
+            { label = 'Armadillo',   location = 'armadillo',  },
+            { label = 'Blackwater',  location = 'blackwater', },
+            { label = 'Rhodes',      location = 'rhodes',     },
+            { label = 'Strawberry',  location = 'strawberry', },
+            { label = 'Tumbleweed',  location = 'tumbleweed', },
+            { label = 'Valentine',   location = 'valentine',  },
+            { label = 'Van Horn',    location = 'vanhorn',    },
         }
     },
     tumbleweed = {
@@ -226,14 +228,14 @@ Config.shops = {
         shopOpen = 7,
         shopClose = 21,
         outlets = {
-            { label = 'Annesburg',   location = 'annesburg',  currencyType = 'cash', buyPrice = 100 },
-            { label = 'Armadillo',   location = 'armadillo',  currencyType = 'cash', buyPrice = 20  },
-            { label = 'Blackwater',  location = 'blackwater', currencyType = 'cash', buyPrice = 60  },
-            { label = 'Rhodes',      location = 'rhodes',     currencyType = 'cash', buyPrice = 80  },
-            { label = 'Strawberry',  location = 'strawberry', currencyType = 'cash', buyPrice = 60  },
-            { label = 'Saint Denis', location = 'stdenis',    currencyType = 'cash', buyPrice = 100 },
-            { label = 'Valentine',   location = 'valentine',  currencyType = 'cash', buyPrice = 60  },
-            { label = 'Van Horn',    location = 'vanhorn',    currencyType = 'cash', buyPrice = 100 },
+            { label = 'Annesburg',   location = 'annesburg',  },
+            { label = 'Armadillo',   location = 'armadillo',  },
+            { label = 'Blackwater',  location = 'blackwater', },
+            { label = 'Rhodes',      location = 'rhodes',     },
+            { label = 'Strawberry',  location = 'strawberry', },
+            { label = 'Saint Denis', location = 'stdenis',    },
+            { label = 'Valentine',   location = 'valentine',  },
+            { label = 'Van Horn',    location = 'vanhorn',    },
         }
     },
     valentine = {
@@ -257,14 +259,14 @@ Config.shops = {
         shopOpen = 7,
         shopClose = 21,
         outlets = {
-            { label = 'Annesburg',   location = 'annesburg',  currencyType = 'cash', buyPrice = 60 },
-            { label = 'Armadillo',   location = 'armadillo',  currencyType = 'cash', buyPrice = 60 },
-            { label = 'Blackwater',  location = 'blackwater', currencyType = 'cash', buyPrice = 40 },
-            { label = 'Rhodes',      location = 'rhodes',     currencyType = 'cash', buyPrice = 40 },
-            { label = 'Strawberry',  location = 'strawberry', currencyType = 'cash', buyPrice = 20 },
-            { label = 'Saint Denis', location = 'stdenis',    currencyType = 'cash', buyPrice = 60 },
-            { label = 'Tumbleweed',  location = 'tumbleweed', currencyType = 'cash', buyPrice = 60 },
-            { label = 'Van Horn',    location = 'vanhorn',    currencyType = 'cash', buyPrice = 60 },
+            { label = 'Annesburg',   location = 'annesburg',  },
+            { label = 'Armadillo',   location = 'armadillo',  },
+            { label = 'Blackwater',  location = 'blackwater', },
+            { label = 'Rhodes',      location = 'rhodes',     },
+            { label = 'Strawberry',  location = 'strawberry', },
+            { label = 'Saint Denis', location = 'stdenis',    },
+            { label = 'Tumbleweed',  location = 'tumbleweed', },
+            { label = 'Van Horn',    location = 'vanhorn',    },
         }
     },
     vanhorn = {
@@ -288,14 +290,14 @@ Config.shops = {
         shopOpen = 7,
         shopClose = 21,
         outlets = {
-            { label = 'Annesburg',   location = 'annesburg',  currencyType = 'cash', buyPrice = 20  },
-            { label = 'Armadillo',   location = 'armadillo',  currencyType = 'cash', buyPrice = 100 },
-            { label = 'Blackwater',  location = 'blackwater', currencyType = 'cash', buyPrice = 80  },
-            { label = 'Rhodes',      location = 'rhodes',     currencyType = 'cash', buyPrice = 40  },
-            { label = 'Strawberry',  location = 'strawberry', currencyType = 'cash', buyPrice = 80  },
-            { label = 'Saint Denis', location = 'stdenis',    currencyType = 'cash', buyPrice = 40  },
-            { label = 'Tumbleweed',  location = 'tumbleweed', currencyType = 'cash', buyPrice = 100 },
-            { label = 'Valentine',   location = 'valentine',  currencyType = 'cash', buyPrice = 60  },
+            { label = 'Annesburg',   location = 'annesburg',  },
+            { label = 'Armadillo',   location = 'armadillo',  },
+            { label = 'Blackwater',  location = 'blackwater', },
+            { label = 'Rhodes',      location = 'rhodes',     },
+            { label = 'Strawberry',  location = 'strawberry', },
+            { label = 'Saint Denis', location = 'stdenis',    },
+            { label = 'Tumbleweed',  location = 'tumbleweed', },
+            { label = 'Valentine',   location = 'valentine',  },
         }
     }
 }
