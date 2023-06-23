@@ -277,20 +277,58 @@ RegisterNetEvent('bcc-portals:DestinationMenu', function(location, cashPrice, go
     MenuData.CloseAll()
     InMenu = true
     local player = PlayerPedId()
-    local elements = {
-        {
-            label = 'Cash',
-            value = 'cash',
-            desc = '<span style=color:#C0C0C0;>' .. 'Price: ' .. '</span>' ..  '<span style=color:#278664;>' .. ' $' .. cashPrice .. '</span>' .. '<br>' ..
-            '<span style=color:#C0C0C0;>' .. 'Travel Time: ' .. '</span>' .. '<span style=color:#888;>' .. ' ' .. displayTime .. ' seconds' .. '</span>'
-        },
-        {
-            label = 'Gold',
-            value = 'gold',
-            desc = '<span style=color:#C0C0C0;>' .. 'Price: ' .. '</span>' .. '<span style=color:#CC9900;>' .. goldPrice .. ' ' .. 'gold' .. '</span>' .. '<br>' ..
-            '<span style=color:#C0C0C0;>' .. 'Travel Time: ' .. '</span>' .. '<span style=color:#888;>' .. ' ' .. displayTime .. ' seconds' .. '</span>'
-        }
+    local elements = {}
+    local currencyType = Config.currency
+    local currency = {
+        [1] = function()
+            elements = {
+                {
+                    label = _U('cash'),
+                    value = 'cash',
+                    desc = '<span style=color:#C0C0C0;>' .. 'Price: ' .. '</span>' ..  '<span style=color:#278664;>' .. ' $' .. cashPrice .. '</span>' .. '<br>' ..
+                    '<span style=color:#C0C0C0;>' .. 'Travel Time: ' .. '</span>' .. '<span style=color:#888;>' .. ' ' .. displayTime .. ' seconds' .. '</span>'
+                }
+            }
+        end,
+        [2] = function()
+            elements = {
+                {
+                    label = _U('gold'),
+                    value = 'gold',
+                    desc = '<span style=color:#C0C0C0;>' .. 'Price: ' .. '</span>' .. '<span style=color:#CC9900;>' .. goldPrice .. ' ' .. 'gold' .. '</span>' .. '<br>' ..
+                    '<span style=color:#C0C0C0;>' .. 'Travel Time: ' .. '</span>' .. '<span style=color:#888;>' .. ' ' .. displayTime .. ' seconds' .. '</span>'
+                }
+            }
+        end,
+        [3] = function()
+            elements = {
+                {
+                    label = _U('cash'),
+                    value = 'cash',
+                    desc = '<span style=color:#C0C0C0;>' .. 'Price: ' .. '</span>' ..  '<span style=color:#278664;>' .. ' $' .. cashPrice .. '</span>' .. '<br>' ..
+                    '<span style=color:#C0C0C0;>' .. 'Travel Time: ' .. '</span>' .. '<span style=color:#888;>' .. ' ' .. displayTime .. ' seconds' .. '</span>'
+                },
+                {
+                    label = _U('gold'),
+                    value = 'gold',
+                    desc = '<span style=color:#C0C0C0;>' .. 'Price: ' .. '</span>' .. '<span style=color:#CC9900;>' .. goldPrice .. ' ' .. 'gold' .. '</span>' .. '<br>' ..
+                    '<span style=color:#C0C0C0;>' .. 'Travel Time: ' .. '</span>' .. '<span style=color:#888;>' .. ' ' .. displayTime .. ' seconds' .. '</span>'
+                }
+            }
+        end,
+        [4] = function()
+            elements = {
+                {
+                    label = _U('go'),
+                    value = 'go',
+                    desc =  '<span style=color:#C0C0C0;>' .. 'Travel Time: ' .. '</span>' .. '<span style=color:#888;>' .. ' ' .. displayTime .. ' seconds' .. '</span>'
+                }
+            }
+        end
     }
+    if currency[currencyType] then
+        currency[currencyType]()
+    end
     MenuData.Open('default', GetCurrentResourceName(), 'menuapi',
     {
         title = '<span style=color:#999;>' .. Config.shops[shopId].shopName .. '</span>',
