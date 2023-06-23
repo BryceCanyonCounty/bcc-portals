@@ -12,7 +12,7 @@ Config.key = 0x760A9C6F --[G]
 -- Travel Time and Price are Computed Based on Distance
 Config.time = 3.0 -- Default: 3.0 / Travel Time Multiplier
 
-Config.price = 0.012 -- Default: 0.012 / Price Multiplier
+Config.price = 0.012 -- Default: 0.012 / Price Multiplier / 0 = No Charge
 -----------------------------------------------------
 
 -- Allow Blips on Map when Shop is Closed
