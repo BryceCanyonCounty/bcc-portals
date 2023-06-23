@@ -12,5 +12,8 @@ Locales["en_lang"] = {
     needJob = "You don't have the required job!",
     traveling = "Traveling to ",
     destination = "Destination: ",
-    choose = "Choose Your Destination"
+    choose = "Choose Your Destination",
+    cash = "Cash",
+    gold = "Gold",
+    go = "Go"
 }

@@ -9,9 +9,12 @@ Config.defaultlang = 'en_lang'
 Config.key = 0x760A9C6F --[G]
 -----------------------------------------------------
 
--- Travel Time and Price are Computed Based on Distance
+-- Travel Time is Computed Based on Distance
 Config.time = 3.0 -- Default: 3.0 / Travel Time Multiplier
+-----------------------------------------------------
 
+-- Price is Computed Based on Distance
+Config.currency = 3 -- 1 = cash-only / 2 = gold-only / 3 = cash and gold / 4 = no-currency (set Config.price to 0)
 Config.price = 0.012 -- Default: 0.012 / Price Multiplier / 0 = No Charge
 -----------------------------------------------------
 
