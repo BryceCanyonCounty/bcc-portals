@@ -128,7 +128,7 @@ CreateThread(function()
 
                                 if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then -- UiPromptHasStandardModeCompleted
                                     TriggerServerEvent('bcc-portals:getPlayerJob')
-                                    Wait(200)
+                                    Wait(500)
                                     if PlayerJob then
                                         if CheckJob(shopConfig.allowedJobs, PlayerJob) then
                                             if tonumber(shopConfig.jobGrade) <= tonumber(JobGrade) then
@@ -136,13 +136,13 @@ CreateThread(function()
                                                 DisplayRadar(false)
                                                 TaskStandStill(player, -1)
                                             else
-                                                VORPcore.NotifyRightTip(_U('needJob') .. JobName .. ' ' .. shopConfig.jobGrade, 5000)
+                                                VORPcore.NotifyRightTip(_U('needJob'), 5000)
                                             end
                                         else
-                                            VORPcore.NotifyRightTip(_U('needJob') .. JobName .. ' ' .. shopConfig.jobGrade, 5000)
+                                            VORPcore.NotifyRightTip(_U('needJob'), 5000)
                                         end
                                     else
-                                        VORPcore.NotifyRightTip(_U('needJob') .. JobName .. ' ' .. shopConfig.jobGrade, 5000)
+                                        VORPcore.NotifyRightTip(_U('needJob'), 5000)
                                     end
                                 end
                             end
@@ -208,7 +208,7 @@ CreateThread(function()
 
                             if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then -- UiPromptHasStandardModeCompleted
                                 TriggerServerEvent('bcc-portals:getPlayerJob')
-                                Wait(200)
+                                Wait(500)
                                 if PlayerJob then
                                     if CheckJob(shopConfig.allowedJobs, PlayerJob) then
                                         if tonumber(shopConfig.jobGrade) <= tonumber(JobGrade) then
@@ -216,13 +216,13 @@ CreateThread(function()
                                             DisplayRadar(false)
                                             TaskStandStill(player, -1)
                                         else
-                                            VORPcore.NotifyRightTip(_U('needJob') .. JobName .. ' ' .. shopConfig.jobGrade, 5000)
+                                            VORPcore.NotifyRightTip(_U('needJob'), 5000)
                                         end
                                     else
-                                        VORPcore.NotifyRightTip(_U('needJob') .. JobName .. ' ' .. shopConfig.jobGrade, 5000)
+                                        VORPcore.NotifyRightTip(_U('needJob'), 5000)
                                     end
                                 else
-                                    VORPcore.NotifyRightTip(_U('needJob') .. JobName .. ' ' .. shopConfig.jobGrade, 5000)
+                                    VORPcore.NotifyRightTip(_U('needJob'), 5000)
                                 end
                             end
                         end
@@ -396,10 +396,9 @@ function LoadModel(npcModel)
 end
 
 -- Check if Player has Job
-function CheckJob(allowedJob, playerJob)
-    for _, jobAllowed in pairs(allowedJob) do
-        JobName = jobAllowed
-        if JobName == playerJob then
+function CheckJob(allowedJobs, playerJob)
+    for _, jobs in pairs(allowedJobs) do
+        if jobs == playerJob then
             return true
         end
     end

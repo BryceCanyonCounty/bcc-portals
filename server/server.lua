@@ -9,8 +9,12 @@ RegisterNetEvent('bcc-portals:GetData', function(location, pcoords,shopId)
     local shopConfig = Config.shops[location]
     local dcoords = vector3(shopConfig.npc.x, shopConfig.npc.y, shopConfig.npc.z)
     local distance = #(pcoords - dcoords)
-    local cashPrice = math.ceil(distance * Config.price)
-    local goldPrice = math.ceil(cashPrice / 20.67) -- 1899 Gold Price = $20.67
+    local cashPrice = 0
+    local goldPrice = 0
+    if Config.price > 0 then
+        cashPrice = math.ceil(distance * Config.price)
+        goldPrice = math.ceil(cashPrice / 20.67) -- 1899 Gold Price = $20.67
+    end
     local time = math.ceil(distance * Config.time)
     local displayTime = math.ceil(time / 1000)
 
