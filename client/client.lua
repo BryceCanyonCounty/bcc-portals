@@ -6,7 +6,6 @@ local PortPrompt1 = GetRandomIntInRange(0, 0xffffff)
 local PortPrompt2 = GetRandomIntInRange(0, 0xffffff)
 -- Jobs
 local PlayerJob
-local JobName
 local JobGrade
 -- Menu
 local InMenu = false
