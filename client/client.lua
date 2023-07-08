@@ -7,6 +7,7 @@ local PortPrompt2 = GetRandomIntInRange(0, 0xffffff)
 -- Jobs
 local PlayerJob
 local JobGrade
+local JobCheck = false
 -- Menu
 local InMenu = false
 MenuData = {}
@@ -121,16 +122,16 @@ CreateThread(function()
                                 PromptSetActiveGroupThisFrame(PortPrompt1, shopOpen)
 
                                 if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then -- UiPromptHasStandardModeCompleted
-                                    TriggerServerEvent('bcc-portals:getPlayerJob')
-                                    Wait(500)
+                                    JobCheck = false
+                                    GetPlayerJob()
                                     if PlayerJob then
-                                        if CheckJob(shopCfg.allowedJobs, PlayerJob) then
+                                        if GetAllowedJobs(shopCfg.allowedJobs, PlayerJob) then
                                             if tonumber(shopCfg.jobGrade) <= tonumber(JobGrade) then
                                                 MainMenu(pCoords, shop)
                                                 DisplayRadar(false)
                                                 TaskStandStill(player, -1)
                                             else
-                                                VORPcore.NotifyRightTip(_U('needJob'), 5000)
+                                                VORPcore.NotifyRightTip(_U('needJobGrade'), 5000)
                                             end
                                         else
                                             VORPcore.NotifyRightTip(_U('needJob'), 5000)
@@ -199,16 +200,16 @@ CreateThread(function()
                             PromptSetActiveGroupThisFrame(PortPrompt1, shopOpen)
 
                             if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then -- UiPromptHasStandardModeCompleted
-                                TriggerServerEvent('bcc-portals:getPlayerJob')
-                                Wait(500)
+                                JobCheck = false
+                                GetPlayerJob()
                                 if PlayerJob then
-                                    if CheckJob(shopCfg.allowedJobs, PlayerJob) then
+                                    if GetAllowedJobs(shopCfg.allowedJobs, PlayerJob) then
                                         if tonumber(shopCfg.jobGrade) <= tonumber(JobGrade) then
                                             MainMenu(pCoords, shop)
                                             DisplayRadar(false)
                                             TaskStandStill(player, -1)
                                         else
-                                            VORPcore.NotifyRightTip(_U('needJob'), 5000)
+                                            VORPcore.NotifyRightTip(_U('needJobGrade'), 5000)
                                         end
                                     else
                                         VORPcore.NotifyRightTip(_U('needJob'), 5000)
@@ -261,7 +262,7 @@ function MainMenu(pCoords, shop)
     function(data, menu)
         menu.close()
         InMenu = false
-        ClearPedTasksImmediately(PlayerPedId())
+        ClearPedTasks(PlayerPedId())
         DisplayRadar(true)
     end)
 end
@@ -342,13 +343,13 @@ RegisterNetEvent('bcc-portals:DestinationMenu', function(location, cashPrice, go
 
         menu.close()
         InMenu = false
-        ClearPedTasksImmediately(player)
+        ClearPedTasks(player)
         DisplayRadar(true)
     end,
     function(data, menu)
         menu.close()
         InMenu = false
-        ClearPedTasksImmediately(player)
+        ClearPedTasks(player)
         DisplayRadar(true)
     end)
 end)
@@ -426,19 +427,25 @@ function LoadModel(npcModel)
 end
 
 -- Check if Player has Job
-function CheckJob(allowedJobs, playerJob)
-    for _, jobs in pairs(allowedJobs) do
-        if jobs == playerJob then
+function GetPlayerJob()
+    VORPcore.RpcCall('GetJobData', function(result)
+        PlayerJob = result[1]
+        JobGrade = result[2]
+        JobCheck = true
+    end)
+    while not JobCheck do
+        Wait(5)
+    end
+end
+
+function GetAllowedJobs(allowedJobs, playerJob)
+    for _, job in pairs(allowedJobs) do
+        if job == playerJob then
             return true
         end
     end
     return false
 end
-
-RegisterNetEvent('bcc-portals:sendPlayerJob', function(Job, grade)
-    PlayerJob = Job
-    JobGrade = grade
-end)
 
 AddEventHandler('onResourceStop', function(resourceName)
     if (GetCurrentResourceName() ~= resourceName) then
