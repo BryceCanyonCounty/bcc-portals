@@ -7,7 +7,6 @@ local PortPrompt2 = GetRandomIntInRange(0, 0xffffff)
 -- Jobs
 local PlayerJob
 local JobGrade
-local JobCheck = false
 -- Menu
 local InMenu = false
 MenuData = {}
@@ -122,7 +121,6 @@ CreateThread(function()
                                 PromptSetActiveGroupThisFrame(PortPrompt1, shopOpen)
 
                                 if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then -- UiPromptHasStandardModeCompleted
-                                    JobCheck = false
                                     GetPlayerJob()
                                     if PlayerJob then
                                         if GetAllowedJobs(shopCfg.allowedJobs, PlayerJob) then
@@ -200,7 +198,6 @@ CreateThread(function()
                             PromptSetActiveGroupThisFrame(PortPrompt1, shopOpen)
 
                             if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then -- UiPromptHasStandardModeCompleted
-                                JobCheck = false
                                 GetPlayerJob()
                                 if PlayerJob then
                                     if GetAllowedJobs(shopCfg.allowedJobs, PlayerJob) then
@@ -428,12 +425,13 @@ end
 
 -- Check if Player has Job
 function GetPlayerJob()
+    local jobCheck = false
     VORPcore.RpcCall('GetJobData', function(result)
         PlayerJob = result[1]
         JobGrade = result[2]
-        JobCheck = true
+        jobCheck = true
     end)
-    while not JobCheck do
+    while not jobCheck do
         Wait(5)
     end
 end
