@@ -5,7 +5,8 @@ Looking for fast and convenient travel in your server? Our script has got you co
 
 #### Features
 - Buy passage to a location from a ticket seller
-- Cash, gold, cash and gold or set to free in config
+- Currency is set per individual shop in config
+  - Cash-only, gold-only, cash and gold, free
 - Shop hours may be set individually for each shop or disabled to allow the shop to remain open
 - Shop blips are colored and changeable per shop location
 - Blips can change color reflecting if shop is open, closed or job locked
@@ -21,9 +22,6 @@ Looking for fast and convenient travel in your server? Our script has got you co
 - Add `bcc-portals` folder to your resources folder
 - Add `ensure bcc-portals` to your `resources.cfg`
 - Restart server
-
-#### Credits
-- vorp_stores
 
 #### GitHub
 - https://github.com/BryceCanyonCounty/bcc-portals

@@ -4,9 +4,6 @@ local OpenPorts
 local ClosePorts
 local PortPrompt1 = GetRandomIntInRange(0, 0xffffff)
 local PortPrompt2 = GetRandomIntInRange(0, 0xffffff)
--- Jobs
-local PlayerJob
-local JobGrade
 -- Menu
 local InMenu = false
 MenuData = {}
@@ -40,14 +37,12 @@ CreateThread(function()
                             if not Config.shops[shop].Blip then
                                 AddBlip(shop)
                             end
+                            Citizen.InvokeNative(0x662D364ABF16DE2F, Config.shops[shop].Blip, joaat(Config.BlipColors[shopCfg.blipClosed])) -- BlipAddModifier
                         else
                             if Config.shops[shop].Blip then
                                 RemoveBlip(Config.shops[shop].Blip)
                                 Config.shops[shop].Blip = nil
                             end
-                        end
-                        if Config.shops[shop].Blip then
-                            Citizen.InvokeNative(0x662D364ABF16DE2F, Config.shops[shop].Blip, joaat(Config.BlipColors[shopCfg.blipClosed])) -- BlipAddModifier
                         end
                         if shopCfg.NPC then
                             DeleteEntity(shopCfg.NPC)
@@ -60,19 +55,18 @@ CreateThread(function()
                             PromptSetActiveGroupThisFrame(PortPrompt2, shopClosed)
 
                             if Citizen.InvokeNative(0xC92AC953F0A982AE, ClosePorts) then -- UiPromptHasStandardModeCompleted
-                                Wait(100)
                                 VORPcore.NotifyRightTip(shopCfg.shopName .. _U('hours') .. shopCfg.shopOpen .. _U('to') .. shopCfg.shopClose .. _U('hundred'), 4000)
                             end
                         end
                     elseif hour >= shopCfg.shopOpen then
                         -- Using Shop Hours - Shop Open
-                        if shopCfg.blipOn and not Config.shops[shop].Blip then
-                            AddBlip(shop)
+                        if shopCfg.blipOn then
+                            if not Config.shops[shop].Blip then
+                                AddBlip(shop)
+                            end
+                            Citizen.InvokeNative(0x662D364ABF16DE2F, Config.shops[shop].Blip, joaat(Config.BlipColors[shopCfg.blipOpen])) -- BlipAddModifier
                         end
                         if not next(shopCfg.allowedJobs) then
-                            if Config.shops[shop].Blip then
-                                Citizen.InvokeNative(0x662D364ABF16DE2F, Config.shops[shop].Blip, joaat(Config.BlipColors[shopCfg.blipOpen])) -- BlipAddModifier
-                            end
                             local sDist = #(pCoords - shopCfg.npc)
                             if shopCfg.npcOn then
                                 if sDist <= shopCfg.nDistance then
@@ -93,8 +87,6 @@ CreateThread(function()
 
                                 if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then -- UiPromptHasStandardModeCompleted
                                     MainMenu(pCoords, shop)
-                                    DisplayRadar(false)
-                                    TaskStandStill(player, -1)
                                 end
                             end
                         else
@@ -121,36 +113,20 @@ CreateThread(function()
                                 PromptSetActiveGroupThisFrame(PortPrompt1, shopOpen)
 
                                 if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then -- UiPromptHasStandardModeCompleted
-                                    TriggerServerEvent('bcc-portals:getPlayerJob')
-                                    Wait(500)
-                                    if PlayerJob then
-                                        if CheckJob(shopCfg.allowedJobs, PlayerJob) then
-                                            if tonumber(shopCfg.jobGrade) <= tonumber(JobGrade) then
-                                                MainMenu(pCoords, shop)
-                                                DisplayRadar(false)
-                                                TaskStandStill(player, -1)
-                                            else
-                                                VORPcore.NotifyRightTip(_U('needJob'), 5000)
-                                            end
-                                        else
-                                            VORPcore.NotifyRightTip(_U('needJob'), 5000)
-                                        end
-                                    else
-                                        VORPcore.NotifyRightTip(_U('needJob'), 5000)
-                                    end
+                                    CheckPlayerJob(pCoords, shop)
                                 end
                             end
                         end
                     end
                 else
                     -- Not Using Shop Hours - Shop Always Open
-                    if shopCfg.blipOn and not Config.shops[shop].Blip then
-                        AddBlip(shop)
+                    if shopCfg.blipOn then
+                        if not Config.shops[shop].Blip then
+                            AddBlip(shop)
+                        end
+                        Citizen.InvokeNative(0x662D364ABF16DE2F, Config.shops[shop].Blip, joaat(Config.BlipColors[shopCfg.blipOpen])) -- BlipAddModifier
                     end
                     if not next(shopCfg.allowedJobs) then
-                        if Config.shops[shop].Blip then
-                            Citizen.InvokeNative(0x662D364ABF16DE2F, Config.shops[shop].Blip, joaat(Config.BlipColors[shopCfg.blipOpen])) -- BlipAddModifier
-                        end
                         local sDist = #(pCoords - shopCfg.npc)
                         if shopCfg.npcOn then
                             if sDist <= shopCfg.nDistance then
@@ -171,8 +147,6 @@ CreateThread(function()
 
                             if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then -- UiPromptHasStandardModeCompleted
                                 MainMenu(pCoords, shop)
-                                DisplayRadar(false)
-                                TaskStandStill(player, -1)
                             end
                         end
                     else
@@ -199,23 +173,7 @@ CreateThread(function()
                             PromptSetActiveGroupThisFrame(PortPrompt1, shopOpen)
 
                             if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then -- UiPromptHasStandardModeCompleted
-                                TriggerServerEvent('bcc-portals:getPlayerJob')
-                                Wait(500)
-                                if PlayerJob then
-                                    if CheckJob(shopCfg.allowedJobs, PlayerJob) then
-                                        if tonumber(shopCfg.jobGrade) <= tonumber(JobGrade) then
-                                            MainMenu(pCoords, shop)
-                                            DisplayRadar(false)
-                                            TaskStandStill(player, -1)
-                                        else
-                                            VORPcore.NotifyRightTip(_U('needJob'), 5000)
-                                        end
-                                    else
-                                        VORPcore.NotifyRightTip(_U('needJob'), 5000)
-                                    end
-                                else
-                                    VORPcore.NotifyRightTip(_U('needJob'), 5000)
-                                end
+                                CheckPlayerJob(pCoords, shop)
                             end
                         end
                     end
@@ -231,20 +189,24 @@ end)
 -- Portal Menu to Choose Destination
 function MainMenu(pCoords, shop)
     MenuData.CloseAll()
+    local player = PlayerPedId()
+    local shopCfg = Config.shops[shop]
+    DisplayRadar(false)
+    TaskStandStill(player, -1)
     InMenu = true
     local elements = {}
 
-    for k, v in pairs(Config.shops[shop].outlets) do
+    for _, outletCfg in pairs(shopCfg.outlets) do
         elements[#elements + 1] = {
-            label = v.label,
-            value = k,
+            label = outletCfg.label,
+            value = _,
             desc = '<span style=color:#C0C0C0;>' .. _U('choose') .. '</span>',
-            location = v.location,
+            location = outletCfg.location,
         }
     end
     MenuData.Open('default', GetCurrentResourceName(), 'menuapi',
     {
-        title = '<span style=color:#999;>' .. Config.shops[shop].shopName .. '</span>',
+        title = '<span style=color:#999;>' .. shopCfg.shopName .. '</span>',
         subtext = '<span style=color:#C0C0C0;>' .. _U('subMenu') .. '</span>',
         align = 'top-left',
         elements = elements,
@@ -261,7 +223,7 @@ function MainMenu(pCoords, shop)
     function(data, menu)
         menu.close()
         InMenu = false
-        ClearPedTasksImmediately(PlayerPedId())
+        ClearPedTasks(player)
         DisplayRadar(true)
     end)
 end
@@ -271,7 +233,7 @@ RegisterNetEvent('bcc-portals:DestinationMenu', function(location, cashPrice, go
     InMenu = true
     local player = PlayerPedId()
     local elements = {}
-    local currencyType = Config.currency
+    local currencyType = Config.shops[shop].currency
     local currency = {
         [1] = function()
             elements = {
@@ -313,7 +275,7 @@ RegisterNetEvent('bcc-portals:DestinationMenu', function(location, cashPrice, go
             elements = {
                 {
                     label = _U('go'),
-                    value = 'go',
+                    value = 'free',
                     desc =  '<span style=color:#C0C0C0;>' .. 'Travel Time: ' .. '</span>' .. '<span style=color:#888;>' .. ' ' .. displayTime .. ' seconds' .. '</span>'
                 }
             }
@@ -334,21 +296,29 @@ RegisterNetEvent('bcc-portals:DestinationMenu', function(location, cashPrice, go
         if data.current == 'backup' then
             _G[data.trigger](shop)
         end
+        local payment = nil
         if data.current.value == 'cash' then
-            TriggerServerEvent('bcc-portals:BuyPassage', location, cashPrice, time, true)
-        else
-            TriggerServerEvent('bcc-portals:BuyPassage', location, goldPrice, time, false)
+            payment = 'cash'
+            TriggerServerEvent('bcc-portals:BuyPassage', location, cashPrice, time, payment)
+
+        elseif data.current.value == 'gold' then
+            payment = 'gold'
+            TriggerServerEvent('bcc-portals:BuyPassage', location, goldPrice, time, payment)
+
+        elseif data.current.value == 'free' then
+            payment = 'free'
+            TriggerServerEvent('bcc-portals:BuyPassage', location, goldPrice, time, payment)
         end
 
         menu.close()
         InMenu = false
-        ClearPedTasksImmediately(player)
+        ClearPedTasks(player)
         DisplayRadar(true)
     end,
     function(data, menu)
         menu.close()
         InMenu = false
-        ClearPedTasksImmediately(player)
+        ClearPedTasks(player)
         DisplayRadar(true)
     end)
 end)
@@ -425,20 +395,38 @@ function LoadModel(npcModel)
     end
 end
 
--- Check if Player has Job
-function CheckJob(allowedJobs, playerJob)
-    for _, jobs in pairs(allowedJobs) do
-        if jobs == playerJob then
-            return true
-        end
+-- Check if Player has Required Job
+function CheckPlayerJob(pCoords, shop)
+    local playerJob, jobGrade = nil, nil
+    local jobData = false
+    VORPcore.RpcCall('GetJobData', function(result)
+        playerJob = result[1]
+        jobGrade = result[2]
+        jobData = true
+    end)
+    while not jobData do
+        Wait(5)
     end
-    return false
+    if playerJob then
+        local shopCfg = Config.shops[shop]
+        for _, job in pairs(shopCfg.allowedJobs) do
+            if playerJob == job then
+                if tonumber(jobGrade) >= tonumber(shopCfg.jobGrade) then
+                    MainMenu(pCoords, shop)
+                    break
+                else
+                    VORPcore.NotifyRightTip(_U('needJobGrade'), 4000)
+                    break
+                end
+            else
+                VORPcore.NotifyRightTip(_U('needJob'), 4000)
+                break
+            end
+        end
+    else
+        VORPcore.NotifyRightTip(_U('needJob'), 4000)
+    end
 end
-
-RegisterNetEvent('bcc-portals:sendPlayerJob', function(Job, grade)
-    PlayerJob = Job
-    JobGrade = grade
-end)
 
 AddEventHandler('onResourceStop', function(resourceName)
     if (GetCurrentResourceName() ~= resourceName) then
