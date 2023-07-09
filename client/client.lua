@@ -413,8 +413,6 @@ function CheckPlayerJob(pCoords, shop)
             if playerJob == job then
                 if tonumber(jobGrade) >= tonumber(shopCfg.jobGrade) then
                     MainMenu(pCoords, shop)
-                    DisplayRadar(false)
-                    TaskStandStill(PlayerPedId(), -1)
                     break
                 else
                     VORPcore.NotifyRightTip(_U('needJobGrade'), 4000)
