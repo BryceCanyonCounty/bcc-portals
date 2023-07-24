@@ -48,9 +48,22 @@ RegisterNetEvent('bcc-portals:BuyPassage', function(location, price, time, payme
 end)
 
 -- Get Player Job and Job Grade
-VORPcore.addRpcCallback('GetJobData', function(source, cb)
+VORPcore.addRpcCallback('CheckPlayerJob', function(source, cb, shop)
     local src = source
     local Character = VORPcore.getUser(src).getUsedCharacter
+    local playerJob = Character.job
+    local jobGrade = Character.jobGrade
 
-    cb({Character.job, Character.jobGrade})
+    if playerJob then
+        for _, job in pairs(Config.shops[shop].allowedJobs) do
+            if playerJob == job then
+                if tonumber(jobGrade) >= tonumber(Config.shops[shop].jobGrade) then
+                    cb(true)
+                    return
+                end
+            end
+        end
+    end
+    VORPcore.NotifyRightTip(src, _U('needJob'), 4000)
+    cb(false)
 end)
