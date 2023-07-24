@@ -86,7 +86,7 @@ CreateThread(function()
                                 PromptSetActiveGroupThisFrame(PortPrompt1, shopOpen)
 
                                 if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then -- UiPromptHasStandardModeCompleted
-                                    MainMenu(pCoords, shop)
+                                    OpenMenu(pCoords, shop)
                                 end
                             end
                         else
@@ -113,7 +113,13 @@ CreateThread(function()
                                 PromptSetActiveGroupThisFrame(PortPrompt1, shopOpen)
 
                                 if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then -- UiPromptHasStandardModeCompleted
-                                    CheckPlayerJob(pCoords, shop)
+                                    VORPcore.RpcCall('CheckPlayerJob', function(result)
+                                    if result then
+                                        OpenMenu(pCoords, shop)
+                                    else
+                                        return
+                                    end
+                                end, shop)
                                 end
                             end
                         end
@@ -146,7 +152,7 @@ CreateThread(function()
                             PromptSetActiveGroupThisFrame(PortPrompt1, shopOpen)
 
                             if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then -- UiPromptHasStandardModeCompleted
-                                MainMenu(pCoords, shop)
+                                OpenMenu(pCoords, shop)
                             end
                         end
                     else
@@ -173,7 +179,13 @@ CreateThread(function()
                             PromptSetActiveGroupThisFrame(PortPrompt1, shopOpen)
 
                             if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then -- UiPromptHasStandardModeCompleted
-                                CheckPlayerJob(pCoords, shop)
+                                VORPcore.RpcCall('CheckPlayerJob', function(result)
+                                    if result then
+                                        OpenMenu(pCoords,shop)
+                                    else
+                                        return
+                                    end
+                                end, shop)
                             end
                         end
                     end
@@ -187,7 +199,7 @@ CreateThread(function()
 end)
 
 -- Portal Menu to Choose Destination
-function MainMenu(pCoords, shop)
+function OpenMenu(pCoords, shop)
     MenuData.CloseAll()
     local player = PlayerPedId()
     local shopCfg = Config.shops[shop]
@@ -392,39 +404,6 @@ function LoadModel(npcModel)
     RequestModel(model)
     while not HasModelLoaded(model) do
         Wait(10)
-    end
-end
-
--- Check if Player has Required Job
-function CheckPlayerJob(pCoords, shop)
-    local playerJob, jobGrade = nil, nil
-    local jobData = false
-    VORPcore.RpcCall('GetJobData', function(result)
-        playerJob = result[1]
-        jobGrade = result[2]
-        jobData = true
-    end)
-    while not jobData do
-        Wait(5)
-    end
-    if playerJob then
-        local shopCfg = Config.shops[shop]
-        for _, job in pairs(shopCfg.allowedJobs) do
-            if playerJob == job then
-                if tonumber(jobGrade) >= tonumber(shopCfg.jobGrade) then
-                    MainMenu(pCoords, shop)
-                    break
-                else
-                    VORPcore.NotifyRightTip(_U('needJobGrade'), 4000)
-                    break
-                end
-            else
-                VORPcore.NotifyRightTip(_U('needJob'), 4000)
-                break
-            end
-        end
-    else
-        VORPcore.NotifyRightTip(_U('needJob'), 4000)
     end
 end
 
