@@ -18,7 +18,3 @@ shared_scripts {
     'locale.lua',
     'languages/*.lua'
 }
-
-dependencies {
-    'menuapi'
-}
