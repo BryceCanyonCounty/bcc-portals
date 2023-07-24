@@ -7,16 +7,16 @@ Looking for fast and convenient travel in your server? Our script has got you co
 - Buy passage to a location from a ticket seller
 - Currency is set per individual shop in config
   - Cash-only, gold-only, cash and gold, free
+- Distance-based travel time and prices (multipliers set in config)
 - Shop hours may be set individually for each shop or disabled to allow the shop to remain open
 - Shop blips are colored and changeable per shop location
 - Blips can change color reflecting if shop is open, closed or job locked
 - Shop access can be limited by job and jobgrade
 - Distance-based NPC spawns
-- Distance-based travel time and prices (multipliers set in config)
 
 #### Dependencies
 - [vorp_core](https://github.com/VORPCORE/vorp-core-lua)
-- [menuapi](https://github.com/outsider31000/menuapi)
+- [vorp_menu](https://github.com/VORPCORE/vorp_menu)
 
 #### Installation
 - Add `bcc-portals` folder to your resources folder
