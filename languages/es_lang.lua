@@ -10,7 +10,6 @@ Locales["es_lang"] = {
     shortGold = "No tienes suficiente oro",
     shortCash = "No tienes suficientes dolares",
     needJob = "Para usar esto necesitas ser doctor: ~o~",
-    price = "Precio: ",
     traveling = "Viajando hasta ",
     destination = "Destino: ",
     choose = "Elija su destino",

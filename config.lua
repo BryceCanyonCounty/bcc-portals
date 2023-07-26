@@ -46,14 +46,14 @@ Config.shops = {
         shopClose = 21, -- Shop Close Time / 24 Hour Clock
         currency = 3, -- 1 = cash-only / 2 = gold-only / 3 = cash and gold / 4 = free
         outlets = { -- label is the name used in the body of the menu / DO NOT CHANGE 'location'
-            { label = 'Armadillo',   location = 'armadillo'  },
-            { label = 'Blackwater',  location = 'blackwater' },
-            { label = 'Rhodes',      location = 'rhodes'     },
-            { label = 'Strawberry',  location = 'strawberry' },
-            { label = 'Saint Denis', location = 'stdenis'    },
-            { label = 'Tumbleweed',  location = 'tumbleweed' },
-            { label = 'Valentine',   location = 'valentine'  },
-            { label = 'Van Horn',    location = 'vanhorn'    }
+            armadillo  = { label = 'Armadillo'   },
+            blackwater = { label = 'Blackwater'  },
+            rhodes     = { label = 'Rhodes'      },
+            strawberry = { label = 'Strawberry'  },
+            stdenis    = { label = 'Saint Denis' },
+            tumbleweed = { label = 'Tumbleweed'  },
+            valentine  = { label = 'Valentine'   },
+            vanhorn    = { label = 'Van Horn'    }
         }
     },
     armadillo = {
@@ -79,14 +79,14 @@ Config.shops = {
         shopClose = 21,
         currency = 3, -- 1 = cash-only / 2 = gold-only / 3 = cash and gold / 4 = free
         outlets = {
-            { label = 'Annesburg',   location = 'annesburg'  },
-            { label = 'Blackwater',  location = 'blackwater' },
-            { label = 'Rhodes',      location = 'rhodes'     },
-            { label = 'Strawberry',  location = 'strawberry' },
-            { label = 'Saint Denis', location = 'stdenis'    },
-            { label = 'Tumbleweed',  location = 'tumbleweed' },
-            { label = 'Valentine',   location = 'valentine'  },
-            { label = 'Van Horn',    location = 'vanhorn'    }
+            annesburg  = { label = 'Annesburg'   },
+            blackwater = { label = 'Blackwater'  },
+            rhodes     = { label = 'Rhodes'      },
+            strawberry = { label = 'Strawberry'  },
+            stdenis    = { label = 'Saint Denis' },
+            tumbleweed = { label = 'Tumbleweed'  },
+            valentine  = { label = 'Valentine'   },
+            vanhorn    = { label = 'Van Horn'    }
         }
     },
     blackwater = {
@@ -112,14 +112,14 @@ Config.shops = {
         shopClose = 21,
         currency = 3, -- 1 = cash-only / 2 = gold-only / 3 = cash and gold / 4 = free
         outlets = {
-            { label = 'Annesburg',   location = 'annesburg'  },
-            { label = 'Armadillo',   location = 'armadillo'  },
-            { label = 'Rhodes',      location = 'rhodes'     },
-            { label = 'Strawberry',  location = 'strawberry' },
-            { label = 'Saint Denis', location = 'stdenis'    },
-            { label = 'Tumbleweed',  location = 'tumbleweed' },
-            { label = 'Valentine',   location = 'valentine'  },
-            { label = 'Van Horn',    location = 'vanhorn'    }
+            annesburg  = { label = 'Annesburg'   },
+            armadillo  = { label = 'Armadillo'   },
+            rhodes     = { label = 'Rhodes'      },
+            strawberry = { label = 'Strawberry'  },
+            stdenis    = { label = 'Saint Denis' },
+            tumbleweed = { label = 'Tumbleweed'  },
+            valentine  = { label = 'Valentine'   },
+            vanhorn    = { label = 'Van Horn'    }
         }
     },
     rhodes = {
@@ -145,14 +145,14 @@ Config.shops = {
         shopClose = 21,
         currency = 3, -- 1 = cash-only / 2 = gold-only / 3 = cash and gold / 4 = free
         outlets = {
-            { label = 'Annesburg',   location = 'annesburg'  },
-            { label = 'Armadillo',   location = 'armadillo'  },
-            { label = 'Blackwater',  location = 'blackwater' },
-            { label = 'Strawberry',  location = 'strawberry' },
-            { label = 'Saint Denis', location = 'stdenis'    },
-            { label = 'Tumbleweed',  location = 'tumbleweed' },
-            { label = 'Valentine',   location = 'valentine'  },
-            { label = 'Van Horn',    location = 'vanhorn'    }
+            annesburg  = { label = 'Annesburg'   },
+            armadillo  = { label = 'Armadillo'   },
+            blackwater = { label = 'Blackwater'  },
+            strawberry = { label = 'Strawberry'  },
+            stdenis    = { label = 'Saint Denis' },
+            tumbleweed = { label = 'Tumbleweed'  },
+            valentine  = { label = 'Valentine'   },
+            vanhorn    = { label = 'Van Horn'    }
         }
     },
     strawberry = {
@@ -178,14 +178,14 @@ Config.shops = {
         shopClose = 21,
         currency = 3, -- 1 = cash-only / 2 = gold-only / 3 = cash and gold / 4 = free
         outlets = {
-            { label = 'Annesburg',   location = 'annesburg'  },
-            { label = 'Armadillo',   location = 'armadillo'  },
-            { label = 'Blackwater',  location = 'blackwater' },
-            { label = 'Rhodes',      location = 'rhodes'     },
-            { label = 'Saint Denis', location = 'stdenis'    },
-            { label = 'Tumbleweed',  location = 'tumbleweed' },
-            { label = 'Valentine',   location = 'valentine'  },
-            { label = 'Van Horn',    location = 'vanhorn'    }
+            annesburg  = { label = 'Annesburg'   },
+            armadillo  = { label = 'Armadillo'   },
+            blackwater = { label = 'Blackwater'  },
+            rhodes     = { label = 'Rhodes'      },
+            stdenis    = { label = 'Saint Denis' },
+            tumbleweed = { label = 'Tumbleweed'  },
+            valentine  = { label = 'Valentine'   },
+            vanhorn    = { label = 'Van Horn'    }
         }
     },
     stdenis = {
@@ -211,14 +211,14 @@ Config.shops = {
         shopClose = 21,
         currency = 3, -- 1 = cash-only / 2 = gold-only / 3 = cash and gold / 4 = free
         outlets = {
-            { label = 'Annesburg',   location = 'annesburg'  },
-            { label = 'Armadillo',   location = 'armadillo'  },
-            { label = 'Blackwater',  location = 'blackwater' },
-            { label = 'Rhodes',      location = 'rhodes'     },
-            { label = 'Strawberry',  location = 'strawberry' },
-            { label = 'Tumbleweed',  location = 'tumbleweed' },
-            { label = 'Valentine',   location = 'valentine'  },
-            { label = 'Van Horn',    location = 'vanhorn'    }
+            annesburg  = { label = 'Annesburg'  },
+            armadillo  = { label = 'Armadillo'  },
+            blackwater = { label = 'Blackwater' },
+            rhodes     = { label = 'Rhodes'     },
+            strawberry = { label = 'Strawberry' },
+            tumbleweed = { label = 'Tumbleweed' },
+            valentine  = { label = 'Valentine'  },
+            vanhorn    = { label = 'Van Horn'   }
         }
     },
     tumbleweed = {
@@ -242,16 +242,16 @@ Config.shops = {
         shopHours = false,
         shopOpen = 7,
         shopClose = 21,
-        currency = 1, -- 1 = cash-only / 2 = gold-only / 3 = cash and gold / 4 = free
+        currency = 3, -- 1 = cash-only / 2 = gold-only / 3 = cash and gold / 4 = free
         outlets = {
-            { label = 'Annesburg',   location = 'annesburg'  },
-            { label = 'Armadillo',   location = 'armadillo'  },
-            { label = 'Blackwater',  location = 'blackwater' },
-            { label = 'Rhodes',      location = 'rhodes'     },
-            { label = 'Strawberry',  location = 'strawberry' },
-            { label = 'Saint Denis', location = 'stdenis'    },
-            { label = 'Valentine',   location = 'valentine'  },
-            { label = 'Van Horn',    location = 'vanhorn'    }
+            annesburg  = { label = 'Annesburg'   },
+            armadillo  = { label = 'Armadillo'   },
+            blackwater = { label = 'Blackwater'  },
+            rhodes     = { label = 'Rhodes'      },
+            strawberry = { label = 'Strawberry'  },
+            stdenis    = { label = 'Saint Denis' },
+            valentine  = { label = 'Valentine'   },
+            vanhorn    = { label = 'Van Horn'    }
         }
     },
     valentine = {
@@ -275,16 +275,16 @@ Config.shops = {
         shopHours = false,
         shopOpen = 7,
         shopClose = 21,
-        currency = 4, -- 1 = cash-only / 2 = gold-only / 3 = cash and gold / 4 = free
+        currency = 3, -- 1 = cash-only / 2 = gold-only / 3 = cash and gold / 4 = free
         outlets = {
-            { label = 'Annesburg',   location = 'annesburg'  },
-            { label = 'Armadillo',   location = 'armadillo'  },
-            { label = 'Blackwater',  location = 'blackwater' },
-            { label = 'Rhodes',      location = 'rhodes'     },
-            { label = 'Strawberry',  location = 'strawberry' },
-            { label = 'Saint Denis', location = 'stdenis'    },
-            { label = 'Tumbleweed',  location = 'tumbleweed' },
-            { label = 'Van Horn',    location = 'vanhorn'    }
+            annesburg  = { label = 'Annesburg'   },
+            armadillo  = { label = 'Armadillo'   },
+            blackwater = { label = 'Blackwater'  },
+            rhodes     = { label = 'Rhodes'      },
+            strawberry = { label = 'Strawberry'  },
+            stdenis    = { label = 'Saint Denis' },
+            tumbleweed = { label = 'Tumbleweed'  },
+            vanhorn    = { label = 'Van Horn'    }
         }
     },
     vanhorn = {
@@ -308,16 +308,16 @@ Config.shops = {
         shopHours = false,
         shopOpen = 7,
         shopClose = 21,
-        currency = 2, -- 1 = cash-only / 2 = gold-only / 3 = cash and gold / 4 = free
+        currency = 3, -- 1 = cash-only / 2 = gold-only / 3 = cash and gold / 4 = free
         outlets = {
-            { label = 'Annesburg',   location = 'annesburg'  },
-            { label = 'Armadillo',   location = 'armadillo'  },
-            { label = 'Blackwater',  location = 'blackwater' },
-            { label = 'Rhodes',      location = 'rhodes'     },
-            { label = 'Strawberry',  location = 'strawberry' },
-            { label = 'Saint Denis', location = 'stdenis'    },
-            { label = 'Tumbleweed',  location = 'tumbleweed' },
-            { label = 'Valentine',   location = 'valentine'  }
+            annesburg  = { label = 'Annesburg'   },
+            armadillo  = { label = 'Armadillo'   },
+            blackwater = { label = 'Blackwater'  },
+            rhodes     = { label = 'Rhodes'      },
+            strawberry = { label = 'Strawberry'  },
+            stdenis    = { label = 'Saint Denis' },
+            tumbleweed = { label = 'Tumbleweed'  },
+            valentine  = { label = 'Valentine'   }
         }
     }
 }

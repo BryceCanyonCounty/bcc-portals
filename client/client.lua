@@ -1,26 +1,19 @@
 local VORPcore = {}
--- Prompts
-local OpenPorts
-local ClosePorts
-local PortPrompt1 = GetRandomIntInRange(0, 0xffffff)
-local PortPrompt2 = GetRandomIntInRange(0, 0xffffff)
--- Menu
+local Portal
+local PromptGroup = GetRandomIntInRange(0, 0xffffff)
 local InMenu = false
-MenuData = {}
+local VORPMenu = {}
 
 TriggerEvent('getCore', function(core)
     VORPcore = core
 end)
-
-TriggerEvent('menuapi:getData', function(call)
-    MenuData = call
+TriggerEvent('vorp_menu:getData', function(cb)
+    VORPMenu = cb
 end)
 
 -- Start Portals
 CreateThread(function()
-    PortOpen()
-    PortClosed()
-
+    PortPrompt()
     while true do
         Wait(0)
         local player = PlayerPedId()
@@ -51,12 +44,9 @@ CreateThread(function()
                         local sDist = #(pCoords - shopCfg.npc)
                         if sDist <= shopCfg.sDistance then
                             sleep = false
-                            local shopClosed = CreateVarString(10, 'LITERAL_STRING', shopCfg.shopName .. _U('closed'))
-                            PromptSetActiveGroupThisFrame(PortPrompt2, shopClosed)
-
-                            if Citizen.InvokeNative(0xC92AC953F0A982AE, ClosePorts) then -- UiPromptHasStandardModeCompleted
-                                VORPcore.NotifyRightTip(shopCfg.shopName .. _U('hours') .. shopCfg.shopOpen .. _U('to') .. shopCfg.shopClose .. _U('hundred'), 4000)
-                            end
+                            local shopClosed = CreateVarString(10, 'LITERAL_STRING', shopCfg.shopName .. _U('hours') .. shopCfg.shopOpen .. _U('to') .. shopCfg.shopClose .. _U('hundred'))
+                            PromptSetActiveGroupThisFrame(PromptGroup, shopClosed)
+                            PromptSetEnabled(Portal, 0)
                         end
                     elseif hour >= shopCfg.shopOpen then
                         -- Using Shop Hours - Shop Open
@@ -83,10 +73,10 @@ CreateThread(function()
                             if sDist <= shopCfg.sDistance then
                                 sleep = false
                                 local shopOpen = CreateVarString(10, 'LITERAL_STRING', shopCfg.promptName)
-                                PromptSetActiveGroupThisFrame(PortPrompt1, shopOpen)
+                                PromptSetActiveGroupThisFrame(PromptGroup, shopOpen)
 
-                                if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then -- UiPromptHasStandardModeCompleted
-                                    MainMenu(pCoords, shop)
+                                if Citizen.InvokeNative(0xC92AC953F0A982AE, Portal) then -- UiPromptHasStandardModeCompleted
+                                    OpenMenu(pCoords, shop)
                                 end
                             end
                         else
@@ -110,10 +100,16 @@ CreateThread(function()
                             if sDist <= shopCfg.sDistance then
                                 sleep = false
                                 local shopOpen = CreateVarString(10, 'LITERAL_STRING', shopCfg.promptName)
-                                PromptSetActiveGroupThisFrame(PortPrompt1, shopOpen)
+                                PromptSetActiveGroupThisFrame(PromptGroup, shopOpen)
 
-                                if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then -- UiPromptHasStandardModeCompleted
-                                    CheckPlayerJob(pCoords, shop)
+                                if Citizen.InvokeNative(0xC92AC953F0A982AE, Portal) then -- UiPromptHasStandardModeCompleted
+                                    VORPcore.RpcCall('CheckPlayerJob', function(hasJob)
+                                    if hasJob then
+                                        OpenMenu(pCoords, shop)
+                                    else
+                                        return
+                                    end
+                                end, shop)
                                 end
                             end
                         end
@@ -143,10 +139,10 @@ CreateThread(function()
                         if sDist <= shopCfg.sDistance then
                             sleep = false
                             local shopOpen = CreateVarString(10, 'LITERAL_STRING', shopCfg.promptName)
-                            PromptSetActiveGroupThisFrame(PortPrompt1, shopOpen)
+                            PromptSetActiveGroupThisFrame(PromptGroup, shopOpen)
 
-                            if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then -- UiPromptHasStandardModeCompleted
-                                MainMenu(pCoords, shop)
+                            if Citizen.InvokeNative(0xC92AC953F0A982AE, Portal) then -- UiPromptHasStandardModeCompleted
+                                OpenMenu(pCoords, shop)
                             end
                         end
                     else
@@ -170,10 +166,16 @@ CreateThread(function()
                         if sDist <= shopCfg.sDistance then
                             sleep = false
                             local shopOpen = CreateVarString(10, 'LITERAL_STRING', shopCfg.promptName)
-                            PromptSetActiveGroupThisFrame(PortPrompt1, shopOpen)
+                            PromptSetActiveGroupThisFrame(PromptGroup, shopOpen)
 
-                            if Citizen.InvokeNative(0xC92AC953F0A982AE, OpenPorts) then -- UiPromptHasStandardModeCompleted
-                                CheckPlayerJob(pCoords, shop)
+                            if Citizen.InvokeNative(0xC92AC953F0A982AE, Portal) then -- UiPromptHasStandardModeCompleted
+                                VORPcore.RpcCall('CheckPlayerJob', function(hasJob)
+                                    if hasJob then
+                                        OpenMenu(pCoords,shop)
+                                    else
+                                        return
+                                    end
+                                end, shop)
                             end
                         end
                     end
@@ -187,37 +189,42 @@ CreateThread(function()
 end)
 
 -- Portal Menu to Choose Destination
-function MainMenu(pCoords, shop)
-    MenuData.CloseAll()
+function OpenMenu(pCoords, shop)
+    VORPMenu.CloseAll()
     local player = PlayerPedId()
     local shopCfg = Config.shops[shop]
-    DisplayRadar(false)
     TaskStandStill(player, -1)
+    DisplayRadar(false)
     InMenu = true
-    local elements = {}
+    local MenuElements = {}
 
-    for _, outletCfg in pairs(shopCfg.outlets) do
-        elements[#elements + 1] = {
+    for outlet, outletCfg in pairs(shopCfg.outlets) do
+        MenuElements[#MenuElements + 1] = {
             label = outletCfg.label,
-            value = _,
+            value = outlet,
             desc = '<span style=color:#C0C0C0;>' .. _U('choose') .. '</span>',
-            location = outletCfg.location,
         }
     end
-    MenuData.Open('default', GetCurrentResourceName(), 'menuapi',
+    VORPMenu.Open('default', GetCurrentResourceName(), 'vorp_menu',
     {
         title = '<span style=color:#999;>' .. shopCfg.shopName .. '</span>',
         subtext = '<span style=color:#C0C0C0;>' .. _U('subMenu') .. '</span>',
         align = 'top-left',
-        elements = elements,
+        elements = MenuElements,
         lastmenu = '',
+        itemHeight = '3vh',
     },
     function(data, menu)
         if data.current == 'backup' then
-            _G[data.trigger]()
+            return _G[data.trigger]()
         end
         if data.current.value then
-            TriggerServerEvent('bcc-portals:GetData', data.current.location, pCoords, shop)
+            local travelInfo = {location = data.current.value, coords = pCoords}
+            VORPcore.RpcCall("GetTravelData", function(travelData)
+                if travelData then
+                    DestinationMenu(travelData, shop)
+                end
+            end, travelInfo)
         end
     end,
     function(data, menu)
@@ -228,51 +235,59 @@ function MainMenu(pCoords, shop)
     end)
 end
 
-RegisterNetEvent('bcc-portals:DestinationMenu', function(location, cashPrice, goldPrice, time, displayTime, shop)
-    MenuData.CloseAll()
+function DestinationMenu(travelData, shop)
+    VORPMenu.CloseAll()
     InMenu = true
     local player = PlayerPedId()
-    local elements = {}
+    local MenuElements = {}
+    local travelLoc = travelData.location
+    local cashPrice = travelData.cash
+    local goldPrice = travelData.gold
+    local displayTime = travelData.dispTime
     local currencyType = Config.shops[shop].currency
     local currency = {
         [1] = function()
-            elements = {
+            MenuElements = {
                 {
                     label = _U('cash'),
                     value = 'cash',
                     desc = '<span style=color:#C0C0C0;>' .. 'Price: ' .. '</span>' ..  '<span style=color:#278664;>' .. ' $' .. cashPrice .. '</span>' .. '<br>' ..
-                    '<span style=color:#C0C0C0;>' .. 'Travel Time: ' .. '</span>' .. '<span style=color:#888;>' .. ' ' .. displayTime .. ' seconds' .. '</span>'
+                    '<span style=color:#C0C0C0;>' .. 'Travel Time: ' .. '</span>' .. '<span style=color:#888;>' .. ' ' .. displayTime .. ' seconds' .. '</span>',
+                    info = cashPrice
                 }
             }
         end,
         [2] = function()
-            elements = {
+            MenuElements = {
                 {
                     label = _U('gold'),
                     value = 'gold',
                     desc = '<span style=color:#C0C0C0;>' .. 'Price: ' .. '</span>' .. '<span style=color:#CC9900;>' .. goldPrice .. ' ' .. 'gold' .. '</span>' .. '<br>' ..
-                    '<span style=color:#C0C0C0;>' .. 'Travel Time: ' .. '</span>' .. '<span style=color:#888;>' .. ' ' .. displayTime .. ' seconds' .. '</span>'
+                    '<span style=color:#C0C0C0;>' .. 'Travel Time: ' .. '</span>' .. '<span style=color:#888;>' .. ' ' .. displayTime .. ' seconds' .. '</span>',
+                    info = goldPrice
                 }
             }
         end,
         [3] = function()
-            elements = {
+            MenuElements = {
                 {
                     label = _U('cash'),
                     value = 'cash',
                     desc = '<span style=color:#C0C0C0;>' .. 'Price: ' .. '</span>' ..  '<span style=color:#278664;>' .. ' $' .. cashPrice .. '</span>' .. '<br>' ..
-                    '<span style=color:#C0C0C0;>' .. 'Travel Time: ' .. '</span>' .. '<span style=color:#888;>' .. ' ' .. displayTime .. ' seconds' .. '</span>'
+                    '<span style=color:#C0C0C0;>' .. 'Travel Time: ' .. '</span>' .. '<span style=color:#888;>' .. ' ' .. displayTime .. ' seconds' .. '</span>',
+                    info = cashPrice
                 },
                 {
                     label = _U('gold'),
                     value = 'gold',
                     desc = '<span style=color:#C0C0C0;>' .. 'Price: ' .. '</span>' .. '<span style=color:#CC9900;>' .. goldPrice .. ' ' .. 'gold' .. '</span>' .. '<br>' ..
-                    '<span style=color:#C0C0C0;>' .. 'Travel Time: ' .. '</span>' .. '<span style=color:#888;>' .. ' ' .. displayTime .. ' seconds' .. '</span>'
+                    '<span style=color:#C0C0C0;>' .. 'Travel Time: ' .. '</span>' .. '<span style=color:#888;>' .. ' ' .. displayTime .. ' seconds' .. '</span>',
+                    info = goldPrice
                 }
             }
         end,
         [4] = function()
-            elements = {
+            MenuElements = {
                 {
                     label = _U('go'),
                     value = 'free',
@@ -284,31 +299,26 @@ RegisterNetEvent('bcc-portals:DestinationMenu', function(location, cashPrice, go
     if currency[currencyType] then
         currency[currencyType]()
     end
-    MenuData.Open('default', GetCurrentResourceName(), 'menuapi',
+    VORPMenu.Open('default', GetCurrentResourceName(), 'vorp_menu',
     {
         title = '<span style=color:#999;>' .. Config.shops[shop].shopName .. '</span>',
-        subtext = '<span style=color:#C0C0C0;>' .. _U('destination') .. '</span>' .. '<span style=color:#CC9900;>' .. Config.shops[location].shopName .. '</span>',
+        subtext = '<span style=color:#C0C0C0;>' .. _U('destination') .. '</span>' .. '<span style=color:#CC9900;>' .. Config.shops[travelLoc].shopName .. '</span>',
         align = 'top-left',
-        elements = elements,
-        lastmenu = '',
+        elements = MenuElements,
+        lastmenu = 'OpenMenu',
+        itemHeight = '3vh',
     },
     function(data, menu)
         if data.current == 'backup' then
-            _G[data.trigger](shop)
+            return _G[data.trigger](shop)
         end
-        local payment = nil
-        if data.current.value == 'cash' then
-            payment = 'cash'
-            TriggerServerEvent('bcc-portals:BuyPassage', location, cashPrice, time, payment)
 
-        elseif data.current.value == 'gold' then
-            payment = 'gold'
-            TriggerServerEvent('bcc-portals:BuyPassage', location, goldPrice, time, payment)
-
-        elseif data.current.value == 'free' then
-            payment = 'free'
-            TriggerServerEvent('bcc-portals:BuyPassage', location, goldPrice, time, payment)
-        end
+        local canTravelInfo = {currency = data.current.value, price = data.current.info}
+        VORPcore.RpcCall("GetPlayerCanTravel", function(canTravel)
+            if canTravel then
+                SendPlayer(travelLoc, travelData.travelTime)
+            end
+        end, canTravelInfo)
 
         menu.close()
         InMenu = false
@@ -321,10 +331,10 @@ RegisterNetEvent('bcc-portals:DestinationMenu', function(location, cashPrice, go
         ClearPedTasks(player)
         DisplayRadar(true)
     end)
-end)
+end
 
 -- Send Player to Destination
-RegisterNetEvent('bcc-portals:SendPlayer', function(location, time)
+function SendPlayer(location, time)
     local shopCfg = Config.shops[location]
     DoScreenFadeOut(1000)
     Wait(1000)
@@ -335,33 +345,19 @@ RegisterNetEvent('bcc-portals:SendPlayer', function(location, time)
     DoScreenFadeIn(1000)
     Wait(1000)
     SetCinematicModeActive(false)
-end)
-
--- Menu Prompts
-function PortOpen()
-    local str = _U('portPrompt')
-    OpenPorts = PromptRegisterBegin()
-    PromptSetControlAction(OpenPorts, Config.key)
-    str = CreateVarString(10, 'LITERAL_STRING', str)
-    PromptSetText(OpenPorts, str)
-    PromptSetEnabled(OpenPorts, 1)
-    PromptSetVisible(OpenPorts, 1)
-    PromptSetStandardMode(OpenPorts, 1)
-    PromptSetGroup(OpenPorts, PortPrompt1)
-    PromptRegisterEnd(OpenPorts)
 end
 
-function PortClosed()
-    local str = _U('portPrompt')
-    ClosePorts = PromptRegisterBegin()
-    PromptSetControlAction(ClosePorts, Config.key)
-    str = CreateVarString(10, 'LITERAL_STRING', str)
-    PromptSetText(ClosePorts, str)
-    PromptSetEnabled(ClosePorts, 1)
-    PromptSetVisible(ClosePorts, 1)
-    PromptSetStandardMode(ClosePorts, 1)
-    PromptSetGroup(ClosePorts, PortPrompt2)
-    PromptRegisterEnd(ClosePorts)
+-- Menu Prompts
+function PortPrompt()
+    local str = CreateVarString(10, 'LITERAL_STRING', _U('portPrompt'))
+    Portal = PromptRegisterBegin()
+    PromptSetControlAction(Portal, Config.key)
+    PromptSetText(Portal, str)
+    PromptSetEnabled(Portal, 1)
+    PromptSetVisible(Portal, 1)
+    PromptSetStandardMode(Portal, 1)
+    PromptSetGroup(Portal, PromptGroup)
+    PromptRegisterEnd(Portal)
 end
 
 -- Blips
@@ -377,14 +373,13 @@ end
 function AddNPC(shop)
     local shopCfg = Config.shops[shop]
     LoadModel(shopCfg.npcModel)
-    local npc = CreatePed(shopCfg.npcModel, shopCfg.npc, shopCfg.npcHeading, false, true, true, true)
-    Citizen.InvokeNative(0x283978A15512B2FE, npc, true) -- SetRandomOutfitVariation
-    SetEntityCanBeDamaged(npc, false)
-    SetEntityInvincible(npc, true)
+    shopCfg.NPC = CreatePed(shopCfg.npcModel, shopCfg.npc, shopCfg.npcHeading, false, true, true, true)
+    Citizen.InvokeNative(0x283978A15512B2FE, shopCfg.NPC, true) -- SetRandomOutfitVariation
+    SetEntityCanBeDamaged(shopCfg.NPC, false)
+    SetEntityInvincible(shopCfg.NPC, true)
     Wait(500)
-    FreezeEntityPosition(npc, true)
-    SetBlockingOfNonTemporaryEvents(npc, true)
-    Config.shops[shop].NPC = npc
+    FreezeEntityPosition(shopCfg.NPC, true)
+    SetBlockingOfNonTemporaryEvents(shopCfg.NPC, true)
 end
 
 function LoadModel(npcModel)
@@ -395,53 +390,20 @@ function LoadModel(npcModel)
     end
 end
 
--- Check if Player has Required Job
-function CheckPlayerJob(pCoords, shop)
-    local playerJob, jobGrade = nil, nil
-    local jobData = false
-    VORPcore.RpcCall('GetJobData', function(result)
-        playerJob = result[1]
-        jobGrade = result[2]
-        jobData = true
-    end)
-    while not jobData do
-        Wait(5)
-    end
-    if playerJob then
-        local shopCfg = Config.shops[shop]
-        for _, job in pairs(shopCfg.allowedJobs) do
-            if playerJob == job then
-                if tonumber(jobGrade) >= tonumber(shopCfg.jobGrade) then
-                    MainMenu(pCoords, shop)
-                    break
-                else
-                    VORPcore.NotifyRightTip(_U('needJobGrade'), 4000)
-                    break
-                end
-            else
-                VORPcore.NotifyRightTip(_U('needJob'), 4000)
-                break
-            end
-        end
-    else
-        VORPcore.NotifyRightTip(_U('needJob'), 4000)
-    end
-end
-
 AddEventHandler('onResourceStop', function(resourceName)
     if (GetCurrentResourceName() ~= resourceName) then
         return
     end
     if InMenu then
         ClearPedTasksImmediately(PlayerPedId())
-        PromptDelete(OpenPorts)
-        PromptDelete(ClosePorts)
-        MenuData.CloseAll()
+        VORPMenu.CloseAll()
+        DisplayRadar(true)
     end
 
     for _, shopCfg in pairs(Config.shops) do
         if shopCfg.Blip then
             RemoveBlip(shopCfg.Blip)
+            shopCfg.Blip = nil
         end
         if shopCfg.NPC then
             DeleteEntity(shopCfg.NPC)
