@@ -222,7 +222,7 @@ function OpenMenu(pCoords, shop)
             local travelInfo = {location = data.current.value, coords = pCoords}
             VORPcore.RpcCall("GetTravelData", function(travelData)
                 if travelData then
-                    DestinationMenu(travelData, shop)
+                    DestinationMenu(travelData, shop, pCoords)
                 end
             end, travelInfo)
         end
@@ -235,7 +235,7 @@ function OpenMenu(pCoords, shop)
     end)
 end
 
-function DestinationMenu(travelData, shop)
+function DestinationMenu(travelData, shop, pCoords)
     VORPMenu.CloseAll()
     InMenu = true
     local player = PlayerPedId()
@@ -310,7 +310,7 @@ function DestinationMenu(travelData, shop)
     },
     function(data, menu)
         if data.current == 'backup' then
-            return _G[data.trigger](shop)
+            return _G[data.trigger](pCoords, shop)
         end
 
         local canTravelInfo = {currency = data.current.value, price = data.current.info}
