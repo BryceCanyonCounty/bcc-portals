@@ -344,7 +344,7 @@ function SendPlayer(location, time)
     Wait(1000)
     Citizen.InvokeNative(0x1E5B70E53DB661E5, 0, 0, 0, _U('traveling') .. shopCfg.shopName, '', '') -- DisplayLoadingScreens
     Wait(time)
-    Citizen.InvokeNative(0x203BEFFDBE12E96A, PlayerPedId(), shopCfg.player) -- SetEntityCoordsAndHeading
+    Citizen.InvokeNative(0x203BEFFDBE12E96A, PlayerPedId(), shopCfg.playerPos.x, shopCfg.playerPos.y, shopCfg.playerPos.z, shopCfg.playerHeading, false, false, false) -- SetEntityCoordsAndHeading
     ShutdownLoadingScreen()
     DoScreenFadeIn(1000)
     Wait(1000)
