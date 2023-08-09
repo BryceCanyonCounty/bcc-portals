@@ -1,8 +1,8 @@
 local VORPcore = {}
+local VORPMenu = {}
 local Portal
 local PromptGroup = GetRandomIntInRange(0, 0xffffff)
 local InMenu = false
-local VORPMenu = {}
 
 TriggerEvent('getCore', function(core)
     VORPcore = core
@@ -41,7 +41,7 @@ CreateThread(function()
                             DeleteEntity(shopCfg.NPC)
                             shopCfg.NPC = nil
                         end
-                        local sDist = #(pCoords - shopCfg.npc)
+                        local sDist = #(pCoords - shopCfg.npcPos)
                         if sDist <= shopCfg.sDistance then
                             sleep = false
                             local shopClosed = CreateVarString(10, 'LITERAL_STRING', shopCfg.shopName .. _U('hours') .. shopCfg.shopOpen .. _U('to') .. shopCfg.shopClose .. _U('hundred'))
@@ -57,7 +57,7 @@ CreateThread(function()
                             Citizen.InvokeNative(0x662D364ABF16DE2F, Config.shops[shop].Blip, joaat(Config.BlipColors[shopCfg.blipOpen])) -- BlipAddModifier
                         end
                         if not next(shopCfg.allowedJobs) then
-                            local sDist = #(pCoords - shopCfg.npc)
+                            local sDist = #(pCoords - shopCfg.npcPos)
                             if shopCfg.npcOn then
                                 if sDist <= shopCfg.nDistance then
                                     if not shopCfg.NPC then
@@ -74,6 +74,7 @@ CreateThread(function()
                                 sleep = false
                                 local shopOpen = CreateVarString(10, 'LITERAL_STRING', shopCfg.promptName)
                                 PromptSetActiveGroupThisFrame(PromptGroup, shopOpen)
+                                PromptSetEnabled(Portal, 1)
 
                                 if Citizen.InvokeNative(0xC92AC953F0A982AE, Portal) then -- UiPromptHasStandardModeCompleted
                                     OpenMenu(pCoords, shop)
@@ -84,7 +85,7 @@ CreateThread(function()
                             if Config.shops[shop].Blip then
                                 Citizen.InvokeNative(0x662D364ABF16DE2F, Config.shops[shop].Blip, joaat(Config.BlipColors[shopCfg.blipJob])) -- BlipAddModifier
                             end
-                            local sDist = #(pCoords - shopCfg.npc)
+                            local sDist = #(pCoords - shopCfg.npcPos)
                             if shopCfg.npcOn then
                                 if sDist <= shopCfg.nDistance then
                                     if not shopCfg.NPC then
@@ -101,6 +102,7 @@ CreateThread(function()
                                 sleep = false
                                 local shopOpen = CreateVarString(10, 'LITERAL_STRING', shopCfg.promptName)
                                 PromptSetActiveGroupThisFrame(PromptGroup, shopOpen)
+                                PromptSetEnabled(Portal, 1)
 
                                 if Citizen.InvokeNative(0xC92AC953F0A982AE, Portal) then -- UiPromptHasStandardModeCompleted
                                     VORPcore.RpcCall('CheckPlayerJob', function(hasJob)
@@ -123,7 +125,7 @@ CreateThread(function()
                         Citizen.InvokeNative(0x662D364ABF16DE2F, Config.shops[shop].Blip, joaat(Config.BlipColors[shopCfg.blipOpen])) -- BlipAddModifier
                     end
                     if not next(shopCfg.allowedJobs) then
-                        local sDist = #(pCoords - shopCfg.npc)
+                        local sDist = #(pCoords - shopCfg.npcPos)
                         if shopCfg.npcOn then
                             if sDist <= shopCfg.nDistance then
                                 if not shopCfg.NPC then
@@ -140,6 +142,7 @@ CreateThread(function()
                             sleep = false
                             local shopOpen = CreateVarString(10, 'LITERAL_STRING', shopCfg.promptName)
                             PromptSetActiveGroupThisFrame(PromptGroup, shopOpen)
+                            PromptSetEnabled(Portal, 1)
 
                             if Citizen.InvokeNative(0xC92AC953F0A982AE, Portal) then -- UiPromptHasStandardModeCompleted
                                 OpenMenu(pCoords, shop)
@@ -150,7 +153,7 @@ CreateThread(function()
                         if Config.shops[shop].Blip then
                             Citizen.InvokeNative(0x662D364ABF16DE2F, Config.shops[shop].Blip, joaat(Config.BlipColors[shopCfg.blipJob])) -- BlipAddModifier
                         end
-                        local sDist = #(pCoords - shopCfg.npc)
+                        local sDist = #(pCoords - shopCfg.npcPos)
                         if shopCfg.npcOn then
                             if sDist <= shopCfg.nDistance then
                                 if not shopCfg.NPC then
@@ -167,6 +170,7 @@ CreateThread(function()
                             sleep = false
                             local shopOpen = CreateVarString(10, 'LITERAL_STRING', shopCfg.promptName)
                             PromptSetActiveGroupThisFrame(PromptGroup, shopOpen)
+                            PromptSetEnabled(Portal, 1)
 
                             if Citizen.InvokeNative(0xC92AC953F0A982AE, Portal) then -- UiPromptHasStandardModeCompleted
                                 VORPcore.RpcCall('CheckPlayerJob', function(hasJob)
@@ -340,7 +344,7 @@ function SendPlayer(location, time)
     Wait(1000)
     Citizen.InvokeNative(0x1E5B70E53DB661E5, 0, 0, 0, _U('traveling') .. shopCfg.shopName, '', '') -- DisplayLoadingScreens
     Wait(time)
-    Citizen.InvokeNative(0x203BEFFDBE12E96A, PlayerPedId(), shopCfg.player) -- SetEntityCoordsAndHeading
+    Citizen.InvokeNative(0x203BEFFDBE12E96A, PlayerPedId(), shopCfg.playerPos.x, shopCfg.playerPos.y, shopCfg.playerPos.z, shopCfg.playerHeading, false, false, false) -- SetEntityCoordsAndHeading
     ShutdownLoadingScreen()
     DoScreenFadeIn(1000)
     Wait(1000)
@@ -353,7 +357,6 @@ function PortPrompt()
     Portal = PromptRegisterBegin()
     PromptSetControlAction(Portal, Config.key)
     PromptSetText(Portal, str)
-    PromptSetEnabled(Portal, 1)
     PromptSetVisible(Portal, 1)
     PromptSetStandardMode(Portal, 1)
     PromptSetGroup(Portal, PromptGroup)
@@ -363,8 +366,8 @@ end
 -- Blips
 function AddBlip(shop)
     local shopCfg = Config.shops[shop]
-    shopCfg.Blip = Citizen.InvokeNative(0x554d9d53f696d002, 1664425300, shopCfg.npc) -- BlipAddForCoords
-    SetBlipSprite(shopCfg.Blip, shopCfg.blipSprite, 1)
+    shopCfg.Blip = Citizen.InvokeNative(0x554d9d53f696d002, 1664425300, shopCfg.npcPos) -- BlipAddForCoords
+    SetBlipSprite(shopCfg.Blip, shopCfg.blipSprite, true)
     SetBlipScale(shopCfg.Blip, 0.2)
     Citizen.InvokeNative(0x9CB1A1623062F402, shopCfg.Blip, shopCfg.blipName) -- SetBlipNameFromPlayerString
 end
@@ -373,7 +376,7 @@ end
 function AddNPC(shop)
     local shopCfg = Config.shops[shop]
     LoadModel(shopCfg.npcModel)
-    shopCfg.NPC = CreatePed(shopCfg.npcModel, shopCfg.npc, shopCfg.npcHeading, false, true, true, true)
+    shopCfg.NPC = CreatePed(shopCfg.npcModel, shopCfg.npcPos.x, shopCfg.npcPos.y, shopCfg.npcPos.z, shopCfg.npcHeading, false, false, false, false)
     Citizen.InvokeNative(0x283978A15512B2FE, shopCfg.NPC, true) -- SetRandomOutfitVariation
     SetEntityCanBeDamaged(shopCfg.NPC, false)
     SetEntityInvincible(shopCfg.NPC, true)
