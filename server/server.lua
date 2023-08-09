@@ -6,7 +6,7 @@ end)
 -- Get Travel Time and Price Data
 VORPcore.addRpcCallback("GetTravelData", function(source, cb, travelInfo)
     local travelLoc = travelInfo.location
-    local distance = #(travelInfo.coords - Config.shops[travelLoc].npc)
+    local distance = #(travelInfo.coords - Config.shops[travelLoc].npcPos)
     local cashPrice = 0
     local goldPrice = 0
     if Config.price > 0 then
