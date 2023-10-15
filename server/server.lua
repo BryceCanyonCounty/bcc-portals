@@ -3,8 +3,10 @@ TriggerEvent('getCore', function(core)
     VORPcore = core
 end)
 
+local ServerRPC = exports.vorp_core:ServerRpcCall()
+
 -- Get Travel Time and Price Data
-VORPcore.addRpcCallback("GetTravelData", function(source, cb, travelInfo)
+ServerRPC.Callback.Register('bcc-portals:GetTravelData', function(source, cb, travelInfo)
     local travelLoc = travelInfo.location
     local distance = #(travelInfo.coords - Config.shops[travelLoc].npcPos)
     local cashPrice = 0
@@ -21,7 +23,7 @@ VORPcore.addRpcCallback("GetTravelData", function(source, cb, travelInfo)
 end)
 
 -- Buy Portal Passage
-VORPcore.addRpcCallback("GetPlayerCanTravel", function(source, cb, canTravelInfo)
+ServerRPC.Callback.Register('bcc-portals:GetPlayerCanTravel', function(source, cb, canTravelInfo)
     local src = source
     local Character = VORPcore.getUser(src).getUsedCharacter
     local currency = canTravelInfo.currency
@@ -49,7 +51,7 @@ VORPcore.addRpcCallback("GetPlayerCanTravel", function(source, cb, canTravelInfo
 end)
 
 -- Get Player Job and Job Grade
-VORPcore.addRpcCallback('CheckPlayerJob', function(source, cb, shop)
+ServerRPC.Callback.Register('bcc-portals:CheckPlayerJob', function(source, cb, shop)
     local src = source
     local Character = VORPcore.getUser(src).getUsedCharacter
     local playerJob = Character.job
