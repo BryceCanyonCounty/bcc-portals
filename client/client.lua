@@ -1,27 +1,24 @@
-local VORPcore = {}
 local VORPMenu = {}
-local Portal
-local PromptGroup = GetRandomIntInRange(0, 0xffffff)
-local InMenu = false
-
-TriggerEvent('getCore', function(core)
-    VORPcore = core
-end)
 TriggerEvent('vorp_menu:getData', function(cb)
     VORPMenu = cb
 end)
 
+local ClientRPC = exports.vorp_core:ClientRpcCall()
+
+local Portal
+local PromptGroup = GetRandomIntInRange(0, 0xffffff)
+local InMenu = false
 -- Start Portals
 CreateThread(function()
     PortPrompt()
     while true do
         Wait(0)
-        local player = PlayerPedId()
-        local pCoords = GetEntityCoords(player)
+        local playerPed = PlayerPedId()
+        local pCoords = GetEntityCoords(playerPed)
         local sleep = true
         local hour = GetClockHours()
 
-        if not InMenu and not IsEntityDead(player) then
+        if not InMenu and not IsEntityDead(playerPed) then
             for shop, shopCfg in pairs(Config.shops) do
                 if shopCfg.shopHours then
                     -- Using Shop Hours - Shop Closed
@@ -105,13 +102,12 @@ CreateThread(function()
                                 PromptSetEnabled(Portal, 1)
 
                                 if Citizen.InvokeNative(0xC92AC953F0A982AE, Portal) then -- UiPromptHasStandardModeCompleted
-                                    VORPcore.RpcCall('CheckPlayerJob', function(hasJob)
-                                    if hasJob then
+                                    local result = ClientRPC.Callback.TriggerAwait('bcc-portals:CheckPlayerJob', shop)
+                                    if result then
                                         OpenMenu(pCoords, shop)
                                     else
                                         return
                                     end
-                                end, shop)
                                 end
                             end
                         end
@@ -173,13 +169,12 @@ CreateThread(function()
                             PromptSetEnabled(Portal, 1)
 
                             if Citizen.InvokeNative(0xC92AC953F0A982AE, Portal) then -- UiPromptHasStandardModeCompleted
-                                VORPcore.RpcCall('CheckPlayerJob', function(hasJob)
-                                    if hasJob then
-                                        OpenMenu(pCoords,shop)
-                                    else
-                                        return
-                                    end
-                                end, shop)
+                                local result = ClientRPC.Callback.TriggerAwait('bcc-portals:CheckPlayerJob', shop)
+                                if result then
+                                    OpenMenu(pCoords,shop)
+                                else
+                                    return
+                                end
                             end
                         end
                     end
@@ -195,9 +190,9 @@ end)
 -- Portal Menu to Choose Destination
 function OpenMenu(pCoords, shop)
     VORPMenu.CloseAll()
-    local player = PlayerPedId()
+    local playerPed = PlayerPedId()
     local shopCfg = Config.shops[shop]
-    TaskStandStill(player, -1)
+    TaskStandStill(playerPed, -1)
     DisplayRadar(false)
     InMenu = true
     local MenuElements = {}
@@ -224,17 +219,16 @@ function OpenMenu(pCoords, shop)
         end
         if data.current.value then
             local travelInfo = {location = data.current.value, coords = pCoords}
-            VORPcore.RpcCall("GetTravelData", function(travelData)
-                if travelData then
-                    DestinationMenu(travelData, shop, pCoords)
-                end
-            end, travelInfo)
+            local travelData = ClientRPC.Callback.TriggerAwait('bcc-portals:GetTravelData', travelInfo)
+            if travelData then
+                DestinationMenu(travelData, shop, pCoords)
+            end
         end
     end,
     function(data, menu)
         menu.close()
         InMenu = false
-        ClearPedTasks(player)
+        ClearPedTasks(playerPed)
         DisplayRadar(true)
     end)
 end
@@ -242,7 +236,7 @@ end
 function DestinationMenu(travelData, shop, pCoords)
     VORPMenu.CloseAll()
     InMenu = true
-    local player = PlayerPedId()
+    local playerPed = PlayerPedId()
     local MenuElements = {}
     local travelLoc = travelData.location
     local cashPrice = travelData.cash
@@ -318,21 +312,19 @@ function DestinationMenu(travelData, shop, pCoords)
         end
 
         local canTravelInfo = {currency = data.current.value, price = data.current.info}
-        VORPcore.RpcCall("GetPlayerCanTravel", function(canTravel)
-            if canTravel then
-                SendPlayer(travelLoc, travelData.travelTime)
-            end
-        end, canTravelInfo)
-
-        menu.close()
-        InMenu = false
-        ClearPedTasks(player)
-        DisplayRadar(true)
+        local canTravel = ClientRPC.Callback.TriggerAwait('bcc-portals:GetPlayerCanTravel', canTravelInfo)
+        if canTravel then
+            menu.close()
+            SendPlayer(travelLoc, travelData.travelTime)
+            InMenu = false
+            ClearPedTasks(playerPed)
+            DisplayRadar(true)
+        end
     end,
     function(data, menu)
         menu.close()
         InMenu = false
-        ClearPedTasks(player)
+        ClearPedTasks(playerPed)
         DisplayRadar(true)
     end)
 end
