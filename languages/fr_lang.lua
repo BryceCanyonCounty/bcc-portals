@@ -1,9 +1,10 @@
 ---------------------------------- FRANCAIS -------------------------------------------
+-- Please send Pull Request to GitHub with Language Updates
 Locales["fr_lang"] = {
 
-    portPrompt = "Menu",
-    subMenu = "Portails disponibles",
-    closed = " ~o~: ~e~FERMÉ",
+    portPrompt = "Open",
+    destinations = "Portails disponibles",
+    travelInfo = "Travel Information",
     to = ":00~q~ à ~o~",
     hundred = ":00",
     hours = " est ouvert de ~o~",
@@ -11,9 +12,16 @@ Locales["fr_lang"] = {
     shortCash = "Vous n'avez pas assez d'argent",
     needJob = "Vous n'avez pas l'emploi requis !",
     traveling = "Voyager vers ",
-    destination = "Destination: ",
     choose = "Choisissez votre destination",
+    currency = "Currency",
     cash = "Argent ",
     gold = "Or",
-    go = "Aller"
+    free = "Free",
+    nugget = " gold",
+    go = "Aller",
+    back = "Back",
+    price = "Price: ",
+    time = "Travel Time: ",
+    minutes = " minutes",
+    seconds = " seconds"
 }
