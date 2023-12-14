@@ -1,9 +1,10 @@
 ---------------------------------- Spanish -------------- Made by Magico
+-- Please send Pull Request to GitHub with Language Updates
 Locales["es_lang"] = {
 
-    portPrompt = "Menu",
-    subMenu = "Destinos Disponibles",
-    closed = " ~o~: ~e~CERRADI",
+    portPrompt = "Open",
+    destinations = "Destinos Disponibles",
+    travelInfo = "Travel Information",
     to = ":00~q~ hasta ~o~",
     hundred = ":00",
     hours = " Abierto desde ~o~",
@@ -11,9 +12,16 @@ Locales["es_lang"] = {
     shortCash = "No tienes suficientes dolares",
     needJob = "Para usar esto necesitas ser doctor: ~o~",
     traveling = "Viajando hasta ",
-    destination = "Destino: ",
     choose = "Elija su destino",
+    currency = "Currency",
     cash = "Dolares",
     gold = "Oro",
-    go = "Go"
+    free = "Free",
+    nugget = " gold",
+    go = "Go",
+    back = "Back",
+    price = "Price: ",
+    time = "Travel Time: ",
+    minutes = " minutes",
+    seconds = " seconds"
 }

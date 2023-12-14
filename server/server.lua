@@ -1,29 +1,32 @@
-local VORPcore = {}
-TriggerEvent('getCore', function(core)
-    VORPcore = core
-end)
-
-local ServerRPC = exports.vorp_core:ServerRpcCall()
+local VORPcore = exports.vorp_core:GetCore()
 
 -- Get Travel Time and Price Data
-ServerRPC.Callback.Register('bcc-portals:GetTravelData', function(source, cb, travelInfo)
+VORPcore.Callback.Register('bcc-portals:GetTravelData', function(source, cb, travelInfo)
     local travelLoc = travelInfo.location
-    local distance = #(travelInfo.coords - Config.shops[travelLoc].npcPos)
+    local distance = #(travelInfo.coords - Config.shops[travelLoc].npc.coords)
     local cashPrice = 0
     local goldPrice = 0
     if Config.price > 0 then
         cashPrice = math.ceil(distance * Config.price)
         goldPrice = math.ceil(cashPrice / 20.67) -- 1899 Gold Price = $20.67
     end
-    local time = math.ceil(distance * Config.time)
-    local displayTime = math.ceil(time / 1000)
-    local travelData = {location = travelLoc, cash = cashPrice, gold = goldPrice, travelTime = time, dispTime = displayTime}
+    local time = math.floor(distance * Config.time)
+    local displayTime = ConvertToTime(time)
+    local travelData = { location = travelLoc, cash = cashPrice, gold = goldPrice, timeMs = time, dispTime = displayTime }
 
     cb(travelData)
 end)
 
+function ConvertToTime(ms)
+    local seconds = math.ceil(ms / 1000)
+    local mins = math.floor(seconds / 60)
+    local secs = math.ceil(seconds % 60)
+    local realTime = { minutes = mins, seconds = secs }
+    return realTime
+end
+
 -- Buy Portal Passage
-ServerRPC.Callback.Register('bcc-portals:GetPlayerCanTravel', function(source, cb, canTravelInfo)
+VORPcore.Callback.Register('bcc-portals:GetPlayerCanTravel', function(source, cb, canTravelInfo)
     local src = source
     local Character = VORPcore.getUser(src).getUsedCharacter
     local currency = canTravelInfo.currency
@@ -45,28 +48,27 @@ ServerRPC.Callback.Register('bcc-portals:GetPlayerCanTravel', function(source, c
             VORPcore.NotifyRightTip(src, _U('shortGold'), 4000)
             cb(false)
         end
-    else
+    elseif currency == 'free' then
         cb(true)
     end
 end)
 
 -- Get Player Job and Job Grade
-ServerRPC.Callback.Register('bcc-portals:CheckPlayerJob', function(source, cb, shop)
+VORPcore.Callback.Register('bcc-portals:CheckPlayerJob', function(source, cb, portal)
     local src = source
     local Character = VORPcore.getUser(src).getUsedCharacter
-    local playerJob = Character.job
+    local charJob = Character.job
     local jobGrade = Character.jobGrade
-
-    if playerJob then
-        for _, job in pairs(Config.shops[shop].allowedJobs) do
-            if playerJob == job then
-                if tonumber(jobGrade) >= tonumber(Config.shops[shop].jobGrade) then
-                    cb(true)
-                    return
-                end
-            end
-        end
+    if not charJob then
+        cb(false)
+        return
     end
-    VORPcore.NotifyRightTip(src, _U('needJob'), 4000)
-    cb(false)
+    for _, job in pairs(Config.shops[portal].shop.jobs) do
+        if (charJob == job.name) and (tonumber(jobGrade) >= tonumber(job.grade)) then
+            cb(true)
+            return
+        end
+        VORPcore.NotifyRightTip(src, _U('needJob'), 4000)
+        cb(false)
+    end
 end)

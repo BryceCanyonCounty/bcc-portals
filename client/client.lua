@@ -1,16 +1,12 @@
-local VORPMenu = {}
-TriggerEvent('vorp_menu:getData', function(cb)
-    VORPMenu = cb
-end)
+FeatherMenu =  exports['feather-menu'].initiate()
 
 local ClientRPC = exports.vorp_core:ClientRpcCall()
 
-local Portal
+local MenuPrompt
 local PromptGroup = GetRandomIntInRange(0, 0xffffff)
-local InMenu = false
 -- Start Portals
 CreateThread(function()
-    PortPrompt()
+    StartPrompt()
     while true do
         Wait(0)
         local playerPed = PlayerPedId()
@@ -18,95 +14,93 @@ CreateThread(function()
         local sleep = true
         local hour = GetClockHours()
 
-        if not InMenu and not IsEntityDead(playerPed) then
-            for shop, shopCfg in pairs(Config.shops) do
-                if shopCfg.shopHours then
+        if not IsEntityDead(playerPed) then
+            for portal, portalCfg in pairs(Config.shops) do
+                if portalCfg.shop.hours.active then
                     -- Using Shop Hours - Shop Closed
-                    if hour >= shopCfg.shopClose or hour < shopCfg.shopOpen then
-                        if shopCfg.blipOn and Config.blipOnClosed then
-                            if not Config.shops[shop].Blip then
-                                AddBlip(shop)
+                    if hour >= portalCfg.shop.hours.close or hour < portalCfg.shop.hours.open then
+                        if portalCfg.blip.show and portalCfg.blip.showClosed then
+                            if not Config.shops[portal].Blip then
+                                AddBlip(portal)
                             end
-                            Citizen.InvokeNative(0x662D364ABF16DE2F, Config.shops[shop].Blip, joaat(Config.BlipColors[shopCfg.blipClosed])) -- BlipAddModifier
+                            Citizen.InvokeNative(0x662D364ABF16DE2F, Config.shops[portal].Blip, joaat(Config.BlipColors[portalCfg.blip.color.closed])) -- BlipAddModifier
                         else
-                            if Config.shops[shop].Blip then
-                                RemoveBlip(Config.shops[shop].Blip)
-                                Config.shops[shop].Blip = nil
+                            if Config.shops[portal].Blip then
+                                RemoveBlip(Config.shops[portal].Blip)
+                                Config.shops[portal].Blip = nil
                             end
                         end
-                        if shopCfg.NPC then
-                            DeleteEntity(shopCfg.NPC)
-                            shopCfg.NPC = nil
+                        if portalCfg.NPC then
+                            DeleteEntity(portalCfg.NPC)
+                            portalCfg.NPC = nil
                         end
-                        local sDist = #(pCoords - shopCfg.npcPos)
-                        if sDist <= shopCfg.sDistance then
+                        local distance = #(pCoords - portalCfg.npc.coords)
+                        if distance <= portalCfg.shop.distance then
                             sleep = false
-                            local shopClosed = CreateVarString(10, 'LITERAL_STRING', shopCfg.shopName .. _U('hours') .. shopCfg.shopOpen .. _U('to') .. shopCfg.shopClose .. _U('hundred'))
+                            local shopClosed = CreateVarString(10, 'LITERAL_STRING', portalCfg.shop.name .. _U('hours') .. portalCfg.shop.hours.open .. _U('to') .. portalCfg.shop.hours.close .. _U('hundred'))
                             PromptSetActiveGroupThisFrame(PromptGroup, shopClosed)
-                            PromptSetEnabled(Portal, 0)
+                            PromptSetEnabled(MenuPrompt, false)
                         end
-                    elseif hour >= shopCfg.shopOpen then
+                    elseif hour >= portalCfg.shop.hours.open then
                         -- Using Shop Hours - Shop Open
-                        if shopCfg.blipOn then
-                            if not Config.shops[shop].Blip then
-                                AddBlip(shop)
+                        if portalCfg.blip.show then
+                            if not Config.shops[portal].Blip then
+                                AddBlip(portal)
                             end
-                            Citizen.InvokeNative(0x662D364ABF16DE2F, Config.shops[shop].Blip, joaat(Config.BlipColors[shopCfg.blipOpen])) -- BlipAddModifier
+                            Citizen.InvokeNative(0x662D364ABF16DE2F, Config.shops[portal].Blip, joaat(Config.BlipColors[portalCfg.blip.color.open])) -- BlipAddModifier
                         end
-                        if not next(shopCfg.allowedJobs) then
-                            local sDist = #(pCoords - shopCfg.npcPos)
-                            if shopCfg.npcOn then
-                                if sDist <= shopCfg.nDistance then
-                                    if not shopCfg.NPC then
-                                        AddNPC(shop)
+                        if not next(portalCfg.shop.jobs) then
+                            local distance = #(pCoords - portalCfg.npc.coords)
+                            if portalCfg.npc.active then
+                                if distance <= portalCfg.npc.distance then
+                                    if not portalCfg.NPC then
+                                        AddNPC(portal)
                                     end
                                 else
-                                    if shopCfg.NPC then
-                                        DeleteEntity(shopCfg.NPC)
-                                        shopCfg.NPC = nil
+                                    if portalCfg.NPC then
+                                        DeleteEntity(portalCfg.NPC)
+                                        portalCfg.NPC = nil
                                     end
                                 end
                             end
-                            if sDist <= shopCfg.sDistance then
+                            if distance <= portalCfg.shop.distance then
                                 sleep = false
-                                local shopOpen = CreateVarString(10, 'LITERAL_STRING', shopCfg.promptName)
+                                local shopOpen = CreateVarString(10, 'LITERAL_STRING', portalCfg.shop.prompt)
                                 PromptSetActiveGroupThisFrame(PromptGroup, shopOpen)
-                                PromptSetEnabled(Portal, 1)
+                                PromptSetEnabled(MenuPrompt, true)
 
-                                if Citizen.InvokeNative(0xC92AC953F0A982AE, Portal) then -- UiPromptHasStandardModeCompleted
-                                    OpenMenu(pCoords, shop)
+                                if Citizen.InvokeNative(0xC92AC953F0A982AE, MenuPrompt) then -- UiPromptHasStandardModeCompleted
+                                    MainMenu(pCoords, portal)
                                 end
                             end
                         else
                             -- Using Shop Hours - Shop Open - Job Locked
-                            if Config.shops[shop].Blip then
-                                Citizen.InvokeNative(0x662D364ABF16DE2F, Config.shops[shop].Blip, joaat(Config.BlipColors[shopCfg.blipJob])) -- BlipAddModifier
+                            if Config.shops[portal].Blip then
+                                Citizen.InvokeNative(0x662D364ABF16DE2F, Config.shops[portal].Blip, joaat(Config.BlipColors[portalCfg.blip.color.job])) -- BlipAddModifier
                             end
-                            local sDist = #(pCoords - shopCfg.npcPos)
-                            if shopCfg.npcOn then
-                                if sDist <= shopCfg.nDistance then
-                                    if not shopCfg.NPC then
-                                        AddNPC(shop)
+                            local distance = #(pCoords - portalCfg.npc.coords)
+                            if portalCfg.npc.active then
+                                if distance <= portalCfg.npc.distance then
+                                    if not portalCfg.NPC then
+                                        AddNPC(portal)
                                     end
                                 else
-                                    if shopCfg.NPC then
-                                        DeleteEntity(shopCfg.NPC)
-                                        shopCfg.NPC = nil
+                                    if portalCfg.NPC then
+                                        DeleteEntity(portalCfg.NPC)
+                                        portalCfg.NPC = nil
                                     end
                                 end
                             end
-                            if sDist <= shopCfg.sDistance then
+                            if distance <= portalCfg.shop.distance then
                                 sleep = false
-                                local shopOpen = CreateVarString(10, 'LITERAL_STRING', shopCfg.promptName)
+                                local shopOpen = CreateVarString(10, 'LITERAL_STRING', portalCfg.shop.prompt)
                                 PromptSetActiveGroupThisFrame(PromptGroup, shopOpen)
-                                PromptSetEnabled(Portal, 1)
+                                PromptSetEnabled(MenuPrompt, true)
 
-                                if Citizen.InvokeNative(0xC92AC953F0A982AE, Portal) then -- UiPromptHasStandardModeCompleted
-                                    local result = ClientRPC.Callback.TriggerAwait('bcc-portals:CheckPlayerJob', shop)
+                                if Citizen.InvokeNative(0xC92AC953F0A982AE, MenuPrompt) then -- UiPromptHasStandardModeCompleted
+                                    local result = ClientRPC.Callback.TriggerAwait('bcc-portals:CheckPlayerJob', portal)
                                     if result then
-                                        OpenMenu(pCoords, shop)
-                                    else
-                                        return
+                                        MainMenu(pCoords, portal)
                                     end
                                 end
                             end
@@ -114,66 +108,64 @@ CreateThread(function()
                     end
                 else
                     -- Not Using Shop Hours - Shop Always Open
-                    if shopCfg.blipOn then
-                        if not Config.shops[shop].Blip then
-                            AddBlip(shop)
+                    if portalCfg.blip.show then
+                        if not Config.shops[portal].Blip then
+                            AddBlip(portal)
                         end
-                        Citizen.InvokeNative(0x662D364ABF16DE2F, Config.shops[shop].Blip, joaat(Config.BlipColors[shopCfg.blipOpen])) -- BlipAddModifier
+                        Citizen.InvokeNative(0x662D364ABF16DE2F, Config.shops[portal].Blip, joaat(Config.BlipColors[portalCfg.blip.color.open])) -- BlipAddModifier
                     end
-                    if not next(shopCfg.allowedJobs) then
-                        local sDist = #(pCoords - shopCfg.npcPos)
-                        if shopCfg.npcOn then
-                            if sDist <= shopCfg.nDistance then
-                                if not shopCfg.NPC then
-                                    AddNPC(shop)
+                    if not next(portalCfg.shop.jobs) then
+                        local distance = #(pCoords - portalCfg.npc.coords)
+                        if portalCfg.npc.active then
+                            if distance <= portalCfg.npc.distance then
+                                if not portalCfg.NPC then
+                                    AddNPC(portal)
                                 end
                             else
-                                if shopCfg.NPC then
-                                    DeleteEntity(shopCfg.NPC)
-                                    shopCfg.NPC = nil
+                                if portalCfg.NPC then
+                                    DeleteEntity(portalCfg.NPC)
+                                    portalCfg.NPC = nil
                                 end
                             end
                         end
-                        if sDist <= shopCfg.sDistance then
+                        if distance <= portalCfg.shop.distance then
                             sleep = false
-                            local shopOpen = CreateVarString(10, 'LITERAL_STRING', shopCfg.promptName)
+                            local shopOpen = CreateVarString(10, 'LITERAL_STRING', portalCfg.shop.prompt)
                             PromptSetActiveGroupThisFrame(PromptGroup, shopOpen)
-                            PromptSetEnabled(Portal, 1)
+                            PromptSetEnabled(MenuPrompt, true)
 
-                            if Citizen.InvokeNative(0xC92AC953F0A982AE, Portal) then -- UiPromptHasStandardModeCompleted
-                                OpenMenu(pCoords, shop)
+                            if Citizen.InvokeNative(0xC92AC953F0A982AE, MenuPrompt) then -- UiPromptHasStandardModeCompleted
+                                MainMenu(pCoords, portal)
                             end
                         end
                     else
                         -- Not Using Shop Hours - Shop Always Open - Job Locked
-                        if Config.shops[shop].Blip then
-                            Citizen.InvokeNative(0x662D364ABF16DE2F, Config.shops[shop].Blip, joaat(Config.BlipColors[shopCfg.blipJob])) -- BlipAddModifier
+                        if Config.shops[portal].Blip then
+                            Citizen.InvokeNative(0x662D364ABF16DE2F, Config.shops[portal].Blip, joaat(Config.BlipColors[portalCfg.blip.color.job])) -- BlipAddModifier
                         end
-                        local sDist = #(pCoords - shopCfg.npcPos)
-                        if shopCfg.npcOn then
-                            if sDist <= shopCfg.nDistance then
-                                if not shopCfg.NPC then
-                                    AddNPC(shop)
+                        local distance = #(pCoords - portalCfg.npc.coords)
+                        if portalCfg.npc.active then
+                            if distance <= portalCfg.npc.distance then
+                                if not portalCfg.NPC then
+                                    AddNPC(portal)
                                 end
                             else
-                                if shopCfg.NPC then
-                                    DeleteEntity(shopCfg.NPC)
-                                    shopCfg.NPC = nil
+                                if portalCfg.NPC then
+                                    DeleteEntity(portalCfg.NPC)
+                                    portalCfg.NPC = nil
                                 end
                             end
                         end
-                        if sDist <= shopCfg.sDistance then
+                        if distance <= portalCfg.shop.distance then
                             sleep = false
-                            local shopOpen = CreateVarString(10, 'LITERAL_STRING', shopCfg.promptName)
+                            local shopOpen = CreateVarString(10, 'LITERAL_STRING', portalCfg.shop.prompt)
                             PromptSetActiveGroupThisFrame(PromptGroup, shopOpen)
-                            PromptSetEnabled(Portal, 1)
+                            PromptSetEnabled(MenuPrompt, true)
 
-                            if Citizen.InvokeNative(0xC92AC953F0A982AE, Portal) then -- UiPromptHasStandardModeCompleted
-                                local result = ClientRPC.Callback.TriggerAwait('bcc-portals:CheckPlayerJob', shop)
+                            if Citizen.InvokeNative(0xC92AC953F0A982AE, MenuPrompt) then -- UiPromptHasStandardModeCompleted
+                                local result = ClientRPC.Callback.TriggerAwait('bcc-portals:CheckPlayerJob', portal)
                                 if result then
-                                    OpenMenu(pCoords,shop)
-                                else
-                                    return
+                                    MainMenu(pCoords,portal)
                                 end
                             end
                         end
@@ -187,156 +179,276 @@ CreateThread(function()
     end
 end)
 
--- Portal Menu to Choose Destination
-function OpenMenu(pCoords, shop)
-    VORPMenu.CloseAll()
-    local playerPed = PlayerPedId()
-    local shopCfg = Config.shops[shop]
-    TaskStandStill(playerPed, -1)
-    DisplayRadar(false)
-    InMenu = true
-    local MenuElements = {}
+-- Portal Menus
+function MainMenu(pCoords, portal)
+    local portalCfg = Config.shops[portal]
+    local mainMenu = FeatherMenu:RegisterMenu('bcc-portals:MainMenu', {
+        top = '10%',
+        left = '5%',
+        ['720width'] = '500px',
+        ['1080width'] = '600px',
+        ['2kwidth'] = '700px',
+        ['4kwidth'] = '900px',
+        style = {},
+        contentslot = {
+            style = {
+                ['height'] = '325px',
+                ['min-height'] = '325px'
+            }
+        },
+        draggable = true,
+        canclose = true
+    })
 
-    for outlet, outletCfg in pairs(shopCfg.outlets) do
-        MenuElements[#MenuElements + 1] = {
-            label = outletCfg.label,
-            value = outlet,
-            desc = '<span style=color:#C0C0C0;>' .. _U('choose') .. '</span>',
+    local destinations = mainMenu:RegisterPage('first:page')
+
+    destinations:RegisterElement('header', {
+        value = portalCfg.shop.name,
+        slot = 'header',
+        style = {
+            ['color'] = '#999'
         }
-    end
-    VORPMenu.Open('default', GetCurrentResourceName(), 'vorp_menu',
-    {
-        title = '<span style=color:#999;>' .. shopCfg.shopName .. '</span>',
-        subtext = '<span style=color:#C0C0C0;>' .. _U('subMenu') .. '</span>',
-        align = 'top-left',
-        elements = MenuElements,
-        lastmenu = '',
-        itemHeight = '3vh',
-    },
-    function(data, menu)
-        if data.current == 'backup' then
-            return _G[data.trigger]()
-        end
-        if data.current.value then
-            local travelInfo = {location = data.current.value, coords = pCoords}
+    })
+
+    destinations:RegisterElement('subheader', {
+        value = _U('destinations'),
+        slot = 'header',
+        style = {
+            ['color'] = '#CC9900',
+            ['font-size'] = '18px'
+        }
+    })
+
+    destinations:RegisterElement('line', {
+        slot = 'header'
+    })
+
+    for outlet, outletCfg in pairs(portalCfg.outlets) do
+        destinations:RegisterElement('button', {
+            label = outletCfg.label,
+            style = {
+                ['color'] = '#E0E0E0'
+            },
+            id = outlet
+        }, function(data)
+            local travelInfo = { location = data.id, coords = pCoords }
             local travelData = ClientRPC.Callback.TriggerAwait('bcc-portals:GetTravelData', travelInfo)
             if travelData then
-                DestinationMenu(travelData, shop, pCoords)
+                TravelMenu(travelData, portal, pCoords)
             end
-        end
-    end,
-    function(data, menu)
-        menu.close()
-        InMenu = false
-        ClearPedTasks(playerPed)
-        DisplayRadar(true)
-    end)
+        end)
+    end
+
+    destinations:RegisterElement('bottomline', {
+        slot = 'footer',
+    })
+
+    TextDisplay = destinations:RegisterElement('textdisplay', {
+        value = _U('choose'),
+        slot = 'footer',
+        style = {
+            ['color'] = '#C0C0C0'
+        }
+    })
+
+    mainMenu:Open({
+        startupPage = destinations
+    })
 end
 
-function DestinationMenu(travelData, shop, pCoords)
-    VORPMenu.CloseAll()
-    InMenu = true
-    local playerPed = PlayerPedId()
-    local MenuElements = {}
+function TravelMenu(travelData, portal, pCoords)
     local travelLoc = travelData.location
     local cashPrice = travelData.cash
     local goldPrice = travelData.gold
-    local displayTime = travelData.dispTime
-    local currencyType = Config.shops[shop].currency
+    local currencyData = 'cash'
+    local travelPrice = cashPrice
+
+    local travelMenu = FeatherMenu:RegisterMenu('bcc-portals:TravelMenu', {
+        top = '10%',
+        left = '5%',
+        ['720width'] = '500px',
+        ['1080width'] = '600px',
+        ['2kwidth'] = '700px',
+        ['4kwidth'] = '900px',
+        style = {},
+        contentslot = {
+            style = {
+                ['height'] = '325px',
+                ['min-height'] = '325px'
+            }
+        },
+        draggable = true,
+        canclose = true
+    })
+
+    local travelInfo = travelMenu:RegisterPage('first:page')
+
+    travelInfo:RegisterElement('header', {
+        value = Config.shops[portal].shop.name,
+        slot = 'header',
+        style = {
+            ['color'] = '#999'
+        }
+    })
+
+    travelInfo:RegisterElement('subheader', {
+        value = _U('travelInfo'),
+        slot = 'header',
+        style = {
+            ['color'] = '#CC9900',
+            ['font-size'] = '18px'
+        }
+    })
+
+    travelInfo:RegisterElement('line', {
+        slot = 'header'
+    })
+
+    LocDisplay = travelInfo:RegisterElement('textdisplay', {
+        value = Config.shops[travelLoc].shop.name,
+        style = {
+            ['color'] = '#C0C0C0',
+            ['font-size'] = '20px',
+            ['font-variant'] = 'small-caps',
+            ['font-weight'] = '500',
+            ['letter-spacing'] = '2px'
+        },
+        id = 'location'
+    })
+
+    PriceDisplay = travelInfo:RegisterElement('textdisplay', {
+        value = _U('price') .. ' $' .. cashPrice,
+        style = {
+            ['color'] = '#C0C0C0',
+            ['font-variant'] = 'small-caps',
+            ['font-size'] = '16px'
+        },
+        id = 'price'
+    })
+
+    local minutes = tonumber(travelData.dispTime.minutes)
+    local seconds = tonumber(travelData.dispTime.seconds)
+    local travelTime = nil
+    if minutes >= 1 then
+        travelTime = minutes .. _U('minutes') .. ' ' .. seconds .. _U('seconds')
+    else
+        travelTime = seconds .. _U('seconds')
+    end
+
+    TimeDisplay = travelInfo:RegisterElement('textdisplay', {
+        value = _U('time') .. travelTime,
+        style = {
+            ['color'] = '#C0C0C0',
+            ['font-variant'] = 'small-caps',
+            ['font-size'] = '16px'
+        },
+        id = 'time'
+    })
+
+    local currencyType = Config.shops[portal].shop.currency
     local currency = {
-        [1] = function()
-            MenuElements = {
-                {
-                    label = _U('cash'),
-                    value = 'cash',
-                    desc = '<span style=color:#C0C0C0;>' .. 'Price: ' .. '</span>' ..  '<span style=color:#278664;>' .. ' $' .. cashPrice .. '</span>' .. '<br>' ..
-                    '<span style=color:#C0C0C0;>' .. 'Travel Time: ' .. '</span>' .. '<span style=color:#888;>' .. ' ' .. displayTime .. ' seconds' .. '</span>',
-                    info = cashPrice
-                }
-            }
+        [1] = function() -- Cash-Only
+            currencyData = 'cash'
+            travelPrice = cashPrice
         end,
-        [2] = function()
-            MenuElements = {
-                {
-                    label = _U('gold'),
-                    value = 'gold',
-                    desc = '<span style=color:#C0C0C0;>' .. 'Price: ' .. '</span>' .. '<span style=color:#CC9900;>' .. goldPrice .. ' ' .. 'gold' .. '</span>' .. '<br>' ..
-                    '<span style=color:#C0C0C0;>' .. 'Travel Time: ' .. '</span>' .. '<span style=color:#888;>' .. ' ' .. displayTime .. ' seconds' .. '</span>',
-                    info = goldPrice
-                }
-            }
+        [2] = function() -- Gold-Only
+            PriceDisplay:update({
+                value = _U('price') .. goldPrice .. _U('nugget'),
+                style = {},
+            })
+            currencyData = 'gold'
+            travelPrice = goldPrice
         end,
-        [3] = function()
-            MenuElements = {
-                {
-                    label = _U('cash'),
-                    value = 'cash',
-                    desc = '<span style=color:#C0C0C0;>' .. 'Price: ' .. '</span>' ..  '<span style=color:#278664;>' .. ' $' .. cashPrice .. '</span>' .. '<br>' ..
-                    '<span style=color:#C0C0C0;>' .. 'Travel Time: ' .. '</span>' .. '<span style=color:#888;>' .. ' ' .. displayTime .. ' seconds' .. '</span>',
-                    info = cashPrice
+        [3] = function() -- Cash and Gold
+            travelInfo:RegisterElement('arrows', {
+                label = _U('currency'),
+                start = 1,
+                options = {
+                    {
+                        display = _U('cash'),
+                        extra = 'cash'
+                    },
+                    {
+                        display = _U('gold'),
+                        extra = 'gold'
+                    }
                 },
-                {
-                    label = _U('gold'),
-                    value = 'gold',
-                    desc = '<span style=color:#C0C0C0;>' .. 'Price: ' .. '</span>' .. '<span style=color:#CC9900;>' .. goldPrice .. ' ' .. 'gold' .. '</span>' .. '<br>' ..
-                    '<span style=color:#C0C0C0;>' .. 'Travel Time: ' .. '</span>' .. '<span style=color:#888;>' .. ' ' .. displayTime .. ' seconds' .. '</span>',
-                    info = goldPrice
-                }
-            }
+                style = {
+                    ['color'] = '#E0E0E0'
+                },
+                persist = false,
+            }, function(data)
+                if data.value.extra == 'cash' then
+                    PriceDisplay:update({
+                        value = _U('price') .. ' $' .. cashPrice,
+                        style = {},
+                    })
+                    currencyData = 'cash'
+                    travelPrice = cashPrice
+                elseif data.value.extra == 'gold' then
+                    PriceDisplay:update({
+                        value = _U('price') .. goldPrice .. _U('nugget'),
+                        style = {},
+                    })
+                    currencyData = 'gold'
+                    travelPrice = goldPrice
+                end
+            end)
         end,
-        [4] = function()
-            MenuElements = {
-                {
-                    label = _U('go'),
-                    value = 'free',
-                    desc =  '<span style=color:#C0C0C0;>' .. 'Travel Time: ' .. '</span>' .. '<span style=color:#888;>' .. ' ' .. displayTime .. ' seconds' .. '</span>'
-                }
-            }
+        [4] = function() -- Free
+            PriceDisplay:update({
+                value = _U('price') .. _U('free'),
+                style = {},
+            })
+            currencyData = 'free'
         end
     }
     if currency[currencyType] then
         currency[currencyType]()
     end
-    VORPMenu.Open('default', GetCurrentResourceName(), 'vorp_menu',
-    {
-        title = '<span style=color:#999;>' .. Config.shops[shop].shopName .. '</span>',
-        subtext = '<span style=color:#C0C0C0;>' .. _U('destination') .. '</span>' .. '<span style=color:#CC9900;>' .. Config.shops[travelLoc].shopName .. '</span>',
-        align = 'top-left',
-        elements = MenuElements,
-        lastmenu = 'OpenMenu',
-        itemHeight = '3vh',
-    },
-    function(data, menu)
-        if data.current == 'backup' then
-            return _G[data.trigger](pCoords, shop)
-        end
 
-        local canTravelInfo = {currency = data.current.value, price = data.current.info}
+    travelInfo:RegisterElement('button', {
+        label = _U('go'),
+        style = {
+            ['color'] = '#E0E0E0'
+        },
+        id = 'go'
+    }, function(data)
+        local canTravelInfo = { currency = currencyData, price = travelPrice }
         local canTravel = ClientRPC.Callback.TriggerAwait('bcc-portals:GetPlayerCanTravel', canTravelInfo)
         if canTravel then
-            menu.close()
-            SendPlayer(travelLoc, travelData.travelTime)
-            InMenu = false
-            ClearPedTasks(playerPed)
-            DisplayRadar(true)
+            travelMenu.Close()
+            SendPlayer(travelLoc, travelData.timeMs)
         end
-    end,
-    function(data, menu)
-        menu.close()
-        InMenu = false
-        ClearPedTasks(playerPed)
-        DisplayRadar(true)
     end)
+
+    travelInfo:RegisterElement('button', {
+        label = _U('back'),
+        style = {
+            ['color'] = '#E0E0E0'
+        },
+        id = 'back'
+    }, function(data)
+        MainMenu(pCoords, portal)
+    end)
+
+    travelInfo:RegisterElement('bottomline', {
+        slot = 'footer',
+    })
+
+    travelMenu:Open({
+        startupPage = travelInfo
+    })
 end
 
 -- Send Player to Destination
 function SendPlayer(location, time)
-    local shopCfg = Config.shops[location]
+    local portalCfg = Config.shops[location]
     DoScreenFadeOut(1000)
     Wait(1000)
-    Citizen.InvokeNative(0x1E5B70E53DB661E5, 0, 0, 0, _U('traveling') .. shopCfg.shopName, '', '') -- DisplayLoadingScreens
+    Citizen.InvokeNative(0x1E5B70E53DB661E5, 0, 0, 0, _U('traveling') .. portalCfg.shop.name, '', '') -- DisplayLoadingScreens
     Wait(time)
-    Citizen.InvokeNative(0x203BEFFDBE12E96A, PlayerPedId(), shopCfg.playerPos.x, shopCfg.playerPos.y, shopCfg.playerPos.z, shopCfg.playerHeading, false, false, false) -- SetEntityCoordsAndHeading
+    Citizen.InvokeNative(0x203BEFFDBE12E96A, PlayerPedId(), portalCfg.player.coords, portalCfg.player.heading, false, false, false) -- SetEntityCoordsAndHeading
     ShutdownLoadingScreen()
     DoScreenFadeIn(1000)
     Wait(1000)
@@ -344,43 +456,43 @@ function SendPlayer(location, time)
 end
 
 -- Menu Prompts
-function PortPrompt()
+function StartPrompt()
     local str = CreateVarString(10, 'LITERAL_STRING', _U('portPrompt'))
-    Portal = PromptRegisterBegin()
-    PromptSetControlAction(Portal, Config.key)
-    PromptSetText(Portal, str)
-    PromptSetVisible(Portal, 1)
-    PromptSetStandardMode(Portal, 1)
-    PromptSetGroup(Portal, PromptGroup)
-    PromptRegisterEnd(Portal)
+    MenuPrompt = PromptRegisterBegin()
+    PromptSetControlAction(MenuPrompt, Config.key)
+    PromptSetText(MenuPrompt, str)
+    PromptSetVisible(MenuPrompt, true)
+    PromptSetStandardMode(MenuPrompt, true)
+    PromptSetGroup(MenuPrompt, PromptGroup)
+    PromptRegisterEnd(MenuPrompt)
 end
 
 -- Blips
-function AddBlip(shop)
-    local shopCfg = Config.shops[shop]
-    shopCfg.Blip = Citizen.InvokeNative(0x554d9d53f696d002, 1664425300, shopCfg.npcPos) -- BlipAddForCoords
-    SetBlipSprite(shopCfg.Blip, shopCfg.blipSprite, true)
-    SetBlipScale(shopCfg.Blip, 0.2)
-    Citizen.InvokeNative(0x9CB1A1623062F402, shopCfg.Blip, shopCfg.blipName) -- SetBlipNameFromPlayerString
+function AddBlip(portal)
+    local portalCfg = Config.shops[portal]
+    portalCfg.Blip = Citizen.InvokeNative(0x554d9d53f696d002, 1664425300, portalCfg.npc.coords) -- BlipAddForCoords
+    SetBlipSprite(portalCfg.Blip, portalCfg.blip.sprite, true)
+    SetBlipScale(portalCfg.Blip, 0.2)
+    Citizen.InvokeNative(0x9CB1A1623062F402, portalCfg.Blip, portalCfg.blip.name) -- SetBlipNameFromPlayerString
 end
 
 -- NPCs
-function AddNPC(shop)
-    local shopCfg = Config.shops[shop]
-    LoadModel(shopCfg.npcModel)
-    shopCfg.NPC = CreatePed(shopCfg.npcModel, shopCfg.npcPos.x, shopCfg.npcPos.y, shopCfg.npcPos.z, shopCfg.npcHeading, false, false, false, false)
-    Citizen.InvokeNative(0x283978A15512B2FE, shopCfg.NPC, true) -- SetRandomOutfitVariation
-    SetEntityCanBeDamaged(shopCfg.NPC, false)
-    SetEntityInvincible(shopCfg.NPC, true)
+function AddNPC(portal)
+    local portalCfg = Config.shops[portal]
+    LoadModel(portalCfg.npc.model)
+    portalCfg.NPC = CreatePed(portalCfg.npc.model, portalCfg.npc.coords, portalCfg.npc.heading, false, false, false, false)
+    Citizen.InvokeNative(0x283978A15512B2FE, portalCfg.NPC, true) -- SetRandomOutfitVariation
+    SetEntityCanBeDamaged(portalCfg.NPC, false)
+    SetEntityInvincible(portalCfg.NPC, true)
     Wait(500)
-    FreezeEntityPosition(shopCfg.NPC, true)
-    SetBlockingOfNonTemporaryEvents(shopCfg.NPC, true)
+    FreezeEntityPosition(portalCfg.NPC, true)
+    SetBlockingOfNonTemporaryEvents(portalCfg.NPC, true)
 end
 
-function LoadModel(npcModel)
-    local model = joaat(npcModel)
-    RequestModel(model)
-    while not HasModelLoaded(model) do
+function LoadModel(model)
+    local hash = joaat(model)
+    RequestModel(hash)
+    while not HasModelLoaded(hash) do
         Wait(10)
     end
 end
@@ -389,20 +501,14 @@ AddEventHandler('onResourceStop', function(resourceName)
     if (GetCurrentResourceName() ~= resourceName) then
         return
     end
-    if InMenu then
-        ClearPedTasksImmediately(PlayerPedId())
-        VORPMenu.CloseAll()
-        DisplayRadar(true)
-    end
-
-    for _, shopCfg in pairs(Config.shops) do
-        if shopCfg.Blip then
-            RemoveBlip(shopCfg.Blip)
-            shopCfg.Blip = nil
+    for _, portalCfg in pairs(Config.shops) do
+        if portalCfg.Blip then
+            RemoveBlip(portalCfg.Blip)
+            portalCfg.Blip = nil
         end
-        if shopCfg.NPC then
-            DeleteEntity(shopCfg.NPC)
-            shopCfg.NPC = nil
+        if portalCfg.NPC then
+            DeleteEntity(portalCfg.NPC)
+            portalCfg.NPC = nil
         end
     end
 end)
