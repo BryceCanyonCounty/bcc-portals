@@ -16,9 +16,10 @@ Looking for fast and convenient travel in your server? Our script has got you co
 
 #### Dependencies
 - [vorp_core](https://github.com/VORPCORE/vorp-core-lua)
-- [vorp_menu](https://github.com/VORPCORE/vorp_menu)
+- [feather-menu](https://github.com/FeatherFramework/feather-menu)
 
 #### Installation
+- Make sure dependencies are installed/updated and ensured before this script
 - Add `bcc-portals` folder to your resources folder
 - Add `ensure bcc-portals` to your `resources.cfg`
 - Restart server
