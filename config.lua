@@ -25,7 +25,11 @@ Config.shops = {
             prompt   = 'Annesburg Portal',              -- Text Below the Menu Prompt Button
             distance = 2.0,                             -- Distance Between Player and Shop to Show Menu Prompt
             currency = 3,                               -- 1 = Cash-Only / 2 = Gold-Only / 3 = Cash and Gold / 4 = Free
-            jobs     = {},                              -- Insert Job to Limit Access - ex. jobs = {{name = 'police', grade = 1},{name = 'doctor', grade = 3}}
+            jobsEnabled = false,                        -- Allow Shop Access to Specified Jobs Only
+            jobs     = {                                -- Insert Job to Limit Access - ex. jobs = {{name = 'police', grade = 1},{name = 'doctor', grade = 3}}
+                {name = 'police', grade = 1},
+                {name = 'doctor', grade = 3}
+            },
             hours    = {
                 active = false,                         -- Shop uses Open and Closed Hours
                 open   = 7,                             -- Shop Open Time / 24 Hour Clock
@@ -73,7 +77,11 @@ Config.shops = {
             prompt   = 'Armadillo Portal',
             distance = 2.0,
             currency = 3,
-            jobs     = {},
+            jobsEnabled = false,
+            jobs     = {
+                {name = 'police', grade = 1},
+                {name = 'doctor', grade = 3}
+            },
             hours    = {
                 active = false,
                 open   = 7,
@@ -121,7 +129,11 @@ Config.shops = {
             prompt   = 'Blackwater Portal',
             distance = 2.0,
             currency = 3,
-            jobs     = {},
+            jobsEnabled = false,
+            jobs     = {
+                {name = 'police', grade = 1},
+                {name = 'doctor', grade = 3}
+            },
             hours    = {
                 active = false,
                 open   = 7,
@@ -169,7 +181,11 @@ Config.shops = {
             prompt   = 'Rhodes Portal',
             distance = 2.0,
             currency = 3,
-            jobs     = {},
+            jobsEnabled = false,
+            jobs     = {
+                {name = 'police', grade = 1},
+                {name = 'doctor', grade = 3}
+            },
             hours    = {
                 active = false,
                 open   = 7,
@@ -217,7 +233,11 @@ Config.shops = {
             prompt   = 'Strawberry Portal',
             distance = 2.0,
             currency = 3,
-            jobs     = {},
+            jobsEnabled = false,
+            jobs     = {
+                {name = 'police', grade = 1},
+                {name = 'doctor', grade = 3}
+            },
             hours    = {
                 active = false,
                 open   = 7,
@@ -265,7 +285,11 @@ Config.shops = {
             prompt   = 'Saint Denis Portal',
             distance = 2.0,
             currency = 3,
-            jobs     = {},
+            jobsEnabled = false,
+            jobs     = {
+                {name = 'police', grade = 1},
+                {name = 'doctor', grade = 3}
+            },
             hours    = {
                 active = false,
                 open   = 7,
@@ -313,7 +337,11 @@ Config.shops = {
             prompt   = 'Tumbleweed Portal',
             distance = 2.0,
             currency = 3,
-            jobs     = {},
+            jobsEnabled = false,
+            jobs     = {
+                {name = 'police', grade = 1},
+                {name = 'doctor', grade = 3}
+            },
             hours    = {
                 active = false,
                 open   = 7,
@@ -361,7 +389,11 @@ Config.shops = {
             prompt   = 'Valentine Portal',
             distance = 2.0,
             currency = 3,
-            jobs     = {},
+            jobsEnabled = false,
+            jobs     = {
+                {name = 'police', grade = 1},
+                {name = 'doctor', grade = 3}
+            },
             hours    = {
                 active = false,
                 open   = 7,
@@ -409,7 +441,11 @@ Config.shops = {
             prompt   = 'Van Horn Portal',
             distance = 2.0,
             currency = 3,
-            jobs     = {},
+            jobsEnabled = false,
+            jobs     = {
+                {name = 'police', grade = 1},
+                {name = 'doctor', grade = 3}
+            },
             hours    = {
                 active = false,
                 open   = 7,

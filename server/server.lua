@@ -1,6 +1,5 @@
 local VORPcore = exports.vorp_core:GetCore()
 
--- Get Travel Time and Price Data
 VORPcore.Callback.Register('bcc-portals:GetTravelData', function(source, cb, travelInfo)
     local travelLoc = travelInfo.location
     local distance = #(travelInfo.coords - Config.shops[travelLoc].npc.coords)
@@ -25,7 +24,6 @@ function ConvertToTime(ms)
     return realTime
 end
 
--- Buy Portal Passage
 VORPcore.Callback.Register('bcc-portals:GetPlayerCanTravel', function(source, cb, canTravelInfo)
     local src = source
     local Character = VORPcore.getUser(src).getUsedCharacter
@@ -53,8 +51,7 @@ VORPcore.Callback.Register('bcc-portals:GetPlayerCanTravel', function(source, cb
     end
 end)
 
--- Get Player Job and Job Grade
-VORPcore.Callback.Register('bcc-portals:CheckPlayerJob', function(source, cb, portal)
+VORPcore.Callback.Register('bcc-portals:CheckJob', function(source, cb, portal)
     local src = source
     local Character = VORPcore.getUser(src).getUsedCharacter
     local charJob = Character.job
@@ -63,12 +60,20 @@ VORPcore.Callback.Register('bcc-portals:CheckPlayerJob', function(source, cb, po
         cb(false)
         return
     end
-    for _, job in pairs(Config.shops[portal].shop.jobs) do
-        if (charJob == job.name) and (tonumber(jobGrade) >= tonumber(job.grade)) then
-            cb(true)
-            return
-        end
+    local hasJob = false
+    hasJob = CheckPlayerJob(charJob, jobGrade, portal)
+    if hasJob then
+        cb(true)
+    else
         VORPcore.NotifyRightTip(src, _U('needJob'), 4000)
         cb(false)
     end
 end)
+
+function CheckPlayerJob(charJob, jobGrade, portal)
+    for _, job in pairs(Config.shops[portal].shop.jobs) do
+        if (charJob == job.name) and (tonumber(jobGrade) >= tonumber(job.grade)) then
+            return true
+        end
+    end
+end
