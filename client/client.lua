@@ -4,117 +4,54 @@ local ClientRPC = exports.vorp_core:ClientRpcCall()
 
 local MenuPrompt
 local PromptGroup = GetRandomIntInRange(0, 0xffffff)
+local HasJob = false
 -- Start Portals
 CreateThread(function()
     StartPrompt()
     while true do
-        Wait(0)
         local playerPed = PlayerPedId()
         local pCoords = GetEntityCoords(playerPed)
-        local sleep = true
+        local sleep = 1000
         local hour = GetClockHours()
 
-        if not IsEntityDead(playerPed) then
-            for portal, portalCfg in pairs(Config.shops) do
-                if portalCfg.shop.hours.active then
-                    -- Using Shop Hours - Shop Closed
-                    if hour >= portalCfg.shop.hours.close or hour < portalCfg.shop.hours.open then
-                        if portalCfg.blip.show and portalCfg.blip.showClosed then
-                            if not Config.shops[portal].Blip then
-                                AddBlip(portal)
-                            end
-                            Citizen.InvokeNative(0x662D364ABF16DE2F, Config.shops[portal].Blip, joaat(Config.BlipColors[portalCfg.blip.color.closed])) -- BlipAddModifier
-                        else
-                            if Config.shops[portal].Blip then
-                                RemoveBlip(Config.shops[portal].Blip)
-                                Config.shops[portal].Blip = nil
-                            end
+        if IsEntityDead(playerPed) then
+            goto continue
+        end
+        for portal, portalCfg in pairs(Config.shops) do
+            if portalCfg.shop.hours.active then
+                -- Using Shop Hours - Shop Closed
+                if hour >= portalCfg.shop.hours.close or hour < portalCfg.shop.hours.open then
+                    if portalCfg.blip.show and portalCfg.blip.showClosed then
+                        if not Config.shops[portal].Blip then
+                            AddBlip(portal)
                         end
-                        if portalCfg.NPC then
-                            DeleteEntity(portalCfg.NPC)
-                            portalCfg.NPC = nil
-                        end
-                        local distance = #(pCoords - portalCfg.npc.coords)
-                        if distance <= portalCfg.shop.distance then
-                            sleep = false
-                            local shopClosed = CreateVarString(10, 'LITERAL_STRING', portalCfg.shop.name .. _U('hours') .. portalCfg.shop.hours.open .. _U('to') .. portalCfg.shop.hours.close .. _U('hundred'))
-                            PromptSetActiveGroupThisFrame(PromptGroup, shopClosed)
-                            PromptSetEnabled(MenuPrompt, false)
-                        end
-                    elseif hour >= portalCfg.shop.hours.open then
-                        -- Using Shop Hours - Shop Open
-                        if portalCfg.blip.show then
-                            if not Config.shops[portal].Blip then
-                                AddBlip(portal)
-                            end
-                            Citizen.InvokeNative(0x662D364ABF16DE2F, Config.shops[portal].Blip, joaat(Config.BlipColors[portalCfg.blip.color.open])) -- BlipAddModifier
-                        end
-                        if not next(portalCfg.shop.jobs) then
-                            local distance = #(pCoords - portalCfg.npc.coords)
-                            if portalCfg.npc.active then
-                                if distance <= portalCfg.npc.distance then
-                                    if not portalCfg.NPC then
-                                        AddNPC(portal)
-                                    end
-                                else
-                                    if portalCfg.NPC then
-                                        DeleteEntity(portalCfg.NPC)
-                                        portalCfg.NPC = nil
-                                    end
-                                end
-                            end
-                            if distance <= portalCfg.shop.distance then
-                                sleep = false
-                                local shopOpen = CreateVarString(10, 'LITERAL_STRING', portalCfg.shop.prompt)
-                                PromptSetActiveGroupThisFrame(PromptGroup, shopOpen)
-                                PromptSetEnabled(MenuPrompt, true)
-
-                                if Citizen.InvokeNative(0xC92AC953F0A982AE, MenuPrompt) then -- UiPromptHasStandardModeCompleted
-                                    MainMenu(pCoords, portal)
-                                end
-                            end
-                        else
-                            -- Using Shop Hours - Shop Open - Job Locked
-                            if Config.shops[portal].Blip then
-                                Citizen.InvokeNative(0x662D364ABF16DE2F, Config.shops[portal].Blip, joaat(Config.BlipColors[portalCfg.blip.color.job])) -- BlipAddModifier
-                            end
-                            local distance = #(pCoords - portalCfg.npc.coords)
-                            if portalCfg.npc.active then
-                                if distance <= portalCfg.npc.distance then
-                                    if not portalCfg.NPC then
-                                        AddNPC(portal)
-                                    end
-                                else
-                                    if portalCfg.NPC then
-                                        DeleteEntity(portalCfg.NPC)
-                                        portalCfg.NPC = nil
-                                    end
-                                end
-                            end
-                            if distance <= portalCfg.shop.distance then
-                                sleep = false
-                                local shopOpen = CreateVarString(10, 'LITERAL_STRING', portalCfg.shop.prompt)
-                                PromptSetActiveGroupThisFrame(PromptGroup, shopOpen)
-                                PromptSetEnabled(MenuPrompt, true)
-
-                                if Citizen.InvokeNative(0xC92AC953F0A982AE, MenuPrompt) then -- UiPromptHasStandardModeCompleted
-                                    local result = ClientRPC.Callback.TriggerAwait('bcc-portals:CheckPlayerJob', portal)
-                                    if result then
-                                        MainMenu(pCoords, portal)
-                                    end
-                                end
-                            end
+                        Citizen.InvokeNative(0x662D364ABF16DE2F, Config.shops[portal].Blip, joaat(Config.BlipColors[portalCfg.blip.color.closed])) -- BlipAddModifier
+                    else
+                        if Config.shops[portal].Blip then
+                            RemoveBlip(Config.shops[portal].Blip)
+                            Config.shops[portal].Blip = nil
                         end
                     end
-                else
-                    -- Not Using Shop Hours - Shop Always Open
+                    if portalCfg.NPC then
+                        DeleteEntity(portalCfg.NPC)
+                        portalCfg.NPC = nil
+                    end
+                    local distance = #(pCoords - portalCfg.npc.coords)
+                    if distance <= portalCfg.shop.distance then
+                        sleep = 0
+                        local shopClosed = CreateVarString(10, 'LITERAL_STRING', portalCfg.shop.name .. _U('hours') .. portalCfg.shop.hours.open .. _U('to') .. portalCfg.shop.hours.close .. _U('hundred'))
+                        PromptSetActiveGroupThisFrame(PromptGroup, shopClosed)
+                        PromptSetEnabled(MenuPrompt, false)
+                    end
+                elseif hour >= portalCfg.shop.hours.open then
+                    -- Using Shop Hours - Shop Open
                     if portalCfg.blip.show then
                         if not Config.shops[portal].Blip then
                             AddBlip(portal)
                         end
                         Citizen.InvokeNative(0x662D364ABF16DE2F, Config.shops[portal].Blip, joaat(Config.BlipColors[portalCfg.blip.color.open])) -- BlipAddModifier
                     end
-                    if not next(portalCfg.shop.jobs) then
+                    if not (portalCfg.shop.jobsEnabled) then
                         local distance = #(pCoords - portalCfg.npc.coords)
                         if portalCfg.npc.active then
                             if distance <= portalCfg.npc.distance then
@@ -129,7 +66,7 @@ CreateThread(function()
                             end
                         end
                         if distance <= portalCfg.shop.distance then
-                            sleep = false
+                            sleep = 0
                             local shopOpen = CreateVarString(10, 'LITERAL_STRING', portalCfg.shop.prompt)
                             PromptSetActiveGroupThisFrame(PromptGroup, shopOpen)
                             PromptSetEnabled(MenuPrompt, true)
@@ -139,7 +76,7 @@ CreateThread(function()
                             end
                         end
                     else
-                        -- Not Using Shop Hours - Shop Always Open - Job Locked
+                        -- Using Shop Hours - Shop Open - Job Locked
                         if Config.shops[portal].Blip then
                             Citizen.InvokeNative(0x662D364ABF16DE2F, Config.shops[portal].Blip, joaat(Config.BlipColors[portalCfg.blip.color.job])) -- BlipAddModifier
                         end
@@ -157,25 +94,88 @@ CreateThread(function()
                             end
                         end
                         if distance <= portalCfg.shop.distance then
-                            sleep = false
+                            sleep = 0
                             local shopOpen = CreateVarString(10, 'LITERAL_STRING', portalCfg.shop.prompt)
                             PromptSetActiveGroupThisFrame(PromptGroup, shopOpen)
                             PromptSetEnabled(MenuPrompt, true)
 
                             if Citizen.InvokeNative(0xC92AC953F0A982AE, MenuPrompt) then -- UiPromptHasStandardModeCompleted
-                                local result = ClientRPC.Callback.TriggerAwait('bcc-portals:CheckPlayerJob', portal)
-                                if result then
-                                    MainMenu(pCoords,portal)
+                                CheckPlayerJob(portal)
+                                if HasJob then
+                                    MainMenu(pCoords, portal)
                                 end
+                            end
+                        end
+                    end
+                end
+            else
+                -- Not Using Shop Hours - Shop Always Open
+                if portalCfg.blip.show then
+                    if not Config.shops[portal].Blip then
+                        AddBlip(portal)
+                    end
+                    Citizen.InvokeNative(0x662D364ABF16DE2F, Config.shops[portal].Blip, joaat(Config.BlipColors[portalCfg.blip.color.open])) -- BlipAddModifier
+                end
+                if not (portalCfg.shop.jobsEnabled) then
+                    local distance = #(pCoords - portalCfg.npc.coords)
+                    if portalCfg.npc.active then
+                        if distance <= portalCfg.npc.distance then
+                            if not portalCfg.NPC then
+                                AddNPC(portal)
+                            end
+                        else
+                            if portalCfg.NPC then
+                                DeleteEntity(portalCfg.NPC)
+                                portalCfg.NPC = nil
+                            end
+                        end
+                    end
+                    if distance <= portalCfg.shop.distance then
+                        sleep = 0
+                        local shopOpen = CreateVarString(10, 'LITERAL_STRING', portalCfg.shop.prompt)
+                        PromptSetActiveGroupThisFrame(PromptGroup, shopOpen)
+                        PromptSetEnabled(MenuPrompt, true)
+
+                        if Citizen.InvokeNative(0xC92AC953F0A982AE, MenuPrompt) then -- UiPromptHasStandardModeCompleted
+                            MainMenu(pCoords, portal)
+                        end
+                    end
+                else
+                    -- Not Using Shop Hours - Shop Always Open - Job Locked
+                    if Config.shops[portal].Blip then
+                        Citizen.InvokeNative(0x662D364ABF16DE2F, Config.shops[portal].Blip, joaat(Config.BlipColors[portalCfg.blip.color.job])) -- BlipAddModifier
+                    end
+                    local distance = #(pCoords - portalCfg.npc.coords)
+                    if portalCfg.npc.active then
+                        if distance <= portalCfg.npc.distance then
+                            if not portalCfg.NPC then
+                                AddNPC(portal)
+                            end
+                        else
+                            if portalCfg.NPC then
+                                DeleteEntity(portalCfg.NPC)
+                                portalCfg.NPC = nil
+                            end
+                        end
+                    end
+                    if distance <= portalCfg.shop.distance then
+                        sleep = 0
+                        local shopOpen = CreateVarString(10, 'LITERAL_STRING', portalCfg.shop.prompt)
+                        PromptSetActiveGroupThisFrame(PromptGroup, shopOpen)
+                        PromptSetEnabled(MenuPrompt, true)
+
+                        if Citizen.InvokeNative(0xC92AC953F0A982AE, MenuPrompt) then -- UiPromptHasStandardModeCompleted
+                            CheckPlayerJob(portal)
+                            if HasJob then
+                                MainMenu(pCoords,portal)
                             end
                         end
                     end
                 end
             end
         end
-        if sleep then
-            Wait(1000)
-        end
+        ::continue::
+        Wait(sleep)
     end
 end)
 
@@ -441,7 +441,6 @@ function TravelMenu(travelData, portal, pCoords)
     })
 end
 
--- Send Player to Destination
 function SendPlayer(location, time)
     local portalCfg = Config.shops[location]
     DoScreenFadeOut(1000)
@@ -455,19 +454,24 @@ function SendPlayer(location, time)
     SetCinematicModeActive(false)
 end
 
--- Menu Prompts
+function CheckPlayerJob(portal)
+    HasJob = false
+    local result = ClientRPC.Callback.TriggerAwait('bcc-portals:CheckJob', portal)
+    if result then
+        HasJob = true
+    end
+end
+
 function StartPrompt()
-    local str = CreateVarString(10, 'LITERAL_STRING', _U('portPrompt'))
     MenuPrompt = PromptRegisterBegin()
     PromptSetControlAction(MenuPrompt, Config.key)
-    PromptSetText(MenuPrompt, str)
+    PromptSetText(MenuPrompt, CreateVarString(10, 'LITERAL_STRING', _U('portPrompt')))
     PromptSetVisible(MenuPrompt, true)
     PromptSetStandardMode(MenuPrompt, true)
     PromptSetGroup(MenuPrompt, PromptGroup)
     PromptRegisterEnd(MenuPrompt)
 end
 
--- Blips
 function AddBlip(portal)
     local portalCfg = Config.shops[portal]
     portalCfg.Blip = Citizen.InvokeNative(0x554d9d53f696d002, 1664425300, portalCfg.npc.coords) -- BlipAddForCoords
@@ -476,11 +480,11 @@ function AddBlip(portal)
     Citizen.InvokeNative(0x9CB1A1623062F402, portalCfg.Blip, portalCfg.blip.name) -- SetBlipNameFromPlayerString
 end
 
--- NPCs
 function AddNPC(portal)
     local portalCfg = Config.shops[portal]
-    LoadModel(portalCfg.npc.model)
-    portalCfg.NPC = CreatePed(portalCfg.npc.model, portalCfg.npc.coords, portalCfg.npc.heading, false, false, false, false)
+    local model = joaat(portalCfg.npc.model)
+    LoadModel(model)
+    portalCfg.NPC = CreatePed(model, portalCfg.npc.coords, portalCfg.npc.heading, false, false, false, false)
     Citizen.InvokeNative(0x283978A15512B2FE, portalCfg.NPC, true) -- SetRandomOutfitVariation
     SetEntityCanBeDamaged(portalCfg.NPC, false)
     SetEntityInvincible(portalCfg.NPC, true)
@@ -490,9 +494,8 @@ function AddNPC(portal)
 end
 
 function LoadModel(model)
-    local hash = joaat(model)
-    RequestModel(hash)
-    while not HasModelLoaded(hash) do
+    RequestModel(model)
+    while not HasModelLoaded(model) do
         Wait(10)
     end
 end
