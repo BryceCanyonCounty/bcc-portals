@@ -51,7 +51,7 @@ VORPcore.Callback.Register('bcc-portals:GetPlayerCanTravel', function(source, cb
     end
 end)
 
-VORPcore.Callback.Register('bcc-portals:CheckJob', function(source, cb, portal)
+VORPcore.Callback.Register('bcc-portals:CheckJob', function(source, cb, shop)
     local src = source
     local Character = VORPcore.getUser(src).getUsedCharacter
     local charJob = Character.job
@@ -61,7 +61,7 @@ VORPcore.Callback.Register('bcc-portals:CheckJob', function(source, cb, portal)
         return
     end
     local hasJob = false
-    hasJob = CheckPlayerJob(charJob, jobGrade, portal)
+    hasJob = CheckPlayerJob(charJob, jobGrade, shop)
     if hasJob then
         cb(true)
     else
@@ -70,8 +70,8 @@ VORPcore.Callback.Register('bcc-portals:CheckJob', function(source, cb, portal)
     end
 end)
 
-function CheckPlayerJob(charJob, jobGrade, portal)
-    for _, job in pairs(Config.shops[portal].shop.jobs) do
+function CheckPlayerJob(charJob, jobGrade, shop)
+    for _, job in pairs(Config.shops[shop].shop.jobs) do
         if (charJob == job.name) and (tonumber(jobGrade) >= tonumber(job.grade)) then
             return true
         end
