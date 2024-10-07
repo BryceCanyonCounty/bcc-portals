@@ -1,7 +1,4 @@
----------------------------------- ENGLISH -------------------------------------------
--- Please send Pull Request to GitHub with Language Updates
 Locales["en_lang"] = {
-
     portPrompt = "Open",
     destinations = "Available Portals",
     travelInfo = "Travel Information",
@@ -23,5 +20,6 @@ Locales["en_lang"] = {
     price = "Price: ",
     time = "Travel Time: ",
     minutes = " minutes",
-    seconds = " seconds"
+    seconds = " seconds",
+    close = "Close",
 }
