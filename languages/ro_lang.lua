@@ -1,5 +1,4 @@
 Locales["ro_lang"] = {
-
     portPrompt = "Deschide",
     destinations = "Portaluri Disponibile",
     travelInfo = "Informatii despre Calatorie",
@@ -21,5 +20,6 @@ Locales["ro_lang"] = {
     price = "Pret: ",
     time = "Timp de calatorie: ",
     minutes = " minute",
-    seconds = " secunde"
+    seconds = " secunde",
+    close = "Close",
 }
