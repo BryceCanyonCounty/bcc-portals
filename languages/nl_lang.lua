@@ -1,7 +1,4 @@
----------------------------------- DUTCH -------------------------------------------
--- Please send Pull Request to GitHub with Language Updates
 Locales["nl_lang"] = {
-
     portPrompt = "Open",
     destinations = "Beschikbare Portalen",
     travelInfo = "Travel Information",
@@ -23,5 +20,6 @@ Locales["nl_lang"] = {
     price = "Price: ",
     time = "Travel Time: ",
     minutes = " minutes",
-    seconds = " seconds"
+    seconds = " seconds",
+    close = "Close",
 }
