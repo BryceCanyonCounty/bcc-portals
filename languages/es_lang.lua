@@ -1,7 +1,4 @@
----------------------------------- Spanish -------------- Made by Magico
--- Please send Pull Request to GitHub with Language Updates
 Locales["es_lang"] = {
-
     portPrompt = "Open",
     destinations = "Destinos Disponibles",
     travelInfo = "Travel Information",
@@ -23,5 +20,6 @@ Locales["es_lang"] = {
     price = "Price: ",
     time = "Travel Time: ",
     minutes = " minutes",
-    seconds = " seconds"
+    seconds = " seconds",
+    close = "Close",
 }
