@@ -1,17 +1,20 @@
 local VORPcore = exports.vorp_core:GetCore()
 
-VORPcore.Callback.Register('bcc-portals:GetTravelData', function(source, cb, travelInfo)
-    local travelLoc = travelInfo.location
-    local distance = #(travelInfo.coords - Config.shops[travelLoc].npc.coords)
-    local cashPrice = 0
-    local goldPrice = 0
+VORPcore.Callback.Register('bcc-portals:GetTravelData', function(source, cb, location, coords)
+    local src = source
+    local user = VORPcore.getUser(src)
+    if not user then return cb(false) end
+    local distance = #(coords - Locations[location].npc.coords)
+    local cashPrice, goldPrice = 0, 0
+
     if Config.price > 0 then
         cashPrice = math.ceil(distance * Config.price)
         goldPrice = math.ceil(cashPrice / 20.67) -- 1899 Gold Price = $20.67
     end
+
     local time = math.floor(distance * Config.time)
     local displayTime = ConvertToTime(time)
-    local travelData = { location = travelLoc, cash = cashPrice, gold = goldPrice, timeMs = time, dispTime = displayTime }
+    local travelData = { location = location, cash = cashPrice, gold = goldPrice, timeMs = time, dispTime = displayTime }
 
     cb(travelData)
 end)
@@ -71,7 +74,7 @@ VORPcore.Callback.Register('bcc-portals:CheckJob', function(source, cb, shop)
 end)
 
 function CheckPlayerJob(charJob, jobGrade, shop)
-    for _, job in pairs(Config.shops[shop].shop.jobs) do
+    for _, job in pairs(Locations[shop].shop.jobs) do
         if (charJob == job.name) and (tonumber(jobGrade) >= tonumber(job.grade)) then
             return true
         end
