@@ -54,31 +54,56 @@ function OpenMainMenu(pCoords, shop)
         style = {}
     })
 
-    for outlet, outletCfg in pairs(shopCfg.outlets) do
-        MainPage:RegisterElement('button', {
-            label = outletCfg.label,
-            style = {
-                ['color'] = '#E0E0E0'
-            },
-            id = outlet
-        }, function(data)
-            local travelData = VORPcore.Callback.TriggerAwait('bcc-portals:GetTravelData', data.id, pCoords)
-            if travelData then
-                OpenTravelMenu(travelData, pCoords, shop)
+    for outlet, outletCfg in pairs(Locations) do
+        if outlet == shop then goto END end
+        local isExcluded = false
+        for _, excludedLocation in ipairs(Locations[shop].excludes) do
+            if excludedLocation == outlet then
+                isExcluded = true
+                break
             end
-        end)
+        end
+        if not isExcluded then
+            MainPage:RegisterElement('button', {
+                label = outletCfg.shop.label,
+                slot = 'content',
+                style = {
+                    ['color'] = '#E0E0E0'
+                },
+                id = outlet
+            }, function(data)
+                local travelData = VORPcore.Callback.TriggerAwait('bcc-portals:GetTravelData', data.id, pCoords)
+                if travelData then
+                    OpenTravelMenu(travelData, pCoords, shop)
+                end
+            end)
+        end
+        ::END::
     end
 
     MainPage:RegisterElement('bottomline', {
         slot = 'footer',
+        style = {}
     })
 
-    TextDisplay = MainPage:RegisterElement('textdisplay', {
-        value = _U('choose'),
+    MainPage:RegisterElement('line', {
+        slot = 'footer',
+        style = {}
+    })
+
+    MainPage:RegisterElement('button', {
+        label = _U('close'),
         slot = 'footer',
         style = {
-            ['color'] = '#C0C0C0'
+            ['color'] = '#E0E0E0'
         }
+    }, function()
+        PortalMenu:Close()
+    end)
+
+    MainPage:RegisterElement('line', {
+        slot = 'footer',
+        style = {}
     })
 
     PortalMenu:Open({
@@ -115,11 +140,13 @@ function OpenTravelMenu(travelData, pCoords, shop)
     })
 
     TravelPage:RegisterElement('line', {
-        slot = 'header'
+        slot = 'header',
+        style = {}
     })
 
-    LocDisplay = TravelPage:RegisterElement('textdisplay', {
+    TravelPage:RegisterElement('textdisplay', {
         value = Locations[travelLoc].shop.name,
+        slot = 'content',
         style = {
             ['color'] = '#C0C0C0',
             ['font-size'] = '1.0vw',
@@ -127,17 +154,16 @@ function OpenTravelMenu(travelData, pCoords, shop)
             ['font-weight'] = '500',
             ['letter-spacing'] = '2px'
         },
-        id = 'location'
     })
 
     PriceDisplay = TravelPage:RegisterElement('textdisplay', {
         value = _U('price') .. ' $' .. cashPrice,
+        slot = 'content',
         style = {
             ['color'] = '#C0C0C0',
             ['font-variant'] = 'small-caps',
             ['font-size'] = '0.83vw'
         },
-        id = 'price'
     })
 
     local minutes = tonumber(travelData.dispTime.minutes)
@@ -149,14 +175,14 @@ function OpenTravelMenu(travelData, pCoords, shop)
         travelTime = seconds .. _U('seconds')
     end
 
-    TimeDisplay = TravelPage:RegisterElement('textdisplay', {
+    TravelPage:RegisterElement('textdisplay', {
         value = _U('time') .. travelTime,
+        slot = 'content',
         style = {
             ['color'] = '#C0C0C0',
             ['font-variant'] = 'small-caps',
             ['font-size'] = '0.83vw'
         },
-        id = 'time'
     })
 
     local currencyType = Locations[shop].shop.currency
@@ -176,6 +202,7 @@ function OpenTravelMenu(travelData, pCoords, shop)
         [3] = function() -- Cash and Gold
             TravelPage:RegisterElement('arrows', {
                 label = _U('currency'),
+                slot = 'content',
                 start = 1,
                 options = {
                     {
@@ -223,10 +250,10 @@ function OpenTravelMenu(travelData, pCoords, shop)
 
     TravelPage:RegisterElement('button', {
         label = _U('go'),
+        slot = 'content',
         style = {
             ['color'] = '#E0E0E0'
         },
-        id = 'go'
     }, function(data)
         local canTravelInfo = { currency = currencyData, price = travelPrice }
         local canTravel = VORPcore.Callback.TriggerAwait('bcc-portals:GetPlayerCanTravel', canTravelInfo)
@@ -236,18 +263,24 @@ function OpenTravelMenu(travelData, pCoords, shop)
         end
     end)
 
+    TravelPage:RegisterElement('line', {
+        slot = 'footer',
+        style = {}
+    })
+
     TravelPage:RegisterElement('button', {
         label = _U('back'),
+        slot = 'footer',
         style = {
             ['color'] = '#E0E0E0'
         },
-        id = 'back'
     }, function(data)
         OpenMainMenu(pCoords, shop)
     end)
 
-    TravelPage:RegisterElement('bottomline', {
+    TravelPage:RegisterElement('line', {
         slot = 'footer',
+        style = {}
     })
 
     PortalMenu:Open({
