@@ -1,5 +1,13 @@
 local VORPcore = exports.vorp_core:GetCore()
 
+local function ConvertToTime(ms)
+    local seconds = math.ceil(ms / 1000)
+    local mins = math.floor(seconds / 60)
+    local secs = math.ceil(seconds % 60)
+    local realTime = { minutes = mins, seconds = secs }
+    return realTime
+end
+
 VORPcore.Callback.Register('bcc-portals:GetTravelData', function(source, cb, location, coords)
     local src = source
     local user = VORPcore.getUser(src)
@@ -19,31 +27,25 @@ VORPcore.Callback.Register('bcc-portals:GetTravelData', function(source, cb, loc
     cb(travelData)
 end)
 
-function ConvertToTime(ms)
-    local seconds = math.ceil(ms / 1000)
-    local mins = math.floor(seconds / 60)
-    local secs = math.ceil(seconds % 60)
-    local realTime = { minutes = mins, seconds = secs }
-    return realTime
-end
-
 VORPcore.Callback.Register('bcc-portals:GetPlayerCanTravel', function(source, cb, canTravelInfo)
     local src = source
-    local Character = VORPcore.getUser(src).getUsedCharacter
+    local user = VORPcore.getUser(src)
+    if not user then return cb(false) end
+    local character = user.getUsedCharacter
     local currency = canTravelInfo.currency
     local price = canTravelInfo.price
 
     if currency == 'cash' then
-        if Character.money >= price then
-            Character.removeCurrency(0, price)
+        if character.money >= price then
+            character.removeCurrency(0, price)
             cb(true)
         else
             VORPcore.NotifyRightTip(src, _U('shortCash'), 4000)
             cb(false)
         end
     elseif currency == 'gold' then
-        if Character.gold >= price then
-            Character.removeCurrency(1, price)
+        if character.gold >= price then
+            character.removeCurrency(1, price)
             cb(true)
         else
             VORPcore.NotifyRightTip(src, _U('shortGold'), 4000)
@@ -54,15 +56,23 @@ VORPcore.Callback.Register('bcc-portals:GetPlayerCanTravel', function(source, cb
     end
 end)
 
+local function CheckPlayerJob(charJob, jobGrade, shop)
+    for _, job in pairs(Locations[shop].shop.jobs) do
+        if (charJob == job.name) and (tonumber(jobGrade) >= tonumber(job.grade)) then
+            return true
+        end
+    end
+end
+
 VORPcore.Callback.Register('bcc-portals:CheckJob', function(source, cb, shop)
     local src = source
-    local Character = VORPcore.getUser(src).getUsedCharacter
-    local charJob = Character.job
-    local jobGrade = Character.jobGrade
-    if not charJob then
-        cb(false)
-        return
-    end
+    local user = VORPcore.getUser(src)
+    if not user then return cb(false) end
+    local character = user.getUsedCharacter
+    local charJob = character.job
+    local jobGrade = character.jobGrade
+
+    if not charJob then cb(false) return end
     local hasJob = false
     hasJob = CheckPlayerJob(charJob, jobGrade, shop)
     if hasJob then
@@ -72,11 +82,3 @@ VORPcore.Callback.Register('bcc-portals:CheckJob', function(source, cb, shop)
         cb(false)
     end
 end)
-
-function CheckPlayerJob(charJob, jobGrade, shop)
-    for _, job in pairs(Locations[shop].shop.jobs) do
-        if (charJob == job.name) and (tonumber(jobGrade) >= tonumber(job.grade)) then
-            return true
-        end
-    end
-end
