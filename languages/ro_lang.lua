@@ -9,7 +9,6 @@ Locales["ro_lang"] = {
     shortCash = "Nu ai suficienti bani!",
     needJob = "Nu ai meseria necesara!",
     traveling = "Calatorind catre ",
-    choose = "Alegeti Destinatia Dumneavoastra",
     currency = "Valuta",
     cash = "Bani",
     gold = "Aur",
@@ -22,4 +21,8 @@ Locales["ro_lang"] = {
     minutes = " minute",
     seconds = " secunde",
     close = "Close",
+    charid = "Character ID: ",
+    travelTo = " to ",
+    priceCash = "Price: $",
+    priceFree = "Price: free",
 }
