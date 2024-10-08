@@ -9,7 +9,6 @@ Locales["nl_lang"] = {
     shortCash = "Je hebt niet voldoende geld!",
     needJob = "Je hebt niet de juiste baan!",
     traveling = "Reizen naar ",
-    choose = "Choose Your Locatie",
     currency = "Currency",
     cash = "Geld",
     gold = "Goud",
@@ -22,4 +21,8 @@ Locales["nl_lang"] = {
     minutes = " minutes",
     seconds = " seconds",
     close = "Close",
+    charid = "Character ID: ",
+    travelTo = " to ",
+    priceCash = "Price: $",
+    priceFree = "Price: free",
 }
