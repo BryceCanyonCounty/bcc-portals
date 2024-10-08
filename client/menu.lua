@@ -65,7 +65,7 @@ function OpenMainMenu(pCoords, shop)
         end
         if not isExcluded then
             MainPage:RegisterElement('button', {
-                label = outletCfg.shop.label,
+                label = outlet,
                 slot = 'content',
                 style = {
                     ['color'] = '#E0E0E0'
@@ -255,8 +255,7 @@ function OpenTravelMenu(travelData, pCoords, shop)
             ['color'] = '#E0E0E0'
         },
     }, function(data)
-        local canTravelInfo = { currency = currencyData, price = travelPrice }
-        local canTravel = VORPcore.Callback.TriggerAwait('bcc-portals:GetPlayerCanTravel', canTravelInfo)
+        local canTravel = VORPcore.Callback.TriggerAwait('bcc-portals:GetPlayerCanTravel', currencyData, travelPrice, shop, travelLoc)
         if canTravel then
             PortalMenu.Close()
             SendPlayer(travelLoc, travelData.timeMs)
