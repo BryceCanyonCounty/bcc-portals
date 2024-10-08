@@ -1,3 +1,5 @@
+local BccUtils = exports['bcc-utils'].initiate()
+local discord = BccUtils.Discord.setup(Config.webhook.url, Config.webhook.name, Config.webhook.avatar)
 local VORPcore = exports.vorp_core:GetCore()
 
 local function ConvertToTime(ms)
@@ -27,17 +29,18 @@ VORPcore.Callback.Register('bcc-portals:GetTravelData', function(source, cb, loc
     cb(travelData)
 end)
 
-VORPcore.Callback.Register('bcc-portals:GetPlayerCanTravel', function(source, cb, canTravelInfo)
+VORPcore.Callback.Register('bcc-portals:GetPlayerCanTravel', function(source, cb, currency, price, location, destination)
     local src = source
     local user = VORPcore.getUser(src)
     if not user then return cb(false) end
     local character = user.getUsedCharacter
-    local currency = canTravelInfo.currency
-    local price = canTravelInfo.price
+    local charId = character.charIdentifier
 
     if currency == 'cash' then
         if character.money >= price then
             character.removeCurrency(0, price)
+            discord:sendMessage(character.firstname .. ' ' .. character.lastname .. '\n' .. _U('charid') .. tostring(charId),
+            '\n' .. location .. _U('travelTo') .. destination .. '\n' .. _U('priceCash') .. tostring(price))
             cb(true)
         else
             VORPcore.NotifyRightTip(src, _U('shortCash'), 4000)
@@ -46,12 +49,16 @@ VORPcore.Callback.Register('bcc-portals:GetPlayerCanTravel', function(source, cb
     elseif currency == 'gold' then
         if character.gold >= price then
             character.removeCurrency(1, price)
+            discord:sendMessage(character.firstname .. ' ' .. character.lastname .. '\n' .. _U('charid') .. tostring(charId),
+            '\n' .. location .. _U('travelTo') .. destination .. '\n' .. _U('price') .. tostring(price) .. _U('nugget'))
             cb(true)
         else
             VORPcore.NotifyRightTip(src, _U('shortGold'), 4000)
             cb(false)
         end
     elseif currency == 'free' then
+        discord:sendMessage(character.firstname .. ' ' .. character.lastname .. '\n' .. _U('charid') .. tostring(charId),
+            '\n' .. location .. _U('travelTo') .. destination .. '\n' .. _U('priceFree'))
         cb(true)
     end
 end)
@@ -82,3 +89,5 @@ VORPcore.Callback.Register('bcc-portals:CheckJob', function(source, cb, shop)
         cb(false)
     end
 end)
+
+BccUtils.Versioner.checkFile(GetCurrentResourceName(), 'https://github.com/BryceCanyonCounty/bcc-portals')
