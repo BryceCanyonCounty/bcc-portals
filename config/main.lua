@@ -1,10 +1,18 @@
 -----------------------------------------------------
--- Portal Main Configuration
+-- Portals Main Configuration
 -----------------------------------------------------
 Config = {}
 
 -- Set Language
 Config.defaultlang = 'en_lang'
+-----------------------------------------------------
+
+-- Discord Webhook Configuration
+Config.webhook = {
+    url = '',
+    name = 'BCC-Portals',
+    avatar = ''
+}
 -----------------------------------------------------
 
 -- Open Portals Menu
