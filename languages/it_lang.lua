@@ -9,7 +9,6 @@ Locales["it_lang"] = {
     shortCash = "Non hai abbastanza dollari!",
     needJob = "You don't have the required job!",
     traveling = "Viaggiando verso ",
-    choose = "Choose Your Destination",
     currency = "Currency",
     cash = "Cash",
     gold = "Gold",
@@ -22,4 +21,8 @@ Locales["it_lang"] = {
     minutes = " minutes",
     seconds = " seconds",
     close = "Close",
+    charid = "Character ID: ",
+    travelTo = " to ",
+    priceCash = "Price: $",
+    priceFree = "Price: free",
 }
