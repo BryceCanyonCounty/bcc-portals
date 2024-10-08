@@ -15,6 +15,7 @@ Looking for fast and convenient travel in your server? Our script has got you co
 - Distance-based NPC spawns
 - All shops in the config are automatically shown in the menu (except the shop you are using)
   - To exclude shops just add the shop id to the `excludes` section for that location (example in config)
+- Discord webhooks can be set up in the main config file to show when players are teleporting  
 
 ## Dependencies
 - [vorp_core](https://github.com/VORPCORE/vorp-core-lua)
