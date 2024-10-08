@@ -1,12 +1,11 @@
 -----------------------------------------------------
--- Portal Locations Configuration
+-- Portal Location Configuration
 -----------------------------------------------------
 Locations = {
-    ['annesburg'] = {
+    ['Annesburg'] = {
         shop = {
             name        = 'Annesburg Portal', -- Name of Shop on Menu Header
             prompt      = 'Annesburg Portal', -- Text Below the Menu Prompt Button
-            label       = 'Annesburg',        -- Label for Shop on Menu Button
             distance    = 2.0,                -- Distance Between Player and Shop to Show Menu Prompt
             currency    = 3,                  -- 1 = Cash-Only / 2 = Gold-Only / 3 = Cash and Gold / 4 = Free
             jobsEnabled = false,              -- Allow Shop Access to Specified Jobs Only
@@ -42,15 +41,14 @@ Locations = {
             coords  = vector3(2942.39, 1272.97, 44.64), -- Player Teleport Position
             heading = 52.18                             -- Player Heading
         },
-        excludes = {}                                   -- Exclude Specific Locations from Menu / ex. excludes = {'valentine', 'blackwater'}
+        excludes = {}                                   -- Exclude Specific Locations from Menu / ex. excludes = {'Valentine', 'Saint Denis'}
     },
     -----------------------------------------------------
 
-    ['armadillo'] = {
+    ['Armadillo'] = {
         shop = {
             name        = 'Armadillo Portal',
             prompt      = 'Armadillo Portal',
-            label       = 'Armadillo',
             distance    = 2.0,
             currency    = 3,
             jobsEnabled = false,
@@ -90,11 +88,10 @@ Locations = {
     },
     -----------------------------------------------------
 
-    ['blackwater'] = {
+    ['Blackwater'] = {
         shop = {
             name        = 'Blackwater Portal',
             prompt      = 'Blackwater Portal',
-            label       = 'Blackwater',
             distance    = 2.0,
             currency    = 3,
             jobsEnabled = false,
@@ -134,11 +131,10 @@ Locations = {
     },
     -----------------------------------------------------
 
-    ['rhodes'] = {
+    ['Rhodes'] = {
         shop = {
             name        = 'Rhodes Portal',
             prompt      = 'Rhodes Portal',
-            label       = 'Rhodes',
             distance    = 2.0,
             currency    = 3,
             jobsEnabled = false,
@@ -178,11 +174,10 @@ Locations = {
     },
     -----------------------------------------------------
 
-    ['strawberry'] = {
+    ['Strawberry'] = {
         shop = {
             name        = 'Strawberry Portal',
             prompt      = 'Strawberry Portal',
-            label       = 'Strawberry',
             distance    = 2.0,
             currency    = 3,
             jobsEnabled = false,
@@ -222,11 +217,10 @@ Locations = {
     },
     -----------------------------------------------------
 
-    ['stdenis'] = {
+    ['Saint Denis'] = {
         shop = {
             name        = 'Saint Denis Portal',
             prompt      = 'Saint Denis Portal',
-            label       = 'Saint Denis',
             distance    = 2.0,
             currency    = 3,
             jobsEnabled = false,
@@ -266,11 +260,10 @@ Locations = {
     },
     -----------------------------------------------------
 
-    ['tumbleweed'] = {
+    ['Tumbleweed'] = {
         shop = {
             name        = 'Tumbleweed Portal',
             prompt      = 'Tumbleweed Portal',
-            label       = 'Tumbleweed',
             distance    = 2.0,
             currency    = 3,
             jobsEnabled = false,
@@ -310,11 +303,10 @@ Locations = {
     },
     -----------------------------------------------------
 
-    ['valentine'] = {
+    ['Valentine'] = {
         shop = {
             name        = 'Valentine Portal',
             prompt      = 'Valentine Portal',
-            label       = 'Valentine',
             distance    = 2.0,
             currency    = 3,
             jobsEnabled = false,
@@ -354,11 +346,10 @@ Locations = {
     },
     -----------------------------------------------------
 
-    ['vanhorn'] = {
+    ['Van Horn'] = {
         shop = {
             name        = 'Van Horn Portal',
             prompt      = 'Van Horn Portal',
-            label       = 'Van Horn',
             distance    = 2.0,
             currency    = 3,
             jobsEnabled = false,
