@@ -1,5 +1,4 @@
 Locales["ro_lang"] = {
-
     portPrompt = "Deschide",
     destinations = "Portaluri Disponibile",
     travelInfo = "Informatii despre Calatorie",
@@ -10,7 +9,6 @@ Locales["ro_lang"] = {
     shortCash = "Nu ai suficienti bani!",
     needJob = "Nu ai meseria necesara!",
     traveling = "Calatorind catre ",
-    choose = "Alegeti Destinatia Dumneavoastra",
     currency = "Valuta",
     cash = "Bani",
     gold = "Aur",
@@ -21,5 +19,10 @@ Locales["ro_lang"] = {
     price = "Pret: ",
     time = "Timp de calatorie: ",
     minutes = " minute",
-    seconds = " secunde"
+    seconds = " secunde",
+    close = "Close",
+    charid = "Character ID: ",
+    travelTo = " to ",
+    priceCash = "Price: $",
+    priceFree = "Price: free",
 }

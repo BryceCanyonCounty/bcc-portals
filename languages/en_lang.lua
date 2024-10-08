@@ -1,8 +1,5 @@
----------------------------------- ENGLISH -------------------------------------------
--- Please send Pull Request to GitHub with Language Updates
 Locales["en_lang"] = {
-
-    portPrompt = "Open",
+    portPrompt = "Open Menu",
     destinations = "Available Portals",
     travelInfo = "Travel Information",
     to = ":00~q~ to ~o~",
@@ -12,7 +9,6 @@ Locales["en_lang"] = {
     shortCash = "You don't have enough money!",
     needJob = "You don't have the required job!",
     traveling = "Traveling to ",
-    choose = "Choose Your Destination",
     currency = "Currency",
     cash = "Cash",
     gold = "Gold",
@@ -23,5 +19,10 @@ Locales["en_lang"] = {
     price = "Price: ",
     time = "Travel Time: ",
     minutes = " minutes",
-    seconds = " seconds"
+    seconds = " seconds",
+    close = "Close",
+    charid = "Character ID: ",
+    travelTo = " to ",
+    priceCash = "Price: $",
+    priceFree = "Price: free",
 }

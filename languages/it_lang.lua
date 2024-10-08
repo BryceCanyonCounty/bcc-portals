@@ -1,7 +1,4 @@
----------------------------------- ITALIAN -------------------------------------------
--- Please send Pull Request to GitHub with Language Updates
 Locales["it_lang"] = {
-
     portPrompt = "Open",
     destinations = "Available Portals",
     travelInfo = "Travel Information",
@@ -12,7 +9,6 @@ Locales["it_lang"] = {
     shortCash = "Non hai abbastanza dollari!",
     needJob = "You don't have the required job!",
     traveling = "Viaggiando verso ",
-    choose = "Choose Your Destination",
     currency = "Currency",
     cash = "Cash",
     gold = "Gold",
@@ -23,5 +19,10 @@ Locales["it_lang"] = {
     price = "Price: ",
     time = "Travel Time: ",
     minutes = " minutes",
-    seconds = " seconds"
+    seconds = " seconds",
+    close = "Close",
+    charid = "Character ID: ",
+    travelTo = " to ",
+    priceCash = "Price: $",
+    priceFree = "Price: free",
 }

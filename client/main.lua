@@ -1,22 +1,95 @@
-FeatherMenu =  exports['feather-menu'].initiate()
+VORPcore = exports.vorp_core:GetCore()
 
-ClientRPC = exports.vorp_core:ClientRpcCall()
+local PromptGroup = GetRandomIntInRange(0, 0xffffff)
+local HasJob = false
 
-PromptGroup = GetRandomIntInRange(0, 0xffffff)
-HasJob = false
+local function StartPrompt()
+    MenuPrompt = PromptRegisterBegin()
+    PromptSetControlAction(MenuPrompt, Config.key)
+    PromptSetText(MenuPrompt, CreateVarString(10, 'LITERAL_STRING', _U('portPrompt')))
+    PromptSetVisible(MenuPrompt, true)
+    PromptSetStandardMode(MenuPrompt, true)
+    PromptSetGroup(MenuPrompt, PromptGroup)
+    PromptRegisterEnd(MenuPrompt)
+end
+
+local function ManageBlip(shop, closed)
+    local shopCfg = Locations[shop]
+
+    if closed and not shopCfg.blip.showClosed then
+        if Locations[shop].Blip then
+            RemoveBlip(Locations[shop].Blip)
+            Locations[shop].Blip = nil
+        end
+        return
+    end
+
+    if not Locations[shop].Blip then
+        shopCfg.Blip = Citizen.InvokeNative(0x554d9d53f696d002, 1664425300, shopCfg.npc.coords) -- BlipAddForCoords
+        SetBlipSprite(shopCfg.Blip, shopCfg.blip.sprite, true)
+        Citizen.InvokeNative(0x9CB1A1623062F402, shopCfg.Blip, shopCfg.blip.name) -- SetBlipNameFromPlayerString
+    end
+
+    local color = shopCfg.blip.color.open
+    if shopCfg.shop.jobsEnabled then color = shopCfg.blip.color.job end
+    if closed then color = shopCfg.blip.color.closed end
+    Citizen.InvokeNative(0x662D364ABF16DE2F, Locations[shop].Blip, joaat(Config.BlipColors[color])) -- BlipAddModifier
+end
+
+local function LoadModel(model, modelName)
+    if not IsModelValid(model) then
+        return print('Invalid model:', modelName)
+    end
+    RequestModel(model, false)
+    while not HasModelLoaded(model) do
+        Wait(10)
+    end
+end
+
+local function AddNPC(shop)
+    local shopCfg = Locations[shop]
+    if not shopCfg.NPC then
+        local modelName = shopCfg.npc.model
+        local model = joaat(modelName)
+        LoadModel(model, modelName)
+        shopCfg.NPC = CreatePed(model, shopCfg.npc.coords, shopCfg.npc.heading, false, false, false, false, false)
+        Citizen.InvokeNative(0x283978A15512B2FE, shopCfg.NPC, true) -- SetRandomOutfitVariation
+        SetEntityCanBeDamaged(shopCfg.NPC, false)
+        SetEntityInvincible(shopCfg.NPC, true)
+        Wait(500)
+        FreezeEntityPosition(shopCfg.NPC, true)
+        SetBlockingOfNonTemporaryEvents(shopCfg.NPC, true)
+    end
+end
+
+local function RemoveNPC(shop)
+    local shopCfg = Locations[shop]
+    if shopCfg.NPC then
+        DeleteEntity(shopCfg.NPC)
+        shopCfg.NPC = nil
+    end
+end
+
+local function CheckPlayerJob(shop)
+    HasJob = false
+    local result = VORPcore.Callback.TriggerAwait('bcc-portals:CheckJob', shop)
+    if result then
+        HasJob = true
+    end
+end
 
 CreateThread(function()
     StartPrompt()
     while true do
         local playerPed = PlayerPedId()
-        local pCoords = GetEntityCoords(playerPed)
+        local playerCoords = GetEntityCoords(playerPed)
         local sleep = 1000
         local hour = GetClockHours()
 
         if IsEntityDead(playerPed) then goto END end
 
-        for shop, shopCfg in pairs(Config.shops) do
-            local distance = #(pCoords - shopCfg.npc.coords)
+        for shop, shopCfg in pairs(Locations) do
+            local distance = #(playerCoords - shopCfg.npc.coords)
 
             -- Shop Closed
             if (shopCfg.shop.hours.active and hour >= shopCfg.shop.hours.close) or (shopCfg.shop.hours.active and hour < shopCfg.shop.hours.open) then
@@ -52,7 +125,7 @@ CreateThread(function()
                             CheckPlayerJob(shop)
                             if not HasJob then goto END end
                         end
-                        MainMenu(pCoords, shop)
+                        OpenMainMenu(playerCoords, shop)
                     end
                 end
             end
@@ -62,272 +135,24 @@ CreateThread(function()
     end
 end)
 
-function MainMenu(pCoords, shop)
-    local shopCfg = Config.shops[shop]
-    local mainMenu = FeatherMenu:RegisterMenu('bcc-portals:MainMenu', {
-        top = '3%',
-        left = '3%',
-        ['720width'] = '400px',
-        ['1080width'] = '500px',
-        ['2kwidth'] = '600px',
-        ['4kwidth'] = '800px',
-        style = {},
-        contentslot = {
-            style = {
-                ['height'] = '325px',
-                ['min-height'] = '325px'
-            }
-        },
-        draggable = true,
-        canclose = true
-    })
-
-    local destinations = mainMenu:RegisterPage('first:page')
-
-    destinations:RegisterElement('header', {
-        value = shopCfg.shop.name,
-        slot = 'header',
-        style = {
-            ['color'] = '#999'
-        }
-    })
-
-    destinations:RegisterElement('subheader', {
-        value = _U('destinations'),
-        slot = 'header',
-        style = {
-            ['color'] = '#CC9900',
-            ['font-size'] = '18px'
-        }
-    })
-
-    destinations:RegisterElement('line', {
-        slot = 'header'
-    })
-
-    for outlet, outletCfg in pairs(shopCfg.outlets) do
-        destinations:RegisterElement('button', {
-            label = outletCfg.label,
-            style = {
-                ['color'] = '#E0E0E0'
-            },
-            id = outlet
-        }, function(data)
-            local travelInfo = { location = data.id, coords = pCoords }
-            local travelData = ClientRPC.Callback.TriggerAwait('bcc-portals:GetTravelData', travelInfo)
-            if travelData then
-                TravelMenu(travelData, shop, pCoords)
-            end
-        end)
-    end
-
-    destinations:RegisterElement('bottomline', {
-        slot = 'footer',
-    })
-
-    TextDisplay = destinations:RegisterElement('textdisplay', {
-        value = _U('choose'),
-        slot = 'footer',
-        style = {
-            ['color'] = '#C0C0C0'
-        }
-    })
-
-    mainMenu:Open({
-        startupPage = destinations
-    })
-end
-
-function TravelMenu(travelData, shop, pCoords)
-    local travelLoc = travelData.location
-    local cashPrice = travelData.cash
-    local goldPrice = travelData.gold
-    local currencyData = 'cash'
-    local travelPrice = cashPrice
-
-    local travelMenu = FeatherMenu:RegisterMenu('bcc-portals:TravelMenu', {
-        top = '3%',
-        left = '3%',
-        ['720width'] = '400px',
-        ['1080width'] = '500px',
-        ['2kwidth'] = '600px',
-        ['4kwidth'] = '800px',
-        style = {},
-        contentslot = {
-            style = {
-                ['height'] = '325px',
-                ['min-height'] = '325px'
-            }
-        },
-        draggable = true,
-        canclose = true
-    })
-
-    local travelInfo = travelMenu:RegisterPage('first:page')
-
-    travelInfo:RegisterElement('header', {
-        value = Config.shops[shop].shop.name,
-        slot = 'header',
-        style = {
-            ['color'] = '#999'
-        }
-    })
-
-    travelInfo:RegisterElement('subheader', {
-        value = _U('travelInfo'),
-        slot = 'header',
-        style = {
-            ['color'] = '#CC9900',
-            ['font-size'] = '18px'
-        }
-    })
-
-    travelInfo:RegisterElement('line', {
-        slot = 'header'
-    })
-
-    LocDisplay = travelInfo:RegisterElement('textdisplay', {
-        value = Config.shops[travelLoc].shop.name,
-        style = {
-            ['color'] = '#C0C0C0',
-            ['font-size'] = '20px',
-            ['font-variant'] = 'small-caps',
-            ['font-weight'] = '500',
-            ['letter-spacing'] = '2px'
-        },
-        id = 'location'
-    })
-
-    PriceDisplay = travelInfo:RegisterElement('textdisplay', {
-        value = _U('price') .. ' $' .. cashPrice,
-        style = {
-            ['color'] = '#C0C0C0',
-            ['font-variant'] = 'small-caps',
-            ['font-size'] = '16px'
-        },
-        id = 'price'
-    })
-
-    local minutes = tonumber(travelData.dispTime.minutes)
-    local seconds = tonumber(travelData.dispTime.seconds)
-    local travelTime = nil
-    if minutes >= 1 then
-        travelTime = minutes .. _U('minutes') .. ' ' .. seconds .. _U('seconds')
-    else
-        travelTime = seconds .. _U('seconds')
-    end
-
-    TimeDisplay = travelInfo:RegisterElement('textdisplay', {
-        value = _U('time') .. travelTime,
-        style = {
-            ['color'] = '#C0C0C0',
-            ['font-variant'] = 'small-caps',
-            ['font-size'] = '16px'
-        },
-        id = 'time'
-    })
-
-    local currencyType = Config.shops[shop].shop.currency
-    local currency = {
-        [1] = function() -- Cash-Only
-            currencyData = 'cash'
-            travelPrice = cashPrice
-        end,
-        [2] = function() -- Gold-Only
-            PriceDisplay:update({
-                value = _U('price') .. goldPrice .. _U('nugget'),
-                style = {},
-            })
-            currencyData = 'gold'
-            travelPrice = goldPrice
-        end,
-        [3] = function() -- Cash and Gold
-            travelInfo:RegisterElement('arrows', {
-                label = _U('currency'),
-                start = 1,
-                options = {
-                    {
-                        display = _U('cash'),
-                        extra = 'cash'
-                    },
-                    {
-                        display = _U('gold'),
-                        extra = 'gold'
-                    }
-                },
-                style = {
-                    ['color'] = '#E0E0E0'
-                },
-                persist = false,
-            }, function(data)
-                if data.value.extra == 'cash' then
-                    PriceDisplay:update({
-                        value = _U('price') .. ' $' .. cashPrice,
-                        style = {},
-                    })
-                    currencyData = 'cash'
-                    travelPrice = cashPrice
-                elseif data.value.extra == 'gold' then
-                    PriceDisplay:update({
-                        value = _U('price') .. goldPrice .. _U('nugget'),
-                        style = {},
-                    })
-                    currencyData = 'gold'
-                    travelPrice = goldPrice
-                end
-            end)
-        end,
-        [4] = function() -- Free
-            PriceDisplay:update({
-                value = _U('price') .. _U('free'),
-                style = {},
-            })
-            currencyData = 'free'
-        end
-    }
-    if currency[currencyType] then
-        currency[currencyType]()
-    end
-
-    travelInfo:RegisterElement('button', {
-        label = _U('go'),
-        style = {
-            ['color'] = '#E0E0E0'
-        },
-        id = 'go'
-    }, function(data)
-        local canTravelInfo = { currency = currencyData, price = travelPrice }
-        local canTravel = ClientRPC.Callback.TriggerAwait('bcc-portals:GetPlayerCanTravel', canTravelInfo)
-        if canTravel then
-            travelMenu.Close()
-            SendPlayer(travelLoc, travelData.timeMs)
-        end
-    end)
-
-    travelInfo:RegisterElement('button', {
-        label = _U('back'),
-        style = {
-            ['color'] = '#E0E0E0'
-        },
-        id = 'back'
-    }, function(data)
-        MainMenu(pCoords, shop)
-    end)
-
-    travelInfo:RegisterElement('bottomline', {
-        slot = 'footer',
-    })
-
-    travelMenu:Open({
-        startupPage = travelInfo
-    })
+function SendPlayer(location, time)
+    local shopCfg = Locations[location]
+    DoScreenFadeOut(1000)
+    Wait(1000)
+    Citizen.InvokeNative(0x1E5B70E53DB661E5, 0, 0, 0, _U('traveling') .. shopCfg.shop.name, '', '') -- DisplayLoadingScreens
+    Wait(time)
+    Citizen.InvokeNative(0x203BEFFDBE12E96A, PlayerPedId(), shopCfg.player.coords, shopCfg.player.heading, false, false, false) -- SetEntityCoordsAndHeading
+    ShutdownLoadingScreen()
+    DoScreenFadeIn(1000)
+    Wait(1000)
+    SetCinematicModeActive(false)
 end
 
 AddEventHandler('onResourceStop', function(resourceName)
     if (GetCurrentResourceName() ~= resourceName) then
         return
     end
-    for _, shopCfg in pairs(Config.shops) do
+    for _, shopCfg in pairs(Locations) do
         if shopCfg.Blip then
             RemoveBlip(shopCfg.Blip)
             shopCfg.Blip = nil
